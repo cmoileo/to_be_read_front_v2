@@ -1,0 +1,2406 @@
+{
+    "openapi": "3.0.3",
+    "info": {
+        "title": "toBeRead API",
+        "description": "API REST pour l'application toBeRead - Réseau social de critiques de livres",
+        "version": "1.0.0",
+        "contact": {
+            "email": "support@toberead.app"
+        }
+    },
+    "servers": [
+        {
+            "url": "https://api.toberead.app",
+            "description": "Production"
+        },
+        {
+            "url": "http://localhost:3333",
+            "description": "Développement"
+        }
+    ],
+    "tags": [
+        {
+            "name": "Auth",
+            "description": "Authentification et gestion du compte"
+        },
+        {
+            "name": "Reviews",
+            "description": "Gestion des critiques de livres"
+        },
+        {
+            "name": "Comments",
+            "description": "Gestion des commentaires"
+        },
+        {
+            "name": "Users",
+            "description": "Gestion des utilisateurs et relations sociales"
+        },
+        {
+            "name": "Books",
+            "description": "Recherche de livres via Google Books API"
+        },
+        {
+            "name": "Health",
+            "description": "Endpoints de monitoring"
+        }
+    ],
+    "paths": {
+        "/register": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Inscription d'un nouvel utilisateur",
+                "description": "Crée un nouveau compte utilisateur et retourne un token d'authentification",
+                "operationId": "register",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "userName",
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "userName": {
+                                        "type": "string",
+                                        "minLength": 3,
+                                        "maxLength": 32,
+                                        "example": "johndoe"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "john@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "minLength": 8,
+                                        "pattern": "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^a-zA-Z\\d]).{8,}$",
+                                        "example": "MyP@ssw0rd",
+                                        "description": "Min 8 caractères, 1 maj, 1 min, 1 chiffre, 1 caractère spécial"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Utilisateur créé avec succès",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "user": {
+                                            "type": "object",
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "userName": {
+                                                    "type": "string",
+                                                    "example": "johndoe"
+                                                }
+                                            }
+                                        },
+                                        "token": {
+                                            "$ref": "#/components/schemas/Token"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationError"
+                    }
+                }
+            }
+        },
+        "/login": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Connexion d'un utilisateur",
+                "description": "Authentifie un utilisateur avec email ou username + password",
+                "operationId": "login",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "john@example.com"
+                                    },
+                                    "userName": {
+                                        "type": "string",
+                                        "example": "johndoe"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "example": "MyP@ssw0rd"
+                                    }
+                                },
+                                "description": "Fournir soit email soit userName"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Connexion réussie",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "user": {
+                                            "type": "object",
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "userName": {
+                                                    "type": "string",
+                                                    "example": "johndoe"
+                                                }
+                                            }
+                                        },
+                                        "token": {
+                                            "$ref": "#/components/schemas/Token"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    }
+                }
+            }
+        },
+        "/logout": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Déconnexion de l'utilisateur",
+                "description": "Invalide le token d'authentification et supprime les tokens push",
+                "operationId": "logout",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Déconnexion réussie",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Logged out successfully"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    }
+                }
+            }
+        },
+        "/me": {
+            "get": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Obtenir les informations de l'utilisateur connecté",
+                "operationId": "getMe",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Informations de l'utilisateur",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "user": {
+                                            "$ref": "#/components/schemas/UserDetailed"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Mettre à jour le profil de l'utilisateur",
+                "operationId": "updateMe",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "userName": {
+                                        "type": "string",
+                                        "minLength": 3,
+                                        "maxLength": 32
+                                    },
+                                    "biography": {
+                                        "type": "string",
+                                        "maxLength": 500
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email"
+                                    },
+                                    "avatar": {
+                                        "type": "string",
+                                        "format": "binary",
+                                        "description": "Image (jpg, png, jpeg) - Max 5MB"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Profil mis à jour",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "user": {
+                                            "$ref": "#/components/schemas/UserDetailed"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Supprimer son compte",
+                "description": "Supprime définitivement le compte et toutes les données associées",
+                "operationId": "deleteMe",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Compte supprimé",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Account deleted successfully"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    }
+                }
+            }
+        },
+        "/is-username-available/{q}": {
+            "get": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Vérifier la disponibilité d'un username",
+                "operationId": "isUsernameAvailable",
+                "parameters": [
+                    {
+                        "name": "q",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "minLength": 3
+                        },
+                        "description": "Username à vérifier"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Disponibilité du username",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "available": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/password/reset": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Demander une réinitialisation de mot de passe",
+                "description": "Envoie un code à 6 chiffres par email (valable 15min, 3 tentatives max)",
+                "operationId": "resetPassword",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "email"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "john@example.com"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Email envoyé",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Password reset email sent"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/password/reset/confirm": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Confirmer la réinitialisation avec le code",
+                "description": "Valide le code et génère un nouveau mot de passe envoyé par email",
+                "operationId": "resetPasswordConfirm",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "email",
+                                    "code"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "john@example.com"
+                                    },
+                                    "code": {
+                                        "type": "string",
+                                        "pattern": "^[0-9]{6}$",
+                                        "example": "123456"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Mot de passe réinitialisé",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Password reset successfully. Check your email for the new password"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    }
+                }
+            }
+        },
+        "/device-token": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Enregistrer un token de notification push",
+                "operationId": "storeDeviceToken",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "token",
+                                    "platform"
+                                ],
+                                "properties": {
+                                    "token": {
+                                        "type": "string",
+                                        "description": "Token FCM"
+                                    },
+                                    "platform": {
+                                        "type": "string",
+                                        "enum": [
+                                            "ios",
+                                            "android"
+                                        ],
+                                        "example": "android"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Token enregistré",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Device token stored successfully"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    }
+                }
+            }
+        },
+        "/transform-to-deep-link/{page}/{param}": {
+            "get": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Générer un deep link",
+                "operationId": "transformToDeepLink",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "review",
+                                "user"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "param",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "ID de la ressource"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Deep link généré",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "deepLink": {
+                                            "type": "string",
+                                            "example": "toberead://review/123"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    }
+                }
+            }
+        },
+        "/reviews": {
+            "post": {
+                "tags": [
+                    "Reviews"
+                ],
+                "summary": "Créer une critique de livre",
+                "operationId": "createReview",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "content",
+                                    "value",
+                                    "googleBookId"
+                                ],
+                                "properties": {
+                                    "content": {
+                                        "type": "string",
+                                        "minLength": 3,
+                                        "maxLength": 1000,
+                                        "example": "Un livre passionnant qui..."
+                                    },
+                                    "value": {
+                                        "type": "integer",
+                                        "minimum": 1,
+                                        "maximum": 10,
+                                        "example": 8
+                                    },
+                                    "googleBookId": {
+                                        "type": "string",
+                                        "example": "zyTCAlFPjgYC"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Critique créée",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "review": {
+                                            "$ref": "#/components/schemas/Review"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationError"
+                    }
+                }
+            }
+        },
+        "/review/{id}": {
+            "get": {
+                "tags": [
+                    "Reviews"
+                ],
+                "summary": "Obtenir une critique",
+                "operationId": "getReview",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Détails de la critique",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "review": {
+                                            "$ref": "#/components/schemas/Review"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Reviews"
+                ],
+                "summary": "Supprimer une critique",
+                "description": "Supprime une critique (auteur, modérateur ou admin uniquement)",
+                "operationId": "deleteReview",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Critique supprimée",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Review deleted successfully"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/Forbidden"
+                    }
+                }
+            }
+        },
+        "/user/{id}/reviews/{page}": {
+            "get": {
+                "tags": [
+                    "Reviews"
+                ],
+                "summary": "Obtenir les critiques d'un utilisateur",
+                "operationId": "getUserReviews",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "ID de l'utilisateur"
+                    },
+                    {
+                        "name": "page",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Liste des critiques (10 par page)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/PaginatedResponse"
+                                        },
+                                        {
+                                            "type": "object",
+                                            "properties": {
+                                                "data": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/Review"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    }
+                }
+            }
+        },
+        "/feed/{page}": {
+            "get": {
+                "tags": [
+                    "Reviews"
+                ],
+                "summary": "Obtenir le feed (critiques des utilisateurs suivis)",
+                "operationId": "getFeed",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Feed des critiques (10 par page, triées par date)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/PaginatedResponse"
+                                        },
+                                        {
+                                            "type": "object",
+                                            "properties": {
+                                                "data": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/Review"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    }
+                }
+            }
+        },
+        "/review/{id}/like": {
+            "get": {
+                "tags": [
+                    "Reviews"
+                ],
+                "summary": "Liker/Unliker une critique",
+                "description": "Toggle le like sur une critique (envoie une notification si like)",
+                "operationId": "likeReview",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Like/Unlike effectué",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "enum": [
+                                                "Review liked successfully",
+                                                "Review unliked successfully"
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    },
+                    "429": {
+                        "$ref": "#/components/responses/TooManyRequests"
+                    }
+                }
+            }
+        },
+        "/comment": {
+            "post": {
+                "tags": [
+                    "Comments"
+                ],
+                "summary": "Créer un commentaire",
+                "description": "Crée un commentaire sur une critique (envoie une notification)",
+                "operationId": "createComment",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "reviewId",
+                                    "content"
+                                ],
+                                "properties": {
+                                    "reviewId": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "content": {
+                                        "type": "string",
+                                        "minLength": 1,
+                                        "maxLength": 500,
+                                        "example": "Excellent analyse !"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Commentaire créé",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "comment": {
+                                            "$ref": "#/components/schemas/Comment"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationError"
+                    },
+                    "429": {
+                        "$ref": "#/components/responses/TooManyRequests"
+                    }
+                }
+            }
+        },
+        "/comments/{id}/{page}": {
+            "get": {
+                "tags": [
+                    "Comments"
+                ],
+                "summary": "Obtenir les commentaires d'une critique",
+                "operationId": "getComments",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "ID de la critique"
+                    },
+                    {
+                        "name": "page",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Liste des commentaires (10 par page)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/PaginatedResponse"
+                                        },
+                                        {
+                                            "type": "object",
+                                            "properties": {
+                                                "data": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/Comment"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    }
+                }
+            }
+        },
+        "/comment/{id}": {
+            "delete": {
+                "tags": [
+                    "Comments"
+                ],
+                "summary": "Supprimer un commentaire",
+                "description": "Supprime un commentaire (auteur, modérateur ou admin uniquement)",
+                "operationId": "deleteComment",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Commentaire supprimé",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Comment deleted successfully"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/Forbidden"
+                    }
+                }
+            }
+        },
+        "/comment/{id}/like": {
+            "get": {
+                "tags": [
+                    "Comments"
+                ],
+                "summary": "Liker/Unliker un commentaire",
+                "description": "Toggle le like sur un commentaire",
+                "operationId": "likeComment",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Like/Unlike effectué",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "enum": [
+                                                "Comment liked successfully",
+                                                "Comment unliked successfully"
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    },
+                    "429": {
+                        "$ref": "#/components/responses/TooManyRequests"
+                    }
+                }
+            }
+        },
+        "/users": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Rechercher des utilisateurs",
+                "operationId": "searchUsers",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "q",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "minLength": 1
+                        },
+                        "description": "Recherche par username"
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "default": 1
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 50,
+                            "default": 10
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Liste des utilisateurs",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/PaginatedResponse"
+                                        },
+                                        {
+                                            "type": "object",
+                                            "properties": {
+                                                "data": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/User"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    }
+                }
+            }
+        },
+        "/user/{id}": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Obtenir un utilisateur",
+                "operationId": "getUser",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Détails de l'utilisateur",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "user": {
+                                            "$ref": "#/components/schemas/User"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    }
+                }
+            }
+        },
+        "/user/{id}/follow": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Suivre un utilisateur",
+                "description": "Suivre un utilisateur (envoie une notification)",
+                "operationId": "followUser",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Utilisateur suivi",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "User followed successfully"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    },
+                    "429": {
+                        "$ref": "#/components/responses/TooManyRequests"
+                    }
+                }
+            }
+        },
+        "/user/{id}/unfollow": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Ne plus suivre un utilisateur",
+                "operationId": "unfollowUser",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Utilisateur unfollow",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "User unfollowed successfully"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    },
+                    "429": {
+                        "$ref": "#/components/responses/TooManyRequests"
+                    }
+                }
+            }
+        },
+        "/followers/{userId}/{page}": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Obtenir les followers d'un utilisateur",
+                "operationId": "getFollowers",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "userId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Liste des followers (20 par page)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/PaginatedResponse"
+                                        },
+                                        {
+                                            "type": "object",
+                                            "properties": {
+                                                "data": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/User"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    }
+                }
+            }
+        },
+        "/followings/{userId}/{page}": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Obtenir les followings d'un utilisateur",
+                "operationId": "getFollowings",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "userId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Liste des followings (20 par page)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/PaginatedResponse"
+                                        },
+                                        {
+                                            "type": "object",
+                                            "properties": {
+                                                "data": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/User"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    }
+                }
+            }
+        },
+        "/books": {
+            "get": {
+                "tags": [
+                    "Books"
+                ],
+                "summary": "Rechercher des livres",
+                "description": "Recherche de livres via Google Books API (résultats mis en cache 24h)",
+                "operationId": "getBooks",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "q",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "minLength": 1
+                        },
+                        "description": "Terme de recherche"
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "default": 1
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 40,
+                            "default": 10
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Liste des livres",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/GoogleBook"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    },
+                    "429": {
+                        "$ref": "#/components/responses/TooManyRequests"
+                    }
+                }
+            }
+        },
+        "/health": {
+            "get": {
+                "tags": [
+                    "Health"
+                ],
+                "summary": "Health check complet",
+                "description": "Vérifie la santé de la DB, Redis et Cache avec latence",
+                "operationId": "healthCheck",
+                "responses": {
+                    "200": {
+                        "description": "Statut de santé",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "enum": [
+                                                "healthy",
+                                                "unhealthy"
+                                            ]
+                                        },
+                                        "timestamp": {
+                                            "type": "string",
+                                            "format": "date-time"
+                                        },
+                                        "uptime": {
+                                            "type": "number",
+                                            "description": "Secondes"
+                                        },
+                                        "checks": {
+                                            "type": "object",
+                                            "properties": {
+                                                "database": {
+                                                    "$ref": "#/components/schemas/HealthCheck"
+                                                },
+                                                "redis": {
+                                                    "$ref": "#/components/schemas/HealthCheck"
+                                                },
+                                                "cache": {
+                                                    "$ref": "#/components/schemas/HealthCheck"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/health/ready": {
+            "get": {
+                "tags": [
+                    "Health"
+                ],
+                "summary": "Readiness probe",
+                "description": "Vérifie si l'application est prête (pour Kubernetes/Docker)",
+                "operationId": "readinessCheck",
+                "responses": {
+                    "200": {
+                        "description": "Application prête",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "enum": [
+                                                "ready"
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/health/live": {
+            "get": {
+                "tags": [
+                    "Health"
+                ],
+                "summary": "Liveness probe",
+                "description": "Vérifie si l'application est en vie",
+                "operationId": "livenessCheck",
+                "responses": {
+                    "200": {
+                        "description": "Application en vie",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "enum": [
+                                                "alive"
+                                            ]
+                                        },
+                                        "timestamp": {
+                                            "type": "string",
+                                            "format": "date-time"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/metrics": {
+            "get": {
+                "tags": [
+                    "Health"
+                ],
+                "summary": "Métriques système",
+                "description": "Retourne les métriques CPU, mémoire et uptime",
+                "operationId": "getMetrics",
+                "responses": {
+                    "200": {
+                        "description": "Métriques système",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "uptime": {
+                                            "type": "number",
+                                            "description": "Secondes"
+                                        },
+                                        "memory": {
+                                            "type": "object",
+                                            "properties": {
+                                                "total": {
+                                                    "type": "number",
+                                                    "description": "Bytes"
+                                                },
+                                                "used": {
+                                                    "type": "number",
+                                                    "description": "Bytes"
+                                                },
+                                                "free": {
+                                                    "type": "number",
+                                                    "description": "Bytes"
+                                                },
+                                                "percentUsed": {
+                                                    "type": "number"
+                                                }
+                                            }
+                                        },
+                                        "cpu": {
+                                            "type": "object",
+                                            "properties": {
+                                                "count": {
+                                                    "type": "integer"
+                                                },
+                                                "loadAverage": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "number"
+                                                    },
+                                                    "minItems": 3,
+                                                    "maxItems": 3,
+                                                    "description": "1min, 5min, 15min"
+                                                },
+                                                "percentUsed": {
+                                                    "type": "number"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/privacy-policy": {
+            "get": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Page de politique de confidentialité",
+                "description": "Retourne la page HTML de la politique de confidentialité",
+                "operationId": "privacyPolicy",
+                "responses": {
+                    "200": {
+                        "description": "Page HTML",
+                        "content": {
+                            "text/html": {
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT",
+                "description": "Token JWT obtenu via /login ou /register (valable 30 jours)"
+            }
+        },
+        "schemas": {
+            "Token": {
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "bearer"
+                        ],
+                        "example": "bearer"
+                    },
+                    "value": {
+                        "type": "string",
+                        "description": "Token JWT à stocker",
+                        "example": "oat_MQ.T0RwdHZ4V..."
+                    },
+                    "expiresAt": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Date d'expiration (30 jours)"
+                    }
+                }
+            },
+            "User": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "userName": {
+                        "type": "string",
+                        "example": "johndoe"
+                    },
+                    "biography": {
+                        "type": "string",
+                        "nullable": true,
+                        "example": "Passionné de lecture"
+                    },
+                    "avatar": {
+                        "type": "string",
+                        "nullable": true,
+                        "format": "uri",
+                        "example": "https://api.toberead.app/storage/avatars/123.jpg"
+                    },
+                    "reviewsCount": {
+                        "type": "integer",
+                        "example": 42
+                    },
+                    "followersCount": {
+                        "type": "integer",
+                        "example": 150
+                    },
+                    "followingCount": {
+                        "type": "integer",
+                        "example": 85
+                    },
+                    "isFollowed": {
+                        "type": "boolean",
+                        "example": true,
+                        "description": "Si l'utilisateur connecté le suit"
+                    },
+                    "isMe": {
+                        "type": "boolean",
+                        "example": false,
+                        "description": "Si c'est l'utilisateur connecté"
+                    },
+                    "createdAt": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updatedAt": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                }
+            },
+            "UserDetailed": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/User"
+                    },
+                    {
+                        "type": "object",
+                        "properties": {
+                            "email": {
+                                "type": "string",
+                                "format": "email",
+                                "example": "john@example.com"
+                            }
+                        }
+                    }
+                ]
+            },
+            "Review": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "content": {
+                        "type": "string",
+                        "example": "Un livre passionnant qui..."
+                    },
+                    "value": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 10,
+                        "example": 8
+                    },
+                    "googleBookId": {
+                        "type": "string",
+                        "example": "zyTCAlFPjgYC"
+                    },
+                    "authorId": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "likesCount": {
+                        "type": "integer",
+                        "example": 23
+                    },
+                    "commentsCount": {
+                        "type": "integer",
+                        "example": 5
+                    },
+                    "isLiked": {
+                        "type": "boolean",
+                        "example": true,
+                        "description": "Si l'utilisateur connecté a liké"
+                    },
+                    "createdAt": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updatedAt": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "author": {
+                        "type": "object",
+                        "properties": {
+                            "id": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "userName": {
+                                "type": "string",
+                                "example": "johndoe"
+                            },
+                            "avatar": {
+                                "type": "string",
+                                "nullable": true,
+                                "format": "uri"
+                            },
+                            "isMe": {
+                                "type": "boolean",
+                                "example": false
+                            }
+                        }
+                    },
+                    "book": {
+                        "$ref": "#/components/schemas/GoogleBook"
+                    }
+                }
+            },
+            "Comment": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "reviewId": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "authorId": {
+                        "type": "integer",
+                        "example": 2
+                    },
+                    "content": {
+                        "type": "string",
+                        "example": "Excellent analyse !"
+                    },
+                    "likesCount": {
+                        "type": "integer",
+                        "example": 7
+                    },
+                    "isLiked": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "createdAt": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updatedAt": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "author": {
+                        "type": "object",
+                        "properties": {
+                            "id": {
+                                "type": "integer",
+                                "example": 2
+                            },
+                            "userName": {
+                                "type": "string",
+                                "example": "janedoe"
+                            },
+                            "avatar": {
+                                "type": "string",
+                                "nullable": true,
+                                "format": "uri"
+                            },
+                            "isMe": {
+                                "type": "boolean",
+                                "example": false
+                            }
+                        }
+                    }
+                }
+            },
+            "GoogleBook": {
+                "type": "object",
+                "properties": {
+                    "kind": {
+                        "type": "string",
+                        "example": "books#volume"
+                    },
+                    "id": {
+                        "type": "string",
+                        "example": "zyTCAlFPjgYC"
+                    },
+                    "etag": {
+                        "type": "string"
+                    },
+                    "selfLink": {
+                        "type": "string",
+                        "format": "uri"
+                    },
+                    "volumeInfo": {
+                        "type": "object",
+                        "properties": {
+                            "title": {
+                                "type": "string",
+                                "example": "The Google story"
+                            },
+                            "subtitle": {
+                                "type": "string"
+                            },
+                            "authors": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                },
+                                "example": [
+                                    "David A. Vise",
+                                    "Mark Malseed"
+                                ]
+                            },
+                            "publisher": {
+                                "type": "string",
+                                "example": "Delacorte Press"
+                            },
+                            "publishedDate": {
+                                "type": "string",
+                                "example": "2005-11-15"
+                            },
+                            "description": {
+                                "type": "string"
+                            },
+                            "pageCount": {
+                                "type": "integer",
+                                "example": 292
+                            },
+                            "categories": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                },
+                                "example": [
+                                    "Business & Economics"
+                                ]
+                            },
+                            "averageRating": {
+                                "type": "number",
+                                "example": 3.5
+                            },
+                            "ratingsCount": {
+                                "type": "integer",
+                                "example": 136
+                            },
+                            "imageLinks": {
+                                "type": "object",
+                                "properties": {
+                                    "smallThumbnail": {
+                                        "type": "string",
+                                        "format": "uri"
+                                    },
+                                    "thumbnail": {
+                                        "type": "string",
+                                        "format": "uri"
+                                    },
+                                    "small": {
+                                        "type": "string",
+                                        "format": "uri"
+                                    },
+                                    "medium": {
+                                        "type": "string",
+                                        "format": "uri"
+                                    },
+                                    "large": {
+                                        "type": "string",
+                                        "format": "uri"
+                                    },
+                                    "extraLarge": {
+                                        "type": "string",
+                                        "format": "uri"
+                                    }
+                                }
+                            },
+                            "language": {
+                                "type": "string",
+                                "example": "en"
+                            },
+                            "previewLink": {
+                                "type": "string",
+                                "format": "uri"
+                            },
+                            "infoLink": {
+                                "type": "string",
+                                "format": "uri"
+                            }
+                        }
+                    },
+                    "saleInfo": {
+                        "type": "object",
+                        "properties": {
+                            "country": {
+                                "type": "string",
+                                "example": "US"
+                            },
+                            "saleability": {
+                                "type": "string",
+                                "example": "FOR_SALE"
+                            },
+                            "isEbook": {
+                                "type": "boolean",
+                                "example": true
+                            }
+                        }
+                    }
+                }
+            },
+            "PaginatedResponse": {
+                "type": "object",
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {}
+                    },
+                    "meta": {
+                        "type": "object",
+                        "properties": {
+                            "total": {
+                                "type": "integer",
+                                "example": 142
+                            },
+                            "perPage": {
+                                "type": "integer",
+                                "example": 10
+                            },
+                            "currentPage": {
+                                "type": "integer",
+                                "example": 2
+                            },
+                            "lastPage": {
+                                "type": "integer",
+                                "example": 15
+                            },
+                            "firstPage": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "firstPageUrl": {
+                                "type": "string",
+                                "format": "uri"
+                            },
+                            "lastPageUrl": {
+                                "type": "string",
+                                "format": "uri"
+                            },
+                            "nextPageUrl": {
+                                "type": "string",
+                                "format": "uri",
+                                "nullable": true
+                            },
+                            "previousPageUrl": {
+                                "type": "string",
+                                "format": "uri",
+                                "nullable": true
+                            }
+                        }
+                    }
+                }
+            },
+            "HealthCheck": {
+                "type": "object",
+                "properties": {
+                    "status": {
+                        "type": "string",
+                        "enum": [
+                            "healthy",
+                            "unhealthy"
+                        ]
+                    },
+                    "latency": {
+                        "type": "number",
+                        "description": "Latence en millisecondes"
+                    }
+                }
+            },
+            "Error": {
+                "type": "object",
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "example": "An error occurred"
+                    },
+                    "errors": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "field": {
+                                    "type": "string",
+                                    "example": "email"
+                                },
+                                "rule": {
+                                    "type": "string",
+                                    "example": "email"
+                                },
+                                "message": {
+                                    "type": "string",
+                                    "example": "The email field must be a valid email address"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "responses": {
+            "BadRequest": {
+                "description": "Requête invalide",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/Error"
+                        },
+                        "example": {
+                            "message": "This email or username is already in use"
+                        }
+                    }
+                }
+            },
+            "Unauthorized": {
+                "description": "Non authentifié ou token invalide",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/Error"
+                        },
+                        "example": {
+                            "message": "Unauthorized"
+                        }
+                    }
+                }
+            },
+            "Forbidden": {
+                "description": "Accès refusé - Permissions insuffisantes",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/Error"
+                        },
+                        "example": {
+                            "message": "Unauthorized"
+                        }
+                    }
+                }
+            },
+            "NotFound": {
+                "description": "Ressource introuvable",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/Error"
+                        },
+                        "example": {
+                            "message": "Resource not found"
+                        }
+                    }
+                }
+            },
+            "ValidationError": {
+                "description": "Erreur de validation",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/Error"
+                        },
+                        "example": {
+                            "message": "Validation failed",
+                            "errors": [
+                                {
+                                    "field": "password",
+                                    "rule": "regex",
+                                    "message": "The password field format is invalid"
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "TooManyRequests": {
+                "description": "Trop de requêtes - Rate limit atteint",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "message": {
+                                    "type": "string",
+                                    "example": "Too many requests. Please try again later."
+                                },
+                                "retryAfter": {
+                                    "type": "integer",
+                                    "example": 60,
+                                    "description": "Secondes avant de réessayer"
+                                }
+                            }
+                        }
+                    }
+                },
+                "headers": {
+                    "X-RateLimit-Limit": {
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "Nombre de requêtes autorisées"
+                    },
+                    "X-RateLimit-Remaining": {
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "Nombre de requêtes restantes"
+                    },
+                    "X-RateLimit-Reset": {
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "Timestamp de réinitialisation"
+                    }
+                }
+            }
+        }
+    }
+}
