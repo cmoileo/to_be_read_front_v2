@@ -1,4 +1,4 @@
-import type { User } from "@repo/types";
+import type { User, UserBasic } from "@repo/types";
 
 export interface AuthState {
   user: User | null;
@@ -10,8 +10,8 @@ export const getInitialAuthState = (): AuthState => ({
   isAuthenticated: false,
 });
 
-export const setAuthUser = (user: User): AuthState => ({
-  user,
+export const setAuthUser = (user: User | UserBasic): AuthState => ({
+  user: user as User,
   isAuthenticated: true,
 });
 

@@ -24,6 +24,11 @@ export interface AuthResponse {
   token: Token;
 }
 
+export interface AuthUser {
+  id: number;
+  userName: string;
+}
+
 export interface UpdateProfileData {
   userName?: string;
   biography?: string;

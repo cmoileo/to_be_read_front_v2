@@ -5,6 +5,7 @@ import { useLogin } from "@repo/api-client";
 import { TokenStorage } from "@repo/services";
 import { useAuthModel } from "../models/hooks/use-auth-model";
 import type { LoginFormValues } from "@repo/ui";
+import type { UserBasic } from "@repo/types";
 
 export const Route = createFileRoute("/login")({
   component: LoginPage,
@@ -21,8 +22,8 @@ function LoginPage() {
     setError("");
     loginMutation.mutate(values, {
       onSuccess: (data) => {
-        TokenStorage.setToken(data.token);
-        setUser(data.user);
+        TokenStorage.setToken(data.token.token);
+        setUser(data.user as UserBasic);
         navigate({ to: "/" });
       },
       onError: (err) => {

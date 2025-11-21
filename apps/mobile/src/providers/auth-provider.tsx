@@ -2,7 +2,7 @@ import { ReactNode, useState, useEffect } from "react";
 import { TokenStorage } from "@repo/services";
 import { AuthContext } from "../models/hooks/use-auth-model";
 import { getInitialAuthState, setAuthUser, clearAuthUser } from "../models/auth.model";
-import type { User } from "@repo/types";
+import type { User, UserBasic } from "@repo/types";
 
 interface AuthProviderProps {
   children: ReactNode;
@@ -18,7 +18,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   }, []);
 
-  const setUser = (user: User | null) => {
+  const setUser = (user: User | UserBasic | null) => {
     if (user) {
       setAuthState(setAuthUser(user));
     } else {

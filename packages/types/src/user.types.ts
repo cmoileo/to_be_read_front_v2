@@ -22,3 +22,8 @@ export interface UserAuthor {
   avatar: string | null;
   isMe: boolean;
 }
+
+export interface UserBasic {
+  id: number;
+  userName: string;
+}

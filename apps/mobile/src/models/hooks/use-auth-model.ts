@@ -1,8 +1,9 @@
 import { createContext, useContext } from "react";
 import type { AuthState } from "../auth.model";
+import type { User, UserBasic } from "@repo/types";
 
 interface AuthContextValue extends AuthState {
-  setUser: (user: AuthState["user"]) => void;
+  setUser: (user: User | UserBasic) => void;
   clearUser: () => void;
 }
 

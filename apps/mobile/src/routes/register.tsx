@@ -5,6 +5,7 @@ import { useRegister } from "@repo/api-client";
 import { TokenStorage } from "@repo/services";
 import { useAuthModel } from "../models/hooks/use-auth-model";
 import type { RegisterFormValues } from "@repo/ui";
+import type { UserBasic } from "@repo/types";
 
 export const Route = createFileRoute("/register")({
   component: RegisterPage,
@@ -19,10 +20,15 @@ function RegisterPage() {
 
   const handleSubmit = async (values: RegisterFormValues) => {
     setError("");
-    registerMutation.mutate(values, {
+    const credentials = {
+      userName: values.username,
+      email: values.email,
+      password: values.password,
+    };
+    registerMutation.mutate(credentials, {
       onSuccess: (data) => {
-        TokenStorage.setToken(data.token);
-        setUser(data.user);
+        TokenStorage.setToken(data.token.token);
+        setUser(data.user as UserBasic);
         navigate({ to: "/" });
       },
       onError: (err) => {
@@ -31,7 +37,7 @@ function RegisterPage() {
     });
   };
 
-  const checkUsernameAvailability = async (username: string): Promise<boolean> => {
+  const checkUsernameAvailability = async (_username: string): Promise<boolean> => {
     return true;
   };
 
