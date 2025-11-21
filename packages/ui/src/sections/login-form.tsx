@@ -3,7 +3,8 @@ import { Button } from "../components/button";
 import { Input } from "../components/input";
 import { Label } from "../components/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../components/card";
-import { loginSchema, type LoginFormValues } from "../schemas/auth.schema";
+import { getLoginSchema, type LoginFormValues } from "../schemas/auth.schema";
+import { useTranslation } from "react-i18next";
 
 interface LoginFormProps {
   onSubmit: (values: LoginFormValues) => void | Promise<void>;
@@ -20,6 +21,7 @@ export function LoginForm({
   onRegisterClick,
   onForgotPasswordClick,
 }: LoginFormProps) {
+  const { t } = useTranslation();
   const form = useForm({
     defaultValues: {
       email: "",
@@ -33,8 +35,8 @@ export function LoginForm({
   return (
     <Card className="w-full max-w-md">
       <CardHeader>
-        <CardTitle>Connexion</CardTitle>
-        <CardDescription>Connectez-vous à votre compte To Be Read</CardDescription>
+        <CardTitle>{t("auth.login.title")}</CardTitle>
+        <CardDescription>{t("auth.login.description")}</CardDescription>
       </CardHeader>
       <form
         onSubmit={(e) => {
@@ -54,14 +56,14 @@ export function LoginForm({
             name="email"
             validators={{
               onChange: ({ value }) => {
-                const result = loginSchema.shape.email.safeParse(value);
+                const result = getLoginSchema().shape.email.safeParse(value);
                 return result.success ? undefined : result.error.errors[0]?.message;
               },
             }}
           >
             {(field) => (
               <div className="space-y-2">
-                <Label htmlFor={field.name}>Email</Label>
+                <Label htmlFor={field.name}>{t("auth.login.email")}</Label>
                 <Input
                   id={field.name}
                   type="email"
@@ -82,14 +84,14 @@ export function LoginForm({
             name="password"
             validators={{
               onChange: ({ value }) => {
-                const result = loginSchema.shape.password.safeParse(value);
+                const result = getLoginSchema().shape.password.safeParse(value);
                 return result.success ? undefined : result.error.errors[0]?.message;
               },
             }}
           >
             {(field) => (
               <div className="space-y-2">
-                <Label htmlFor={field.name}>Mot de passe</Label>
+                <Label htmlFor={field.name}>{t("auth.login.password")}</Label>
                 <Input
                   id={field.name}
                   type="password"
@@ -115,7 +117,7 @@ export function LoginForm({
                 className="px-0 text-sm"
                 disabled={isLoading}
               >
-                Mot de passe oublié ?
+                {t("auth.login.forgotPassword")}
               </Button>
             </div>
           )}
@@ -123,12 +125,12 @@ export function LoginForm({
 
         <CardFooter className="flex flex-col space-y-4">
           <Button type="submit" className="w-full" disabled={isLoading}>
-            {isLoading ? "Connexion..." : "Se connecter"}
+            {isLoading ? t("auth.login.loading") : t("auth.login.submit")}
           </Button>
 
           {onRegisterClick && (
             <div className="text-center text-sm text-muted-foreground">
-              Pas encore de compte ?{" "}
+              {t("auth.login.noAccount")}{" "}
               <Button
                 type="button"
                 variant="link"
@@ -136,7 +138,7 @@ export function LoginForm({
                 className="px-0"
                 disabled={isLoading}
               >
-                S&apos;inscrire
+                {t("auth.login.register")}
               </Button>
             </div>
           )}

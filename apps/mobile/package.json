@@ -31,6 +31,7 @@
         "@tanstack/router-devtools": "^1.136.18",
         "@tanstack/router-plugin": "^1.136.18",
         "@tauri-apps/cli": "^2.2.0",
+        "@tauri-apps/plugin-store": "^2.4.1",
         "@types/react": "^18.3.12",
         "@types/react-dom": "^18.3.1",
         "@vitejs/plugin-react": "^4.3.4",

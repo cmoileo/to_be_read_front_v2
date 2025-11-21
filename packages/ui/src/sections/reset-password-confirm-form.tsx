@@ -3,7 +3,8 @@ import { Button } from "../components/button";
 import { Input } from "../components/input";
 import { Label } from "../components/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../components/card";
-import { passwordSchema, type ResetPasswordConfirmFormValues } from "../schemas/auth.schema";
+import { getPasswordSchema, type ResetPasswordConfirmFormValues } from "../schemas/auth.schema";
+import { useTranslation } from "react-i18next";
 
 interface ResetPasswordConfirmFormProps {
   onSubmit: (values: ResetPasswordConfirmFormValues) => void | Promise<void>;
@@ -18,6 +19,7 @@ export function ResetPasswordConfirmForm({
   error,
   token,
 }: ResetPasswordConfirmFormProps) {
+  const { t } = useTranslation();
   const form = useForm({
     defaultValues: {
       token,
@@ -32,8 +34,8 @@ export function ResetPasswordConfirmForm({
   return (
     <Card className="w-full max-w-md">
       <CardHeader>
-        <CardTitle>Nouveau mot de passe</CardTitle>
-        <CardDescription>Choisissez un nouveau mot de passe pour votre compte</CardDescription>
+        <CardTitle>{t("auth.resetPassword.confirmTitle")}</CardTitle>
+        <CardDescription>{t("auth.resetPassword.confirmDescription")}</CardDescription>
       </CardHeader>
       <form
         onSubmit={(e) => {
@@ -53,14 +55,14 @@ export function ResetPasswordConfirmForm({
             name="password"
             validators={{
               onChange: ({ value }) => {
-                const result = passwordSchema.safeParse(value);
+                const result = getPasswordSchema().safeParse(value);
                 return result.success ? undefined : result.error.errors[0]?.message;
               },
             }}
           >
             {(field) => (
               <div className="space-y-2">
-                <Label htmlFor={field.name}>Nouveau mot de passe</Label>
+                <Label htmlFor={field.name}>{t("auth.resetPassword.password")}</Label>
                 <Input
                   id={field.name}
                   type="password"
@@ -74,7 +76,7 @@ export function ResetPasswordConfirmForm({
                   <p className="text-sm text-destructive">{field.state.meta.errors[0]}</p>
                 )}
                 <p className="text-xs text-muted-foreground">
-                  Au moins 8 caractères avec majuscule, minuscule et chiffre
+                  {t("auth.resetPassword.passwordHint")}
                 </p>
               </div>
             )}
@@ -87,7 +89,7 @@ export function ResetPasswordConfirmForm({
               onChange: ({ value, fieldApi }) => {
                 const password = fieldApi.form.getFieldValue("password");
                 if (value !== password) {
-                  return "Les mots de passe ne correspondent pas";
+                  return t("auth.validation.passwordMismatch");
                 }
                 return undefined;
               },
@@ -95,7 +97,7 @@ export function ResetPasswordConfirmForm({
           >
             {(field) => (
               <div className="space-y-2">
-                <Label htmlFor={field.name}>Confirmer le mot de passe</Label>
+                <Label htmlFor={field.name}>{t("auth.resetPassword.confirmPassword")}</Label>
                 <Input
                   id={field.name}
                   type="password"
@@ -115,7 +117,7 @@ export function ResetPasswordConfirmForm({
 
         <CardFooter>
           <Button type="submit" className="w-full" disabled={isLoading}>
-            {isLoading ? "Réinitialisation..." : "Réinitialiser le mot de passe"}
+            {isLoading ? t("auth.resetPassword.confirmLoading") : t("auth.resetPassword.confirmSubmit")}
           </Button>
         </CardFooter>
       </form>

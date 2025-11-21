@@ -1,0 +1,84 @@
+{
+    "auth": {
+        "login": {
+            "title": "Login",
+            "description": "Sign in to your To Be Read account",
+            "email": "Email",
+            "password": "Password",
+            "forgotPassword": "Forgot password?",
+            "submit": "Sign in",
+            "loading": "Signing in...",
+            "noAccount": "Don't have an account?",
+            "register": "Sign up",
+            "error": "An error occurred during login"
+        },
+        "register": {
+            "title": "Sign up",
+            "description": "Create your To Be Read account",
+            "username": "Username",
+            "email": "Email",
+            "password": "Password",
+            "confirmPassword": "Confirm password",
+            "submit": "Sign up",
+            "loading": "Signing up...",
+            "hasAccount": "Already have an account?",
+            "login": "Sign in",
+            "error": "An error occurred during registration",
+            "usernameTaken": "This username is already taken",
+            "passwordHint": "At least 8 characters with uppercase, lowercase, number and special character"
+        },
+        "resetPassword": {
+            "requestTitle": "Forgot password",
+            "requestDescription": "Enter your email to receive a reset link",
+            "confirmTitle": "New password",
+            "confirmDescription": "Choose a new password for your account",
+            "email": "Email",
+            "password": "New password",
+            "confirmPassword": "Confirm password",
+            "submit": "Send link",
+            "confirmSubmit": "Reset password",
+            "loading": "Sending...",
+            "confirmLoading": "Resetting...",
+            "backToLogin": "Back to login",
+            "success": "A reset email has been sent to your address.",
+            "error": "An error occurred",
+            "passwordHint": "At least 8 characters with uppercase, lowercase and number"
+        },
+        "validation": {
+            "emailInvalid": "Invalid email",
+            "usernameMin": "Username must be at least 3 characters",
+            "usernameMax": "Username cannot exceed 32 characters",
+            "usernameFormat": "Username can only contain letters, numbers and underscores",
+            "passwordMin": "Password must be at least 8 characters",
+            "passwordUppercase": "Password must contain at least one uppercase letter",
+            "passwordLowercase": "Password must contain at least one lowercase letter",
+            "passwordNumber": "Password must contain at least one number",
+            "passwordSpecial": "Password must contain at least one special character",
+            "passwordMismatch": "Passwords do not match"
+        }
+    },
+    "onboarding": {
+        "appTitle": "To Be Read",
+        "subtitle": "Share your literary reviews",
+        "welcomeTitle": "Welcome",
+        "welcomeDescription": "Join our community of passionate readers",
+        "createAccount": "Create an account",
+        "login": "Sign in",
+        "feature1": "✨ Discover new books",
+        "feature2": "📚 Share your opinions and reviews",
+        "feature3": "👥 Follow other readers"
+    },
+    "home": {
+        "title": "Home",
+        "welcome": "Welcome"
+    },
+    "common": {
+        "loading": "Loading...",
+        "error": "Error",
+        "cancel": "Cancel",
+        "confirm": "Confirm",
+        "save": "Save",
+        "delete": "Delete",
+        "edit": "Edit"
+    }
+}

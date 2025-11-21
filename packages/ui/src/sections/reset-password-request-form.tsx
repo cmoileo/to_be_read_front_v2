@@ -3,7 +3,8 @@ import { Button } from "../components/button";
 import { Input } from "../components/input";
 import { Label } from "../components/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../components/card";
-import { emailSchema, type ResetPasswordRequestFormValues } from "../schemas/auth.schema";
+import { getEmailSchema, type ResetPasswordRequestFormValues } from "../schemas/auth.schema";
+import { useTranslation } from "react-i18next";
 
 interface ResetPasswordRequestFormProps {
   onSubmit: (values: ResetPasswordRequestFormValues) => void | Promise<void>;
@@ -20,6 +21,7 @@ export function ResetPasswordRequestForm({
   success = false,
   onBackToLoginClick,
 }: ResetPasswordRequestFormProps) {
+  const { t } = useTranslation();
   const form = useForm({
     defaultValues: {
       email: "",
@@ -32,9 +34,9 @@ export function ResetPasswordRequestForm({
   return (
     <Card className="w-full max-w-md">
       <CardHeader>
-        <CardTitle>Mot de passe oublié</CardTitle>
+        <CardTitle>{t("auth.resetPassword.requestTitle")}</CardTitle>
         <CardDescription>
-          Entrez votre email pour recevoir un lien de réinitialisation
+          {t("auth.resetPassword.requestDescription")}
         </CardDescription>
       </CardHeader>
       <form
@@ -53,7 +55,7 @@ export function ResetPasswordRequestForm({
 
           {success && (
             <div className="rounded-md bg-green-50 p-3 text-sm text-green-800 dark:bg-green-950 dark:text-green-200">
-              Un email de réinitialisation a été envoyé à votre adresse.
+              {t("auth.resetPassword.success")}
             </div>
           )}
 
@@ -61,14 +63,14 @@ export function ResetPasswordRequestForm({
             name="email"
             validators={{
               onChange: ({ value }) => {
-                const result = emailSchema.safeParse(value);
+                const result = getEmailSchema().safeParse(value);
                 return result.success ? undefined : result.error.errors[0]?.message;
               },
             }}
           >
             {(field) => (
               <div className="space-y-2">
-                <Label htmlFor={field.name}>Email</Label>
+                <Label htmlFor={field.name}>{t("auth.resetPassword.email")}</Label>
                 <Input
                   id={field.name}
                   type="email"
@@ -88,7 +90,7 @@ export function ResetPasswordRequestForm({
 
         <CardFooter className="flex flex-col space-y-4">
           <Button type="submit" className="w-full" disabled={isLoading || success}>
-            {isLoading ? "Envoi..." : "Envoyer le lien"}
+            {isLoading ? t("auth.resetPassword.loading") : t("auth.resetPassword.submit")}
           </Button>
 
           {onBackToLoginClick && (
@@ -99,7 +101,7 @@ export function ResetPasswordRequestForm({
               className="w-full"
               disabled={isLoading}
             >
-              Retour à la connexion
+              {t("auth.resetPassword.backToLogin")}
             </Button>
           )}
         </CardFooter>

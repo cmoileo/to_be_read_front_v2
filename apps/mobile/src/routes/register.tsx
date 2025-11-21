@@ -1,13 +1,20 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import { RegisterForm } from "@repo/ui";
 import { useState } from "react";
 import { useRegister } from "@repo/api-client";
-import { TokenStorage } from "@repo/services";
 import { useAuthModel } from "../models/hooks/use-auth-model";
 import type { RegisterFormValues } from "@repo/ui";
 import type { UserBasic } from "@repo/types";
+import { MobileStorage } from "../services/mobile-storage.service";
+import { AuthApi } from "@repo/api-client";
 
 export const Route = createFileRoute("/register")({
+  beforeLoad: async () => {
+    const hasToken = await MobileStorage.hasToken();
+    if (hasToken) {
+      throw redirect({ to: "/" });
+    }
+  },
   component: RegisterPage,
 });
 
@@ -26,8 +33,8 @@ function RegisterPage() {
       password: values.password,
     };
     registerMutation.mutate(credentials, {
-      onSuccess: (data) => {
-        TokenStorage.setToken(data.token.token);
+      onSuccess: async (data) => {
+        await MobileStorage.setToken(data.token.token);
         setUser(data.user as UserBasic);
         navigate({ to: "/" });
       },
@@ -37,8 +44,13 @@ function RegisterPage() {
     });
   };
 
-  const checkUsernameAvailability = async (_username: string): Promise<boolean> => {
-    return true;
+  const checkUsernameAvailability = async (username: string): Promise<boolean> => {
+    try {
+      const result = await AuthApi.isUsernameAvailable(username);
+      return result.available;
+    } catch {
+      return false;
+    }
   };
 
   const goToLogin = () => {

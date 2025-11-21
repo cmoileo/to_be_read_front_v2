@@ -1,13 +1,19 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import { LoginForm } from "@repo/ui";
 import { useState } from "react";
 import { useLogin } from "@repo/api-client";
-import { TokenStorage } from "@repo/services";
 import { useAuthModel } from "../models/hooks/use-auth-model";
 import type { LoginFormValues } from "@repo/ui";
 import type { UserBasic } from "@repo/types";
+import { MobileStorage } from "../services/mobile-storage.service";
 
 export const Route = createFileRoute("/login")({
+  beforeLoad: async () => {
+    const hasToken = await MobileStorage.hasToken();
+    if (hasToken) {
+      throw redirect({ to: "/" });
+    }
+  },
   component: LoginPage,
 });
 
@@ -21,8 +27,8 @@ function LoginPage() {
   const handleSubmit = async (values: LoginFormValues) => {
     setError("");
     loginMutation.mutate(values, {
-      onSuccess: (data) => {
-        TokenStorage.setToken(data.token.token);
+      onSuccess: async (data) => {
+        await MobileStorage.setToken(data.token.token);
         setUser(data.user as UserBasic);
         navigate({ to: "/" });
       },

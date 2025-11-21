@@ -1,9 +1,10 @@
 import { useForm } from "@tanstack/react-form";
+import { useTranslation } from "react-i18next";
 import { Button } from "../components/button";
 import { Input } from "../components/input";
 import { Label } from "../components/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../components/card";
-import { usernameSchema, emailSchema, passwordSchema, type RegisterFormValues } from "../schemas/auth.schema";
+import { getUsernameSchema, getEmailSchema, getPasswordSchema, type RegisterFormValues } from "../schemas/auth.schema";
 
 interface RegisterFormProps {
   onSubmit: (values: RegisterFormValues) => void | Promise<void>;
@@ -20,6 +21,7 @@ export function RegisterForm({
   onLoginClick,
   isUsernameAvailable,
 }: RegisterFormProps) {
+  const { t } = useTranslation();
   const form = useForm({
     defaultValues: {
       username: "",
@@ -35,8 +37,8 @@ export function RegisterForm({
   return (
     <Card className="w-full max-w-md">
       <CardHeader>
-        <CardTitle>Inscription</CardTitle>
-        <CardDescription>Créez votre compte To Be Read</CardDescription>
+        <CardTitle>{t("auth.register.title")}</CardTitle>
+        <CardDescription>{t("auth.register.description")}</CardDescription>
       </CardHeader>
       <form
         onSubmit={(e) => {
@@ -56,7 +58,7 @@ export function RegisterForm({
             name="username"
             validators={{
               onChange: ({ value }) => {
-                const result = usernameSchema.safeParse(value);
+                const result = getUsernameSchema().safeParse(value);
                 return result.success ? undefined : result.error.errors[0]?.message;
               },
               onChangeAsyncDebounceMs: 500,
@@ -64,7 +66,7 @@ export function RegisterForm({
                 if (isUsernameAvailable && value.length >= 3) {
                   const available = await isUsernameAvailable(value);
                   if (!available) {
-                    return "Ce nom d'utilisateur est déjà pris";
+                    return t("auth.register.usernameTaken");
                   }
                 }
                 return undefined;
@@ -73,7 +75,7 @@ export function RegisterForm({
           >
             {(field) => (
               <div className="space-y-2">
-                <Label htmlFor={field.name}>Nom d&apos;utilisateur</Label>
+                <Label htmlFor={field.name}>{t("auth.register.username")}</Label>
                 <Input
                   id={field.name}
                   type="text"
@@ -94,14 +96,14 @@ export function RegisterForm({
             name="email"
             validators={{
               onChange: ({ value }) => {
-                const result = emailSchema.safeParse(value);
+                const result = getEmailSchema().safeParse(value);
                 return result.success ? undefined : result.error.errors[0]?.message;
               },
             }}
           >
             {(field) => (
               <div className="space-y-2">
-                <Label htmlFor={field.name}>Email</Label>
+                <Label htmlFor={field.name}>{t("auth.register.email")}</Label>
                 <Input
                   id={field.name}
                   type="email"
@@ -122,14 +124,14 @@ export function RegisterForm({
             name="password"
             validators={{
               onChange: ({ value }) => {
-                const result = passwordSchema.safeParse(value);
+                const result = getPasswordSchema().safeParse(value);
                 return result.success ? undefined : result.error.errors[0]?.message;
               },
             }}
           >
             {(field) => (
               <div className="space-y-2">
-                <Label htmlFor={field.name}>Mot de passe</Label>
+                <Label htmlFor={field.name}>{t("auth.register.password")}</Label>
                 <Input
                   id={field.name}
                   type="password"
@@ -143,7 +145,7 @@ export function RegisterForm({
                   <p className="text-sm text-destructive">{field.state.meta.errors[0]}</p>
                 )}
                 <p className="text-xs text-muted-foreground">
-                  Au moins 8 caractères avec majuscule, minuscule et chiffre
+                  {t("auth.register.passwordHint")}
                 </p>
               </div>
             )}
@@ -156,7 +158,7 @@ export function RegisterForm({
               onChange: ({ value, fieldApi }) => {
                 const password = fieldApi.form.getFieldValue("password");
                 if (value !== password) {
-                  return "Les mots de passe ne correspondent pas";
+                  return t("auth.validation.passwordMismatch");
                 }
                 return undefined;
               },
@@ -164,7 +166,7 @@ export function RegisterForm({
           >
             {(field) => (
               <div className="space-y-2">
-                <Label htmlFor={field.name}>Confirmer le mot de passe</Label>
+                <Label htmlFor={field.name}>{t("auth.register.confirmPassword")}</Label>
                 <Input
                   id={field.name}
                   type="password"
@@ -184,12 +186,12 @@ export function RegisterForm({
 
         <CardFooter className="flex flex-col space-y-4">
           <Button type="submit" className="w-full" disabled={isLoading}>
-            {isLoading ? "Inscription..." : "S'inscrire"}
+            {isLoading ? t("auth.register.loading") : t("auth.register.submit")}
           </Button>
 
           {onLoginClick && (
             <div className="text-center text-sm text-muted-foreground">
-              Vous avez déjà un compte ?{" "}
+              {t("auth.register.hasAccount")}{" "}
               <Button
                 type="button"
                 variant="link"
@@ -197,7 +199,7 @@ export function RegisterForm({
                 className="px-0"
                 disabled={isLoading}
               >
-                Se connecter
+                {t("auth.register.login")}
               </Button>
             </div>
           )}

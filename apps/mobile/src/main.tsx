@@ -6,6 +6,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { RouterProvider, createRouter } from "@tanstack/react-router";
 import { routeTree } from "./routeTree.gen";
 import { AuthProvider } from "./providers/auth-provider";
+import { I18nProvider } from "./providers/i18n-provider";
 import { Toaster } from "@repo/ui";
 
 const queryClient = new QueryClient({
@@ -36,9 +37,11 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <RouterProvider router={router} />
-        <Toaster />
-        <ReactQueryDevtools initialIsOpen={false} />
+        <I18nProvider>
+          <RouterProvider router={router} />
+          <Toaster />
+          <ReactQueryDevtools initialIsOpen={false} />
+        </I18nProvider>
       </AuthProvider>
     </QueryClientProvider>
   </React.StrictMode>

@@ -6,6 +6,13 @@
     "main"
   ],
   "permissions": [
-    "core:default"
+    "core:default",
+    "store:allow-get",
+    "store:allow-set",
+    "store:allow-delete",
+    "store:allow-has",
+    "store:allow-clear",
+    "store:allow-load",
+    "store:allow-save"
   ]
 }

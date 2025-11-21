@@ -14,6 +14,7 @@ export interface User {
 
 export interface UserDetailed extends User {
   email: string;
+  locale: "fr" | "en";
 }
 
 export interface UserAuthor {
