@@ -5,9 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { RouterProvider, createRouter } from "@tanstack/react-router";
 import { routeTree } from "./routeTree.gen";
-import { AuthProvider } from "./providers/auth-provider";
-import { I18nProvider } from "./providers/i18n-provider";
-import { Toaster } from "@repo/ui";
+// Providers moved into root route (__root.tsx)
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -36,13 +34,8 @@ declare module "@tanstack/react-router" {
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <I18nProvider>
-          <RouterProvider router={router} />
-          <Toaster />
-          <ReactQueryDevtools initialIsOpen={false} />
-        </I18nProvider>
-      </AuthProvider>
+      <RouterProvider router={router} />
+      <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   </React.StrictMode>
 );

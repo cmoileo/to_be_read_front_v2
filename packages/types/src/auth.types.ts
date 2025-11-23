@@ -22,6 +22,20 @@ export interface AuthResponse {
     userName: string;
   };
   token: Token;
+  refreshToken: string;
+}
+
+export interface RefreshTokenRequest {
+  refreshToken: string;
+}
+
+export interface RefreshTokenResponse {
+  token: Token;
+  refreshToken: string;
+}
+
+export interface RevokeRefreshTokenRequest {
+  refreshToken: string;
 }
 
 export interface AuthUser {

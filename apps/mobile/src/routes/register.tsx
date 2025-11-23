@@ -1,17 +1,18 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { RegisterForm } from "@repo/ui";
 import { useState } from "react";
-import { useRegister } from "@repo/api-client";
+import { useMutation } from "@tanstack/react-query";
 import { useAuthModel } from "../models/hooks/use-auth-model";
 import type { RegisterFormValues } from "@repo/ui";
 import type { UserBasic } from "@repo/types";
 import { MobileStorage } from "../services/mobile-storage.service";
 import { AuthApi } from "@repo/api-client";
+import { MobileAuthService } from "../services/mobile-auth.service";
 
 export const Route = createFileRoute("/register")({
   beforeLoad: async () => {
-    const hasToken = await MobileStorage.hasToken();
-    if (hasToken) {
+    const hasTokens = await MobileStorage.hasTokens();
+    if (hasTokens) {
       throw redirect({ to: "/" });
     }
   },
@@ -23,7 +24,9 @@ function RegisterPage() {
   const navigate = Route.useNavigate();
   const { setUser } = useAuthModel();
   
-  const registerMutation = useRegister();
+  const registerMutation = useMutation({
+    mutationFn: MobileAuthService.register,
+  });
 
   const handleSubmit = async (values: RegisterFormValues) => {
     setError("");
@@ -34,7 +37,9 @@ function RegisterPage() {
     };
     registerMutation.mutate(credentials, {
       onSuccess: async (data) => {
-        await MobileStorage.setToken(data.token.token);
+        const accessToken = data.token.token;
+        await MobileStorage.setAccessToken(accessToken);
+        await MobileStorage.setRefreshToken(data.refreshToken);
         setUser(data.user as UserBasic);
         navigate({ to: "/" });
       },

@@ -7,6 +7,9 @@ import type {
   ResetPasswordRequest,
   ResetPasswordConfirm,
   DeviceToken,
+  RefreshTokenRequest,
+  RefreshTokenResponse,
+  RevokeRefreshTokenRequest,
 } from "@repo/types";
 import { TokenStorage } from "@repo/services";
 import { HttpClient } from "../http-client";
@@ -18,6 +21,14 @@ export class AuthApi {
 
   static async login(data: LoginCredentials): Promise<AuthResponse> {
     return HttpClient.post<AuthResponse>("/login", data, { requiresAuth: false });
+  }
+
+  static async refreshToken(data: RefreshTokenRequest): Promise<RefreshTokenResponse> {
+    return HttpClient.post<RefreshTokenResponse>("/refresh", data, { requiresAuth: false });
+  }
+
+  static async revokeRefreshToken(data: RevokeRefreshTokenRequest): Promise<{ status: string; code: string; message: string }> {
+    return HttpClient.post<{ status: string; code: string; message: string }>("/revoke-refresh-token", data);
   }
 
   static async logout(): Promise<{ message: string }> {

@@ -1,6 +1,7 @@
 import { Store } from "@tauri-apps/plugin-store";
 
-const TOKEN_KEY = "tbr_access_token";
+const ACCESS_TOKEN_KEY = "tbr_access_token";
+const REFRESH_TOKEN_KEY = "tbr_refresh_token";
 
 class MobileStorageService {
   private store: Store | null = null;
@@ -13,55 +14,79 @@ class MobileStorageService {
         this.initialized = true;
       } catch (error) {
         console.error("Failed to initialize mobile storage:", error);
-        // Fallback to localStorage for web preview
         this.initialized = true;
       }
     }
   }
 
-  async setToken(token: string): Promise<void> {
+  async setAccessToken(token: string): Promise<void> {
     await this.initStore();
     if (this.store) {
-      await this.store.set(TOKEN_KEY, token);
+      await this.store.set(ACCESS_TOKEN_KEY, token);
       await this.store.save();
     } else {
-      // Fallback to localStorage
       if (typeof window !== "undefined") {
-        window.localStorage.setItem(TOKEN_KEY, token);
+        window.localStorage.setItem(ACCESS_TOKEN_KEY, token);
       }
     }
   }
 
-  async getToken(): Promise<string | null> {
+  async getAccessToken(): Promise<string | null> {
     await this.initStore();
     if (this.store) {
-      const token = await this.store.get<string>(TOKEN_KEY);
+      const token = await this.store.get<string>(ACCESS_TOKEN_KEY);
       return token || null;
     } else {
-      // Fallback to localStorage
       if (typeof window !== "undefined") {
-        return window.localStorage.getItem(TOKEN_KEY);
+        return window.localStorage.getItem(ACCESS_TOKEN_KEY);
       }
       return null;
     }
   }
 
-  async clearToken(): Promise<void> {
+  async setRefreshToken(token: string): Promise<void> {
     await this.initStore();
     if (this.store) {
-      await this.store.delete(TOKEN_KEY);
+      await this.store.set(REFRESH_TOKEN_KEY, token);
       await this.store.save();
     } else {
-      // Fallback to localStorage
       if (typeof window !== "undefined") {
-        window.localStorage.removeItem(TOKEN_KEY);
+        window.localStorage.setItem(REFRESH_TOKEN_KEY, token);
       }
     }
   }
 
-  async hasToken(): Promise<boolean> {
-    const token = await this.getToken();
-    return !!token;
+  async getRefreshToken(): Promise<string | null> {
+    await this.initStore();
+    if (this.store) {
+      const token = await this.store.get<string>(REFRESH_TOKEN_KEY);
+      return token || null;
+    } else {
+      if (typeof window !== "undefined") {
+        return window.localStorage.getItem(REFRESH_TOKEN_KEY);
+      }
+      return null;
+    }
+  }
+
+  async clearTokens(): Promise<void> {
+    await this.initStore();
+    if (this.store) {
+      await this.store.delete(ACCESS_TOKEN_KEY);
+      await this.store.delete(REFRESH_TOKEN_KEY);
+      await this.store.save();
+    } else {
+      if (typeof window !== "undefined") {
+        window.localStorage.removeItem(ACCESS_TOKEN_KEY);
+        window.localStorage.removeItem(REFRESH_TOKEN_KEY);
+      }
+    }
+  }
+
+  async hasTokens(): Promise<boolean> {
+    const accessToken = await this.getAccessToken();
+    const refreshToken = await this.getRefreshToken();
+    return !!accessToken && !!refreshToken;
   }
 }
 

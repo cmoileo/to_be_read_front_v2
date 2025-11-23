@@ -5,8 +5,8 @@ import { MobileStorage } from "../services/mobile-storage.service";
 
 export const Route = createFileRoute("/")({
   beforeLoad: async () => {
-    const hasToken = await MobileStorage.hasToken();
-    if (!hasToken) {
+    const hasTokens = await MobileStorage.hasTokens();
+    if (!hasTokens) {
       throw redirect({ to: "/onboarding" });
     }
   },

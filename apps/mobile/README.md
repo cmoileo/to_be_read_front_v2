@@ -91,6 +91,44 @@ pnpm tauri android dev
 pnpm tauri ios dev
 ```
 
+## Architecture d'Authentification
+
+L'application utilise un système d'authentification basé sur **Access Token** et **Refresh Token** :
+
+### Services
+
+- **MobileStorage** : Stockage sécurisé via Tauri Store plugin
+  - `setAccessToken()` / `getAccessToken()`
+  - `setRefreshToken()` / `getRefreshToken()`
+  - `clearTokens()` / `hasTokens()`
+
+- **HttpInterceptor** : Gestion automatique du refresh token
+  - Intercepte les erreurs 401 (UNAUTHENTICATED)
+  - Refresh automatique avec `/refresh` endpoint
+  - Retry de la requête originale avec nouveau token
+  - Redirection vers onboarding si refresh échoue
+
+- **MobileAuthService** : API d'authentification
+  - `login()` / `register()` → retourne `{ token, refreshToken }`
+  - `logout()` → révoque les tokens côté serveur
+  - `getMe()` → récupère le profil utilisateur
+  - `revokeRefreshToken()` → révoque manuellement
+
+### Flow d'Authentification
+
+1. **Login/Register** → Stocke access_token + refresh_token
+2. **Requête API** → HttpInterceptor ajoute Authorization header
+3. **Si 401** → HttpInterceptor refresh automatiquement
+4. **Retry** → Requête originale relancée avec nouveau token
+5. **Si refresh échoue** → Logout + redirection onboarding
+
+### Hooks TanStack Query
+
+- `useMobileLogin()` - Connexion avec stockage tokens
+- `useMobileRegister()` - Inscription avec stockage tokens
+- `useMobileLogout()` - Déconnexion avec révocation tokens
+- `useMobileMe()` - Profil utilisateur authentifié
+
 ## Variables d'environnement
 
 Fichier `.env.local` :
