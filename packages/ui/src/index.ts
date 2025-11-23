@@ -15,6 +15,8 @@ export * from "./sections/login-form";
 export * from "./sections/register-form";
 export * from "./sections/reset-password-request-form";
 export * from "./sections/reset-password-confirm-form";
+export * from "./sections/onboarding-screen";
+export * from "./sections/home-screen";
 export * from "./schemas/auth.schema";
 export * from "./i18n/config";
 export { useTranslation } from "react-i18next";
