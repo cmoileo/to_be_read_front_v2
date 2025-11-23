@@ -1,45 +1,19 @@
 "use client";
 
 import { LoginForm } from "@repo/ui";
-import { loginAction } from "../_auth/actions";
-import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
-import type { LoginFormValues } from "@repo/ui";
+import { useLoginViewModel } from "@/viewmodels/use-login-viewmodel";
 
 export default function LoginPage() {
-  const router = useRouter();
-  const [isPending, startTransition] = useTransition();
-  const [error, setError] = useState<string>("");
-
-  const handleLogin = async (values: LoginFormValues) => {
-    setError("");
-    startTransition(async () => {
-      try {
-        await loginAction(values);
-        router.push("/");
-        router.refresh();
-      } catch (err: any) {
-        setError(err.message || "Une erreur est survenue lors de la connexion");
-      }
-    });
-  };
-
-  const goToRegister = () => {
-    router.push("/register");
-  };
-
-  const goToForgotPassword = () => {
-    router.push("/reset-password");
-  };
+  const viewModel = useLoginViewModel();
 
   return (
     <div className="flex min-h-screen items-center justify-center p-6">
       <LoginForm
-        onSubmit={handleLogin}
-        isLoading={isPending}
-        error={error}
-        onRegisterClick={goToRegister}
-        onForgotPasswordClick={goToForgotPassword}
+        onSubmit={viewModel.login}
+        isLoading={viewModel.isLoading}
+        error={viewModel.error}
+        onRegisterClick={viewModel.navigateToRegister}
+        onForgotPasswordClick={viewModel.navigateToResetPassword}
       />
     </div>
   );

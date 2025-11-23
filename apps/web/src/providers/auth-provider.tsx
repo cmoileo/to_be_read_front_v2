@@ -1,35 +1,55 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect, type ReactNode } from "react";
+import { useState, useEffect, type ReactNode } from "react";
+import { useRouter } from "next/navigation";
+import { AuthContext } from "@/models/hooks/use-auth-context";
+import { getInitialAuthState, setAuthUser, clearAuthUser } from "@/models/auth.model";
+import { logoutAction } from "@/app/_auth/actions";
 import type { User } from "@repo/types";
 
-interface AuthContextValue {
-  user: User | null;
-  setUser: (user: User | null) => void;
-  isLoading: boolean;
+interface AuthProviderProps {
+  children: ReactNode;
+  initialUser: User | null;
 }
 
-const AuthContext = createContext<AuthContextValue | undefined>(undefined);
-
-export function AuthProvider({ children, initialUser }: { children: ReactNode; initialUser: User | null }) {
-  const [user, setUser] = useState<User | null>(initialUser);
-  const [isLoading, setIsLoading] = useState(false);
+export function AuthProvider({ children, initialUser }: AuthProviderProps) {
+  const [authState, setAuthState] = useState(() =>
+    initialUser ? setAuthUser(initialUser) : getInitialAuthState()
+  );
+  const router = useRouter();
 
   useEffect(() => {
-    setUser(initialUser);
+    if (initialUser) {
+      setAuthState(setAuthUser(initialUser));
+    } else {
+      setAuthState(clearAuthUser());
+    }
   }, [initialUser]);
 
+  const setUser = (user: User | null) => {
+    if (user) {
+      setAuthState(setAuthUser(user));
+    } else {
+      setAuthState(clearAuthUser());
+    }
+  };
+
+  const clearUser = async () => {
+    await logoutAction();
+    setAuthState(clearAuthUser());
+    router.push("/login");
+    router.refresh();
+  };
+
   return (
-    <AuthContext.Provider value={{ user, setUser, isLoading }}>
+    <AuthContext.Provider
+      value={{
+        ...authState,
+        setUser,
+        clearUser,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
-}
-
-export function useAuth() {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error("useAuth must be used within AuthProvider");
-  }
-  return context;
 }

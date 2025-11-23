@@ -1,0 +1,60 @@
+import { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
+import { useNavigate } from "@tanstack/react-router";
+import { useAuthModel } from "../models/hooks/use-auth-model";
+import { MobileAuthService } from "../services/mobile-auth.service";
+import { MobileStorage } from "../services/mobile-storage.service";
+import { AuthApi } from "@repo/api-client";
+import type { RegisterFormValues } from "@repo/ui";
+import type { UserBasic } from "@repo/types";
+
+export function useRegisterViewModel() {
+  const [error, setError] = useState<string>("");
+  const navigate = useNavigate();
+  const { setUser } = useAuthModel();
+
+  const registerMutation = useMutation({
+    mutationFn: MobileAuthService.register,
+    onSuccess: async (data) => {
+      const accessToken = data.token.token;
+      await MobileStorage.setAccessToken(accessToken);
+      await MobileStorage.setRefreshToken(data.refreshToken);
+      setUser(data.user as UserBasic);
+      navigate({ to: "/" });
+    },
+    onError: (err) => {
+      setError(err.message || "Une erreur est survenue lors de l'inscription");
+    },
+  });
+
+  const register = (values: RegisterFormValues) => {
+    setError("");
+    const credentials = {
+      userName: values.username,
+      email: values.email,
+      password: values.password,
+    };
+    registerMutation.mutate(credentials);
+  };
+
+  const checkUsernameAvailability = async (username: string): Promise<boolean> => {
+    try {
+      const result = await AuthApi.isUsernameAvailable(username);
+      return result.available;
+    } catch {
+      return false;
+    }
+  };
+
+  const navigateToLogin = () => {
+    navigate({ to: "/login" });
+  };
+
+  return {
+    register,
+    isLoading: registerMutation.isPending,
+    error,
+    checkUsernameAvailability,
+    navigateToLogin,
+  };
+}

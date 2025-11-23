@@ -1,17 +1,15 @@
 "use client";
 
 import { HomeScreen, OnboardingScreen } from "@repo/ui";
-import { useAuth } from "@/providers/auth-provider";
-import { logoutAction } from "./_auth/actions";
+import { useAuthContext } from "@/models/hooks/use-auth-context";
 import { useRouter } from "next/navigation";
 
 export default function HomePage() {
-  const { user } = useAuth();
+  const { user, clearUser } = useAuthContext();
   const router = useRouter();
 
   const handleLogout = async () => {
-    await logoutAction();
-    router.refresh();
+    await clearUser();
   };
 
   const goToLogin = () => {

@@ -1,31 +1,13 @@
 "use client";
 
 import { ResetPasswordConfirmForm } from "@repo/ui";
-import { resetPasswordConfirm } from "../../_auth/actions";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
-import type { ResetPasswordConfirmFormValues } from "@repo/ui";
+import { useResetPasswordConfirmViewModel } from "@/viewmodels/use-reset-password-confirm-viewmodel";
+import { useSearchParams } from "next/navigation";
 
 export default function ResetPasswordConfirmPage() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams.get("token") || "";
-  const [error, setError] = useState<string>("");
-  const [isLoading, setIsLoading] = useState(false);
-
-  const handleResetConfirm = async (values: ResetPasswordConfirmFormValues) => {
-    setError("");
-    setIsLoading(true);
-    
-    try {
-      await resetPasswordConfirm({ token: values.token, password: values.password });
-      router.push("/login");
-    } catch (err: any) {
-      setError(err.message || "Une erreur est survenue");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const viewModel = useResetPasswordConfirmViewModel();
 
   if (!token) {
     return (
@@ -43,10 +25,10 @@ export default function ResetPasswordConfirmPage() {
   return (
     <div className="flex min-h-screen items-center justify-center p-6">
       <ResetPasswordConfirmForm
-        onSubmit={handleResetConfirm}
+        onSubmit={viewModel.confirmReset}
         token={token}
-        isLoading={isLoading}
-        error={error}
+        isLoading={viewModel.isLoading}
+        error={viewModel.error}
       />
     </div>
   );
