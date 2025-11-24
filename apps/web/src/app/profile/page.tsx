@@ -1,33 +1,28 @@
-"use client";
-
-import { useAuthContext } from "@/models/hooks/use-auth-context";
-import { Button } from "@repo/ui";
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { WebProfileService } from "@/services/web-profile.service";
+import ProfileClient from "./profile-client";
 
-export default function ProfilePage() {
-  const { user, clearUser } = useAuthContext();
+export default async function ProfilePage() {
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get("tbr_access_token")?.value;
 
-  if (!user) {
+  if (!accessToken) {
     redirect("/login");
   }
 
-  const handleLogout = async () => {
-    await clearUser();
-  };
+  let user = null;
+  let initialReviewsResponse = null;
 
-  return (
-    <div className="container py-8">
-      <header className="mb-8 flex justify-between items-center">
-        <h1 className="text-3xl font-bold">Profil</h1>
-      </header>
+  try {
+    const profileData = await WebProfileService.getMyProfile(accessToken);
+    user = profileData.user;
 
-      <div className="flex min-h-[60vh] flex-col items-center justify-center">
-        <div className="max-w-md w-full text-center space-y-6">
-          <p className="text-6xl">👤</p>
-          <h2 className="text-3xl font-bold">{user.userName}</h2>
-          <p className="text-muted-foreground text-lg">Page de profil à venir</p>
-        </div>
-      </div>
-    </div>
-  );
+    initialReviewsResponse = await WebProfileService.getMyReviews(1, accessToken);
+  } catch (error) {
+    console.error("Failed to fetch profile:", error);
+    redirect("/login");
+  }
+
+  return <ProfileClient initialUser={user} initialReviewsResponse={initialReviewsResponse} />;
 }

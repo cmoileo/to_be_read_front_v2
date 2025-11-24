@@ -37,6 +37,7 @@ interface ProfileScreenProps {
   isOwnProfile?: boolean;
   isLoading?: boolean;
   hasMore?: boolean;
+  isFetchingMore?: boolean;
   isEditDialogOpen?: boolean;
   isUpdating?: boolean;
   onEdit?: () => void;
@@ -54,6 +55,7 @@ export const ProfileScreen = ({
   isOwnProfile = true,
   isLoading = false,
   hasMore = false,
+  isFetchingMore = false,
   isEditDialogOpen = false,
   isUpdating = false,
   onEdit,
@@ -84,7 +86,7 @@ export const ProfileScreen = ({
 
   return (
     <>
-      <div className="space-y-6">
+      <div className="container mx-auto px-4 py-6 space-y-6 max-w-4xl">
         <ProfileHeader
           user={user}
           isOwnProfile={isOwnProfile}
@@ -111,7 +113,7 @@ export const ProfileScreen = ({
               {hasMore && (
                 <button
                   onClick={onLoadMore}
-                  disabled={isLoading}
+                  disabled={isFetchingMore}
                   className="w-full flex justify-center items-center py-4 text-muted-foreground hover:text-foreground transition-colors disabled:opacity-50"
                   aria-label={t("common.loadMore")}
                 >
@@ -125,9 +127,9 @@ export const ProfileScreen = ({
                     strokeWidth="2"
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    className={isLoading ? "animate-spin" : ""}
+                    className={isFetchingMore ? "animate-spin" : ""}
                   >
-                    {isLoading ? (
+                    {isFetchingMore ? (
                       <path d="M21 12a9 9 0 1 1-6.219-8.56" />
                     ) : (
                       <>

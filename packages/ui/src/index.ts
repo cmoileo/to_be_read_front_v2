@@ -11,6 +11,7 @@ export * from "./components/checkbox";
 export * from "./components/textarea";
 export * from "./components/rating";
 export * from "./components/bottom-nav";
+export * from "./components/top-nav";
 export * from "./components/book-search-select";
 export * from "./lib/utils";
 export * from "./hooks/use-toast";
