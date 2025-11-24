@@ -78,6 +78,28 @@
         "createReview": "Créer une critique",
         "profile": "Profil"
     },
+    "review": {
+        "create": {
+            "title": "Créer une critique",
+            "description": "Partagez votre avis sur un livre",
+            "bookLabel": "Livre",
+            "bookPlaceholder": "Rechercher un livre...",
+            "ratingLabel": "Note",
+            "contentLabel": "Votre critique",
+            "contentPlaceholder": "Partagez votre avis sur ce livre...",
+            "submit": "Publier la critique"
+        },
+        "errors": {
+            "bookRequired": "Veuillez sélectionner un livre",
+            "ratingRequired": "Veuillez donner une note",
+            "contentMin": "Votre critique doit contenir au moins 3 caractères",
+            "contentMax": "Votre critique ne peut pas dépasser 1000 caractères"
+        },
+        "success": {
+            "title": "Critique publiée",
+            "description": "Votre critique a été publiée avec succès"
+        }
+    },
     "common": {
         "loading": "Chargement...",
         "error": "Erreur",

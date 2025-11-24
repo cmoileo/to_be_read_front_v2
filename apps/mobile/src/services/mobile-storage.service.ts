@@ -24,24 +24,28 @@ class MobileStorageService {
     if (this.store) {
       await this.store.set(ACCESS_TOKEN_KEY, token);
       await this.store.save();
-    } else {
-      if (typeof window !== "undefined") {
-        window.localStorage.setItem(ACCESS_TOKEN_KEY, token);
-      }
+    }
+    if (typeof window !== "undefined") {
+      window.localStorage.setItem(ACCESS_TOKEN_KEY, token);
     }
   }
 
   async getAccessToken(): Promise<string | null> {
+    if (typeof window !== "undefined") {
+      const localToken = window.localStorage.getItem(ACCESS_TOKEN_KEY);
+      if (localToken) return localToken;
+    }
+
     await this.initStore();
     if (this.store) {
       const token = await this.store.get<string>(ACCESS_TOKEN_KEY);
-      return token || null;
-    } else {
-      if (typeof window !== "undefined") {
-        return window.localStorage.getItem(ACCESS_TOKEN_KEY);
+      if (token && typeof window !== "undefined") {
+        window.localStorage.setItem(ACCESS_TOKEN_KEY, token);
       }
-      return null;
+      return token || null;
     }
+
+    return null;
   }
 
   async setRefreshToken(token: string): Promise<void> {
@@ -49,10 +53,9 @@ class MobileStorageService {
     if (this.store) {
       await this.store.set(REFRESH_TOKEN_KEY, token);
       await this.store.save();
-    } else {
-      if (typeof window !== "undefined") {
-        window.localStorage.setItem(REFRESH_TOKEN_KEY, token);
-      }
+    }
+    if (typeof window !== "undefined") {
+      window.localStorage.setItem(REFRESH_TOKEN_KEY, token);
     }
   }
 
@@ -75,11 +78,10 @@ class MobileStorageService {
       await this.store.delete(ACCESS_TOKEN_KEY);
       await this.store.delete(REFRESH_TOKEN_KEY);
       await this.store.save();
-    } else {
-      if (typeof window !== "undefined") {
-        window.localStorage.removeItem(ACCESS_TOKEN_KEY);
-        window.localStorage.removeItem(REFRESH_TOKEN_KEY);
-      }
+    }
+    if (typeof window !== "undefined") {
+      window.localStorage.removeItem(ACCESS_TOKEN_KEY);
+      window.localStorage.removeItem(REFRESH_TOKEN_KEY);
     }
   }
 

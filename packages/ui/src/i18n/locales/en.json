@@ -78,6 +78,28 @@
         "createReview": "Create Review",
         "profile": "Profile"
     },
+    "review": {
+        "create": {
+            "title": "Create a Review",
+            "description": "Share your opinion about a book",
+            "bookLabel": "Book",
+            "bookPlaceholder": "Search for a book...",
+            "ratingLabel": "Rating",
+            "contentLabel": "Your review",
+            "contentPlaceholder": "Share your thoughts about this book...",
+            "submit": "Publish Review"
+        },
+        "errors": {
+            "bookRequired": "Please select a book",
+            "ratingRequired": "Please provide a rating",
+            "contentMin": "Your review must be at least 3 characters long",
+            "contentMax": "Your review cannot exceed 1000 characters"
+        },
+        "success": {
+            "title": "Review Published",
+            "description": "Your review has been successfully published"
+        }
+    },
     "common": {
         "loading": "Loading...",
         "error": "Error",
