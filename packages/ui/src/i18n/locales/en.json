@@ -110,5 +110,23 @@
         "search": "Search",
         "createReview": "Review",
         "profile": "Profile"
+    },
+    "review": {
+        "create": {
+            "title": "Create a review",
+            "description": "Share your thoughts about a book",
+            "bookLabel": "Book",
+            "bookPlaceholder": "Search for a book...",
+            "ratingLabel": "Rating",
+            "contentLabel": "Your review",
+            "contentPlaceholder": "Share your thoughts about this book...",
+            "submit": "Publish review"
+        },
+        "errors": {
+            "bookRequired": "Please select a book",
+            "ratingRequired": "Please provide a rating",
+            "contentMin": "Review must be at least 3 characters long",
+            "contentMax": "Review cannot exceed 1000 characters"
+        }
     }
 }

@@ -1,4 +1,3 @@
-import { Button } from "../components/button";
 import { Separator } from "../components/separator";
 import { ProfileHeader } from "./profile-header";
 import { ReviewCard } from "./review-card";
@@ -11,7 +10,7 @@ interface User {
   biography: string | null;
   reviewsCount: number;
   followersCount: number;
-  followingsCount: number;
+  followingCount: number;
   isFollowing: boolean;
 }
 
@@ -99,7 +98,7 @@ export const ProfileScreen = ({
         <div className="space-y-4">
           <h2 className="text-xl font-semibold">{t("profile.myReviews")}</h2>
 
-          {reviews.length === 0 ? (
+          {reviews.length === 0 && !isLoading ? (
             <div className="text-center py-12">
               <p className="text-muted-foreground">{t("profile.noReviews")}</p>
             </div>
@@ -110,11 +109,35 @@ export const ProfileScreen = ({
               ))}
 
               {hasMore && (
-                <div className="flex justify-center pt-4">
-                  <Button variant="outline" onClick={onLoadMore} disabled={isLoading}>
-                    {isLoading ? t("common.loading") : t("common.loadMore")}
-                  </Button>
-                </div>
+                <button
+                  onClick={onLoadMore}
+                  disabled={isLoading}
+                  className="w-full flex justify-center items-center py-4 text-muted-foreground hover:text-foreground transition-colors disabled:opacity-50"
+                  aria-label={t("common.loadMore")}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="32"
+                    height="32"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className={isLoading ? "animate-spin" : ""}
+                  >
+                    {isLoading ? (
+                      <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+                    ) : (
+                      <>
+                        <circle cx="12" cy="12" r="10" />
+                        <path d="M12 8v8" />
+                        <path d="M8 12h8" />
+                      </>
+                    )}
+                  </svg>
+                </button>
               )}
             </div>
           )}

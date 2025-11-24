@@ -4,7 +4,7 @@ export interface User {
   avatar: string | null;
   biography: string | null;
   followersCount: number;
-  followingsCount: number;
+  followingCount: number;
   reviewsCount: number;
   isFollowing: boolean;
   isMe: boolean;

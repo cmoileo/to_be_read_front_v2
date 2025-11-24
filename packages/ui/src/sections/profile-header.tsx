@@ -8,7 +8,7 @@ interface User {
   biography: string | null;
   reviewsCount: number;
   followersCount: number;
-  followingsCount: number;
+  followingCount: number;
   isFollowing: boolean;
 }
 
@@ -81,7 +81,7 @@ export const ProfileHeader = ({
           <div className="text-muted-foreground">{t("profile.followers")}</div>
         </div>
         <div className="text-center">
-          <div className="font-bold text-lg">{user.followingsCount}</div>
+          <div className="font-bold text-lg">{user.followingCount}</div>
           <div className="text-muted-foreground">{t("profile.following")}</div>
         </div>
       </div>

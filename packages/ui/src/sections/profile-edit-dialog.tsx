@@ -35,10 +35,18 @@ export const ProfileEditDialog = ({
       userName: defaultValues.userName,
       biography: defaultValues.biography || "",
       locale: defaultValues.locale,
-      avatar: null as File | null,
+      avatar: undefined as File | undefined,
     },
     onSubmit: async ({ value }) => {
-      onSubmit(value);
+      const submitData: any = {
+        userName: value.userName,
+        biography: value.biography,
+        locale: value.locale,
+      };
+      if (value.avatar) {
+        submitData.avatar = value.avatar;
+      }
+      onSubmit(submitData);
       onClose();
     },
   });

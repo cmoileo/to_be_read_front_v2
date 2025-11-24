@@ -110,5 +110,23 @@
         "search": "Rechercher",
         "createReview": "Critique",
         "profile": "Profil"
+    },
+    "review": {
+        "create": {
+            "title": "Créer une critique",
+            "description": "Partagez votre avis sur un livre",
+            "bookLabel": "Livre",
+            "bookPlaceholder": "Rechercher un livre...",
+            "ratingLabel": "Note",
+            "contentLabel": "Votre critique",
+            "contentPlaceholder": "Partagez votre avis sur ce livre...",
+            "submit": "Publier la critique"
+        },
+        "errors": {
+            "bookRequired": "Veuillez sélectionner un livre",
+            "ratingRequired": "Veuillez donner une note",
+            "contentMin": "La critique doit contenir au moins 3 caractères",
+            "contentMax": "La critique ne peut pas dépasser 1000 caractères"
+        }
     }
 }

@@ -5,7 +5,7 @@ export interface UpdateProfileData {
   userName?: string;
   biography?: string;
   locale?: "en" | "fr";
-  avatar?: File | null;
+  avatar?: File;
 }
 
 export class MobileProfileService {
@@ -20,16 +20,16 @@ export class MobileProfileService {
   static async updateProfile(data: UpdateProfileData): Promise<{ user: User }> {
     const formData = new FormData();
     
-    if (data.userName) {
+    if (data.userName !== undefined) {
       formData.append("userName", data.userName);
     }
     if (data.biography !== undefined) {
       formData.append("biography", data.biography);
     }
-    if (data.locale) {
+    if (data.locale !== undefined) {
       formData.append("locale", data.locale);
     }
-    if (data.avatar) {
+    if (data.avatar !== undefined && data.avatar !== null) {
       formData.append("avatar", data.avatar);
     }
 
