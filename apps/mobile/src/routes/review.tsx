@@ -1,20 +1,18 @@
 import { createFileRoute, redirect, useNavigate, useRouterState } from "@tanstack/react-router";
-import { BottomNav, useTranslation } from "@repo/ui";
-import { useAuthModel } from "../models/hooks/use-auth-model";
 import { MobileStorage } from "../services/mobile-storage.service";
+import { BottomNav, useTranslation } from "@repo/ui";
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute("/review")({
   beforeLoad: async () => {
     const hasTokens = await MobileStorage.hasTokens();
     if (!hasTokens) {
       throw redirect({ to: "/onboarding" });
     }
   },
-  component: Index,
+  component: ReviewPage,
 });
 
-function Index() {
-  const { user } = useAuthModel();
+function ReviewPage() {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const routerState = useRouterState();
@@ -55,20 +53,13 @@ function Index() {
     <div className="flex min-h-screen flex-col">
       <div className="flex-1 p-6 pb-20">
         <header className="mb-8">
-          <h1 className="text-2xl font-bold">To Be Read</h1>
+          <h1 className="text-2xl font-bold">Créer une critique</h1>
         </header>
 
         <div className="flex-1 flex flex-col items-center justify-center">
-          <div className="max-w-md w-full space-y-6 text-center">
-            <div className="space-y-2">
-              <h2 className="text-3xl font-bold">
-                {t("home.welcome")} {user?.userName} !
-              </h2>
-              <p className="text-muted-foreground">Votre bibliothèque littéraire personnelle</p>
-            </div>
-
-            <div className="text-4xl">📚</div>
-            <p className="text-muted-foreground">Contenu de la page d'accueil à venir</p>
+          <div className="max-w-md w-full text-center space-y-4">
+            <p className="text-4xl">✍️</p>
+            <p className="text-muted-foreground">Page de création de critique à venir</p>
           </div>
         </div>
       </div>

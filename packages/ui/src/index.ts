@@ -9,6 +9,7 @@ export * from "./components/toaster";
 export * from "./components/dialog";
 export * from "./components/checkbox";
 export * from "./components/textarea";
+export * from "./components/bottom-nav";
 export * from "./lib/utils";
 export * from "./hooks/use-toast";
 export * from "./sections/login-form";

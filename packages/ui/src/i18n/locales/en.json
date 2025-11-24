@@ -72,6 +72,12 @@
         "title": "Home",
         "welcome": "Welcome"
     },
+    "navigation": {
+        "home": "Home",
+        "search": "Search",
+        "createReview": "Create Review",
+        "profile": "Profile"
+    },
     "common": {
         "loading": "Loading...",
         "error": "Error",
