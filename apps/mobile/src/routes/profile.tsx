@@ -1,7 +1,8 @@
+import { useState } from "react";
 import { createFileRoute, redirect, useNavigate, useRouterState } from "@tanstack/react-router";
 import { MobileStorage } from "../services/mobile-storage.service";
-import { useAuthModel } from "../models/hooks/use-auth-model";
-import { Button, BottomNav, useTranslation } from "@repo/ui";
+import { BottomNav, useTranslation, ProfileScreen } from "@repo/ui";
+import { useProfileViewModel } from "../viewmodels/use-profile-viewmodel";
 
 export const Route = createFileRoute("/profile")({
   beforeLoad: async () => {
@@ -14,15 +15,22 @@ export const Route = createFileRoute("/profile")({
 });
 
 function ProfilePage() {
-  const { user, clearUser } = useAuthModel();
   const navigate = useNavigate();
   const { t } = useTranslation();
   const routerState = useRouterState();
   const currentPath = routerState.location.pathname;
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 
-  const handleLogout = () => {
-    clearUser();
-  };
+  const {
+    user,
+    reviews,
+    isLoading,
+    hasMore,
+    isUpdating,
+    handleUpdateProfile,
+    handleLoadMore,
+    handleReviewClick,
+  } = useProfileViewModel();
 
   const navItems = [
     {
@@ -58,20 +66,20 @@ function ProfilePage() {
   return (
     <div className="flex min-h-screen flex-col">
       <div className="flex-1 p-6 pb-20">
-        <header className="mb-8 flex justify-between items-center">
-          <h1 className="text-2xl font-bold">Profil</h1>
-          <Button variant="ghost" onClick={handleLogout} size="sm">
-            Déconnexion
-          </Button>
-        </header>
-
-        <div className="flex-1 flex flex-col items-center justify-center">
-          <div className="max-w-md w-full text-center space-y-4">
-            <p className="text-4xl">👤</p>
-            <h2 className="text-2xl font-bold">{user?.userName}</h2>
-            <p className="text-muted-foreground">Page de profil à venir</p>
-          </div>
-        </div>
+        <ProfileScreen
+          user={user}
+          reviews={reviews}
+          isOwnProfile={true}
+          isLoading={isLoading}
+          hasMore={hasMore}
+          isEditDialogOpen={isEditDialogOpen}
+          isUpdating={isUpdating}
+          onEdit={() => setIsEditDialogOpen(true)}
+          onCloseEditDialog={() => setIsEditDialogOpen(false)}
+          onUpdateProfile={handleUpdateProfile}
+          onLoadMore={handleLoadMore}
+          onReviewClick={handleReviewClick}
+        />
       </div>
 
       <BottomNav items={navItems} onNavigate={handleNavigate} />

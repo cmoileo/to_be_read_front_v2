@@ -72,41 +72,43 @@
         "title": "Accueil",
         "welcome": "Bienvenue"
     },
-    "navigation": {
-        "home": "Accueil",
-        "search": "Rechercher",
-        "createReview": "Créer une critique",
-        "profile": "Profil"
-    },
-    "review": {
-        "create": {
-            "title": "Créer une critique",
-            "description": "Partagez votre avis sur un livre",
-            "bookLabel": "Livre",
-            "bookPlaceholder": "Rechercher un livre...",
-            "ratingLabel": "Note",
-            "contentLabel": "Votre critique",
-            "contentPlaceholder": "Partagez votre avis sur ce livre...",
-            "submit": "Publier la critique"
-        },
-        "errors": {
-            "bookRequired": "Veuillez sélectionner un livre",
-            "ratingRequired": "Veuillez donner une note",
-            "contentMin": "Votre critique doit contenir au moins 3 caractères",
-            "contentMax": "Votre critique ne peut pas dépasser 1000 caractères"
-        },
-        "success": {
-            "title": "Critique publiée",
-            "description": "Votre critique a été publiée avec succès"
-        }
-    },
     "common": {
         "loading": "Chargement...",
         "error": "Erreur",
         "cancel": "Annuler",
         "confirm": "Confirmer",
         "save": "Enregistrer",
+        "saving": "Enregistrement...",
         "delete": "Supprimer",
-        "edit": "Modifier"
+        "edit": "Modifier",
+        "loadMore": "Charger plus"
+    },
+    "profile": {
+        "edit": "Modifier le profil",
+        "editProfile": "Modifier le profil",
+        "follow": "Suivre",
+        "unfollow": "Ne plus suivre",
+        "reviews": "Critiques",
+        "followers": "Abonnés",
+        "following": "Abonnements",
+        "myReviews": "Mes critiques",
+        "noReviews": "Aucune critique pour le moment",
+        "notFound": "Profil introuvable",
+        "userName": "Nom d'utilisateur",
+        "biography": "Biographie",
+        "language": "Langue",
+        "avatar": "Photo de profil",
+        "validation": {
+            "userNameTooShort": "Le nom d'utilisateur doit contenir au moins 3 caractères",
+            "userNameTooLong": "Le nom d'utilisateur ne peut pas dépasser 30 caractères",
+            "userNameInvalidCharacters": "Le nom d'utilisateur ne peut contenir que des lettres, chiffres, tirets et underscores",
+            "biographyTooLong": "La biographie ne peut pas dépasser 500 caractères"
+        }
+    },
+    "navigation": {
+        "home": "Accueil",
+        "search": "Rechercher",
+        "createReview": "Critique",
+        "profile": "Profil"
     }
 }

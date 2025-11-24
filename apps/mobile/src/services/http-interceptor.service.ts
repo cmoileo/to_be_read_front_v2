@@ -71,10 +71,15 @@ export class HttpInterceptor {
   static async request<T>(endpoint: string, config: RequestConfig = {}): Promise<T> {
     const { requiresAuth = true, skipRefresh = false, ...fetchConfig } = config;
 
-    const headers: HeadersInit = {
-      "Content-Type": "application/json",
-      ...fetchConfig.headers,
-    };
+    const headers: Record<string, string> = {};
+    
+    if (!(fetchConfig.body instanceof FormData)) {
+      headers["Content-Type"] = "application/json";
+    }
+    
+    if (fetchConfig.headers) {
+      Object.assign(headers, fetchConfig.headers);
+    }
 
     if (requiresAuth) {
       const token = await MobileStorage.getAccessToken();
@@ -141,18 +146,32 @@ export class HttpInterceptor {
   }
 
   static post<T>(endpoint: string, data?: unknown, config?: RequestConfig): Promise<T> {
+    const isFormData = data instanceof FormData;
+    
     return this.request<T>(endpoint, {
       ...config,
       method: "POST",
-      body: data ? JSON.stringify(data) : undefined,
+      body: isFormData ? data : (data ? JSON.stringify(data) : undefined),
     });
   }
 
   static put<T>(endpoint: string, data?: unknown, config?: RequestConfig): Promise<T> {
+    const isFormData = data instanceof FormData;
+    const headers: Record<string, string> = {};
+    
+    if (!isFormData) {
+      headers["Content-Type"] = "application/json";
+    }
+    
+    if (config?.headers) {
+      Object.assign(headers, config.headers);
+    }
+    
     return this.request<T>(endpoint, {
       ...config,
       method: "PUT",
-      body: data ? JSON.stringify(data) : undefined,
+      headers,
+      body: isFormData ? data : (data ? JSON.stringify(data) : undefined),
     });
   }
 
