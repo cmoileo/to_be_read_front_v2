@@ -1,6 +1,7 @@
 import "@repo/ui/src/styles/globals.css";
 import type { Metadata } from "next";
 import { Providers } from "@/components/providers";
+import { Navigation } from "@/components/navigation";
 import { getUserFromCookies } from "./_auth/actions";
 
 export const metadata: Metadata = {
@@ -18,7 +19,10 @@ export default async function RootLayout({
   return (
     <html lang="fr">
       <body className="antialiased">
-        <Providers initialUser={user}>{children}</Providers>
+        <Providers initialUser={user}>
+          <Navigation />
+          {children}
+        </Providers>
       </body>
     </html>
   );
