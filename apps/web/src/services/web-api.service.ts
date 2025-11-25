@@ -1,7 +1,8 @@
+import { authFetch } from "../lib/auth-fetch";
 import type { GoogleBook, BooksSearchParams, CreateReviewData, Review } from "@repo/types";
 
 async function callApi<T>(path: string, init?: RequestInit): Promise<T> {
-  const res = await fetch(path, {
+  const res = await authFetch(path, {
     ...init,
     headers: {
       "Content-Type": "application/json",

@@ -81,7 +81,8 @@
         "saving": "Enregistrement...",
         "delete": "Supprimer",
         "edit": "Modifier",
-        "loadMore": "Charger plus"
+        "loadMore": "Charger plus",
+        "back": "Retour"
     },
     "profile": {
         "edit": "Modifier le profil",
@@ -133,6 +134,8 @@
         "title": "Rechercher",
         "placeholder": "Rechercher des livres, utilisateurs ou critiques...",
         "noResults": "Aucun résultat trouvé",
+        "noMoreResults": "Plus de résultats",
+        "results": "résultats",
         "users": "Utilisateurs",
         "books": "Livres",
         "reviews": "Critiques",

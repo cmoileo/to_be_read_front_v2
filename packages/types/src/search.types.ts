@@ -25,8 +25,13 @@ export interface SearchUsersResult {
 }
 
 export interface SearchBooksResult {
-  items: GoogleBook[];
-  totalItems: number;
+  data: GoogleBook[];
+  meta: {
+    currentPage: number;
+    lastPage: number;
+    total: number;
+    perPage: number;
+  };
 }
 
 export interface SearchReviewsResult {

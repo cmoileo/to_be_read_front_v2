@@ -1,4 +1,5 @@
 import { SearchApi as BaseSearchApi } from "@repo/api-client";
+import { authFetch } from "../lib/auth-fetch";
 import type {
   SearchResults,
   SearchParams,
@@ -9,7 +10,7 @@ import type {
 
 export class WebSearchApi {
   static async globalSearch(query: string): Promise<SearchResults> {
-    const response = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
+    const response = await authFetch(`/api/search?q=${encodeURIComponent(query)}`);
     if (!response.ok) {
       throw new Error("Failed to search");
     }
@@ -23,7 +24,7 @@ export class WebSearchApi {
       ...(params.limit && { limit: params.limit.toString() }),
     });
 
-    const response = await fetch(`/api/search/users?${searchParams.toString()}`);
+    const response = await authFetch(`/api/search/users?${searchParams.toString()}`);
     if (!response.ok) {
       throw new Error("Failed to search users");
     }
@@ -37,7 +38,7 @@ export class WebSearchApi {
       ...(params.limit && { limit: params.limit.toString() }),
     });
 
-    const response = await fetch(`/api/search/books?${searchParams.toString()}`);
+    const response = await authFetch(`/api/search/books?${searchParams.toString()}`);
     if (!response.ok) {
       throw new Error("Failed to search books");
     }
@@ -51,7 +52,7 @@ export class WebSearchApi {
       ...(params.limit && { limit: params.limit.toString() }),
     });
 
-    const response = await fetch(`/api/search/reviews?${searchParams.toString()}`);
+    const response = await authFetch(`/api/search/reviews?${searchParams.toString()}`);
     if (!response.ok) {
       throw new Error("Failed to search reviews");
     }

@@ -41,13 +41,20 @@ export function useSearchViewModel() {
     }
   };
 
-  const searchUsers = async (params: SearchParams) => {
+  const searchUsers = async (params: SearchParams, append = false) => {
     setIsLoadingUsers(true);
     setError(null);
 
     try {
       const results = await WebSearchApi.searchUsers(params);
-      setUsersResults(results);
+      if (append && usersResults) {
+        setUsersResults({
+          ...results,
+          data: [...usersResults.data, ...results.data],
+        });
+      } else {
+        setUsersResults(results);
+      }
     } catch (err) {
       setError("search.errors.loadFailed");
       console.error("Users search failed:", err);
@@ -56,13 +63,20 @@ export function useSearchViewModel() {
     }
   };
 
-  const searchBooks = async (params: SearchParams) => {
+  const searchBooks = async (params: SearchParams, append = false) => {
     setIsLoadingBooks(true);
     setError(null);
 
     try {
       const results = await WebSearchApi.searchBooks(params);
-      setBooksResults(results);
+      if (append && booksResults) {
+        setBooksResults({
+          ...results,
+          items: [...booksResults.items, ...results.items],
+        });
+      } else {
+        setBooksResults(results);
+      }
     } catch (err) {
       setError("search.errors.loadFailed");
       console.error("Books search failed:", err);
@@ -71,13 +85,20 @@ export function useSearchViewModel() {
     }
   };
 
-  const searchReviews = async (params: SearchParams) => {
+  const searchReviews = async (params: SearchParams, append = false) => {
     setIsLoadingReviews(true);
     setError(null);
 
     try {
       const results = await WebSearchApi.searchReviews(params);
-      setReviewsResults(results);
+      if (append && reviewsResults) {
+        setReviewsResults({
+          ...results,
+          data: [...reviewsResults.data, ...results.data],
+        });
+      } else {
+        setReviewsResults(results);
+      }
     } catch (err) {
       setError("search.errors.loadFailed");
       console.error("Reviews search failed:", err);

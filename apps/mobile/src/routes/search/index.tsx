@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { createFileRoute, redirect, useNavigate, useRouterState } from "@tanstack/react-router";
-import { MobileStorage } from "../services/mobile-storage.service";
+import { MobileStorage } from "../../services/mobile-storage.service";
 import {
   BottomNav,
   Input,
@@ -11,9 +11,9 @@ import {
   useTranslation,
   useToast,
 } from "@repo/ui";
-import { useSearchViewModel } from "../viewmodels/use-search-viewmodel";
+import { useSearchViewModel } from "../../viewmodels/use-search-viewmodel";
 
-export const Route = createFileRoute("/search")({
+export const Route = createFileRoute("/search/")({
   beforeLoad: async () => {
     const hasTokens = await MobileStorage.hasTokens();
     if (!hasTokens) {
@@ -52,21 +52,21 @@ function SearchPage() {
     await globalSearch(searchQuery);
   };
 
-  const handleShowMoreUsers = async () => {
+  const handleShowMoreUsers = () => {
     if (currentQuery) {
-      await searchUsers({ q: currentQuery, page: 1, limit: 20 });
+      navigate({ to: "/search/users", search: { q: currentQuery } });
     }
   };
 
-  const handleShowMoreBooks = async () => {
+  const handleShowMoreBooks = () => {
     if (currentQuery) {
-      await searchBooks({ q: currentQuery, page: 1, limit: 20 });
+      navigate({ to: "/search/books", search: { q: currentQuery } });
     }
   };
 
-  const handleShowMoreReviews = async () => {
+  const handleShowMoreReviews = () => {
     if (currentQuery) {
-      await searchReviews({ q: currentQuery, page: 1, limit: 20 });
+      navigate({ to: "/search/reviews", search: { q: currentQuery } });
     }
   };
 
@@ -113,7 +113,7 @@ function SearchPage() {
     usersResults || booksResults || reviewsResults
       ? {
           users: usersResults?.data || [],
-          books: booksResults?.items || [],
+          books: booksResults?.data || [],
           reviews: reviewsResults?.data || [],
         }
       : globalResults;
@@ -154,7 +154,7 @@ function SearchPage() {
                 <UserCard user={user} onClick={() => navigate({ to: `/profile/${user.id}` })} />
               )}
               onShowMore={handleShowMoreUsers}
-              showMoreButton={!usersResults && displayResults.users.length > 0}
+              showMoreButton={globalResults !== null && displayResults.users.length > 0}
               emptyMessage={currentQuery ? t("search.noResults") : undefined}
             />
 
@@ -163,7 +163,7 @@ function SearchPage() {
               items={displayResults.books}
               renderItem={(book) => <BookCard book={book} onClick={() => {}} />}
               onShowMore={handleShowMoreBooks}
-              showMoreButton={!booksResults && displayResults.books.length > 0}
+              showMoreButton={globalResults !== null && displayResults.books.length > 0}
               emptyMessage={currentQuery ? t("search.noResults") : undefined}
             />
 
@@ -172,7 +172,7 @@ function SearchPage() {
               items={displayResults.reviews}
               renderItem={(review) => <ReviewCard review={review} onClick={() => {}} />}
               onShowMore={handleShowMoreReviews}
-              showMoreButton={!reviewsResults && displayResults.reviews.length > 0}
+              showMoreButton={globalResults !== null && displayResults.reviews.length > 0}
               emptyMessage={currentQuery ? t("search.noResults") : undefined}
             />
           </div>

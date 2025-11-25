@@ -139,7 +139,7 @@ GET /search/books?q=tolkien&page=1&limit=10
 
 ```json
 {
-  "items": [
+  "data": [
     {
       "id": "googleBookId",
       "volumeInfo": {
@@ -154,7 +154,12 @@ GET /search/books?q=tolkien&page=1&limit=10
       }
     }
   ],
-  "totalItems": 500
+  "meta": {
+    "currentPage": 1,
+    "lastPage": 50,
+    "total": 500,
+    "perPage": 10
+  }
 }
 ```
 

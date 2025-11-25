@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@repo/api-client";
+import { useAuthContext } from "@/models/hooks/use-auth-context";
 import {
   Input,
   UserCard,
@@ -16,10 +16,11 @@ import { useSearchViewModel } from "../../viewmodels/use-search-viewmodel";
 
 export default function SearchPage() {
   const router = useRouter();
-  const { user } = useAuth();
+  const { user } = useAuthContext();
   const { t } = useTranslation();
   const { toast } = useToast();
 
+  const [mounted, setMounted] = useState(false);
   const [query, setQuery] = useState("");
   const [currentQuery, setCurrentQuery] = useState("");
 
@@ -37,12 +38,26 @@ export default function SearchPage() {
   } = useSearchViewModel();
 
   useEffect(() => {
-    if (!user) {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (mounted && !user) {
       router.push("/login");
     }
-  }, [user, router]);
+  }, [mounted, user, router]);
 
-  if (!user) {
+  useEffect(() => {
+    if (error) {
+      toast({
+        title: t("common.error"),
+        description: t(error),
+        variant: "destructive",
+      });
+    }
+  }, [error, t, toast]);
+
+  if (!mounted || !user) {
     return null;
   }
 
@@ -52,37 +67,29 @@ export default function SearchPage() {
     await globalSearch(searchQuery);
   };
 
-  const handleShowMoreUsers = async () => {
+  const handleShowMoreUsers = () => {
     if (currentQuery) {
-      await searchUsers({ q: currentQuery, page: 1, limit: 20 });
+      router.push(`/search/users?q=${encodeURIComponent(currentQuery)}`);
     }
   };
 
-  const handleShowMoreBooks = async () => {
+  const handleShowMoreBooks = () => {
     if (currentQuery) {
-      await searchBooks({ q: currentQuery, page: 1, limit: 20 });
+      router.push(`/search/books?q=${encodeURIComponent(currentQuery)}`);
     }
   };
 
-  const handleShowMoreReviews = async () => {
+  const handleShowMoreReviews = () => {
     if (currentQuery) {
-      await searchReviews({ q: currentQuery, page: 1, limit: 20 });
+      router.push(`/search/reviews?q=${encodeURIComponent(currentQuery)}`);
     }
   };
-
-  if (error) {
-    toast({
-      title: t("common.error"),
-      description: t(error),
-      variant: "destructive",
-    });
-  }
 
   const displayResults =
     usersResults || booksResults || reviewsResults
       ? {
           users: usersResults?.data || [],
-          books: booksResults?.items || [],
+          books: booksResults?.data || [],
           reviews: reviewsResults?.data || [],
         }
       : globalResults;
@@ -122,7 +129,7 @@ export default function SearchPage() {
               <UserCard user={user} onClick={() => router.push(`/profile/${user.id}`)} />
             )}
             onShowMore={handleShowMoreUsers}
-            showMoreButton={!usersResults && displayResults.users.length > 0}
+            showMoreButton={globalResults !== null && displayResults.users.length > 0}
             emptyMessage={currentQuery ? t("search.noResults") : undefined}
           />
 
@@ -131,7 +138,7 @@ export default function SearchPage() {
             items={displayResults.books}
             renderItem={(book) => <BookCard book={book} onClick={() => {}} />}
             onShowMore={handleShowMoreBooks}
-            showMoreButton={!booksResults && displayResults.books.length > 0}
+            showMoreButton={globalResults !== null && displayResults.books.length > 0}
             emptyMessage={currentQuery ? t("search.noResults") : undefined}
           />
 
@@ -140,7 +147,7 @@ export default function SearchPage() {
             items={displayResults.reviews}
             renderItem={(review) => <ReviewCard review={review} onClick={() => {}} />}
             onShowMore={handleShowMoreReviews}
-            showMoreButton={!reviewsResults && displayResults.reviews.length > 0}
+            showMoreButton={globalResults !== null && displayResults.reviews.length > 0}
             emptyMessage={currentQuery ? t("search.noResults") : undefined}
           />
         </div>

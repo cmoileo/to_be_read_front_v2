@@ -1,9 +1,9 @@
-import { User } from "@repo/types";
+import { User, UserAuthor } from "@repo/types";
 import { Avatar, AvatarFallback, AvatarImage } from "./avatar";
 import { Card, CardContent, CardHeader } from "./card";
 
 interface UserCardProps {
-  user: User;
+  user: User | UserAuthor;
   onClick?: () => void;
 }
 
@@ -19,7 +19,7 @@ export function UserCard({ user, onClick }: UserCardProps) {
           <p className="font-semibold truncate">@{user.userName}</p>
         </div>
       </CardHeader>
-      {user.biography && (
+      {"biography" in user && user.biography && (
         <CardContent>
           <p className="text-sm text-muted-foreground line-clamp-2">{user.biography}</p>
         </CardContent>

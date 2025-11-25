@@ -81,7 +81,8 @@
         "saving": "Saving...",
         "delete": "Delete",
         "edit": "Edit",
-        "loadMore": "Load more"
+        "loadMore": "Load more",
+        "back": "Back"
     },
     "profile": {
         "edit": "Edit profile",
@@ -133,6 +134,8 @@
         "title": "Search",
         "placeholder": "Search for books, users or reviews...",
         "noResults": "No results found",
+        "noMoreResults": "No more results",
+        "results": "results",
         "users": "Users",
         "books": "Books",
         "reviews": "Reviews",
