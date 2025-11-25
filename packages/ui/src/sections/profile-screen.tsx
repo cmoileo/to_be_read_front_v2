@@ -1,6 +1,6 @@
 import { Separator } from "../components/separator";
 import { ProfileHeader } from "./profile-header";
-import { ReviewCard } from "./review-card";
+import { ProfileReviewCard } from "./profile-review-card";
 import { ProfileEditDialog } from "./profile-edit-dialog";
 import { useTranslation } from "react-i18next";
 
@@ -107,7 +107,7 @@ export const ProfileScreen = ({
           ) : (
             <div className="space-y-3">
               {reviews.map((review) => (
-                <ReviewCard key={review.id} review={review} onClick={onReviewClick} />
+                <ProfileReviewCard key={review.id} review={review} onClick={onReviewClick} />
               ))}
 
               {hasMore && (
