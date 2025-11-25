@@ -128,5 +128,18 @@
             "contentMin": "La critique doit contenir au moins 3 caractères",
             "contentMax": "La critique ne peut pas dépasser 1000 caractères"
         }
+    },
+    "search": {
+        "title": "Rechercher",
+        "placeholder": "Rechercher des livres, utilisateurs ou critiques...",
+        "noResults": "Aucun résultat trouvé",
+        "users": "Utilisateurs",
+        "books": "Livres",
+        "reviews": "Critiques",
+        "showMore": "Afficher +",
+        "searching": "Recherche en cours...",
+        "errors": {
+            "loadFailed": "Échec du chargement des résultats"
+        }
     }
 }

@@ -128,5 +128,18 @@
             "contentMin": "Review must be at least 3 characters long",
             "contentMax": "Review cannot exceed 1000 characters"
         }
+    },
+    "search": {
+        "title": "Search",
+        "placeholder": "Search for books, users or reviews...",
+        "noResults": "No results found",
+        "users": "Users",
+        "books": "Books",
+        "reviews": "Reviews",
+        "showMore": "Show more",
+        "searching": "Searching...",
+        "errors": {
+            "loadFailed": "Failed to load results"
+        }
     }
 }
