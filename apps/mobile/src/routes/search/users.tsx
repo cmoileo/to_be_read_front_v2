@@ -52,7 +52,7 @@ function SearchUsersPage() {
       <div className="flex-1 p-6">
         <header className="mb-6">
           <div className="flex items-center gap-3 mb-4">
-            <Button variant="ghost" size="sm" onClick={() => navigate({ to: "/search" })}>
+            <Button variant="ghost" size="sm" onClick={() => window.history.back()}>
               ← {t("common.back")}
             </Button>
           </div>

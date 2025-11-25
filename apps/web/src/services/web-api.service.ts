@@ -23,14 +23,14 @@ async function callApi<T>(path: string, init?: RequestInit): Promise<T> {
 }
 
 export class WebBooksApi {
-  static async searchBooks(params: BooksSearchParams): Promise<GoogleBook[]> {
+  static async searchBooks(params: BooksSearchParams): Promise<{ data: GoogleBook[] }> {
     const searchParams = new URLSearchParams({
       q: params.q,
       ...(params.page && { page: params.page.toString() }),
       ...(params.limit && { limit: params.limit.toString() }),
     });
 
-    return callApi<GoogleBook[]>(`/api/books?${searchParams.toString()}`);
+    return callApi<{ data: GoogleBook[] }>(`/api/books?${searchParams.toString()}`);
   }
 
   static async getBook(id: string): Promise<GoogleBook> {

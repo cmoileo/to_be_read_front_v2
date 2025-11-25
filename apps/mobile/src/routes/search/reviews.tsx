@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { createFileRoute, redirect, useNavigate, useSearch } from "@tanstack/react-router";
+import { createFileRoute, redirect, useSearch } from "@tanstack/react-router";
 import { MobileStorage } from "../../services/mobile-storage.service";
 import { Button, ReviewCard, useTranslation } from "@repo/ui";
 import { useSearchViewModel } from "../../viewmodels/use-search-viewmodel";
@@ -20,7 +20,6 @@ export const Route = createFileRoute("/search/reviews")({
 });
 
 function SearchReviewsPage() {
-  const navigate = useNavigate();
   const { t } = useTranslation();
   const { q } = useSearch({ from: "/search/reviews" });
 
@@ -52,7 +51,7 @@ function SearchReviewsPage() {
       <div className="flex-1 p-6">
         <header className="mb-6">
           <div className="flex items-center gap-3 mb-4">
-            <Button variant="ghost" size="sm" onClick={() => navigate({ to: "/search" })}>
+            <Button variant="ghost" size="sm" onClick={() => window.history.back()}>
               ← {t("common.back")}
             </Button>
           </div>

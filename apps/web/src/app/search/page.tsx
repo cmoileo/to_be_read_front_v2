@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useAuthContext } from "@/models/hooks/use-auth-context";
 import {
   Input,
@@ -16,13 +16,15 @@ import { useSearchViewModel } from "../../viewmodels/use-search-viewmodel";
 
 export default function SearchPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { user } = useAuthContext();
   const { t } = useTranslation();
   const { toast } = useToast();
 
+  const initialQuery = searchParams.get("q") || "";
   const [mounted, setMounted] = useState(false);
-  const [query, setQuery] = useState("");
-  const [currentQuery, setCurrentQuery] = useState("");
+  const [query, setQuery] = useState(initialQuery);
+  const [currentQuery, setCurrentQuery] = useState(initialQuery);
 
   const {
     globalResults,
@@ -48,6 +50,12 @@ export default function SearchPage() {
   }, [mounted, user, router]);
 
   useEffect(() => {
+    if (mounted && initialQuery && !globalResults) {
+      globalSearch(initialQuery);
+    }
+  }, [mounted, initialQuery]);
+
+  useEffect(() => {
     if (error) {
       toast({
         title: t("common.error"),
@@ -64,6 +72,7 @@ export default function SearchPage() {
   const handleSearch = async (searchQuery: string) => {
     if (!searchQuery.trim()) return;
     setCurrentQuery(searchQuery);
+    router.push(`/search?q=${encodeURIComponent(searchQuery)}`, { scroll: false });
     await globalSearch(searchQuery);
   };
 

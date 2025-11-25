@@ -38,7 +38,7 @@ export default function SearchBooksPage() {
     <div className="container py-8 max-w-4xl">
       <header className="mb-6">
         <div className="flex items-center gap-3 mb-4">
-          <Button variant="ghost" size="sm" onClick={() => router.push("/search")}>
+          <Button variant="ghost" size="sm" onClick={() => router.back()}>
             ← {t("common.back")}
           </Button>
         </div>

@@ -1,5 +1,11 @@
-import { useState } from "react";
-import { createFileRoute, redirect, useNavigate, useRouterState } from "@tanstack/react-router";
+import { useState, useEffect } from "react";
+import {
+  createFileRoute,
+  redirect,
+  useNavigate,
+  useRouterState,
+  useSearch,
+} from "@tanstack/react-router";
 import { MobileStorage } from "../../services/mobile-storage.service";
 import {
   BottomNav,
@@ -21,6 +27,11 @@ export const Route = createFileRoute("/search/")({
     }
   },
   component: SearchPage,
+  validateSearch: (search: Record<string, unknown>) => {
+    return {
+      q: (search.q as string) || "",
+    };
+  },
 });
 
 function SearchPage() {
@@ -29,9 +40,10 @@ function SearchPage() {
   const { toast } = useToast();
   const routerState = useRouterState();
   const currentPath = routerState.location.pathname;
+  const { q: initialQuery } = useSearch({ from: "/search/" });
 
-  const [query, setQuery] = useState("");
-  const [currentQuery, setCurrentQuery] = useState("");
+  const [query, setQuery] = useState(initialQuery);
+  const [currentQuery, setCurrentQuery] = useState(initialQuery);
 
   const {
     globalResults,
@@ -41,14 +53,18 @@ function SearchPage() {
     isSearching,
     error,
     globalSearch,
-    searchUsers,
-    searchBooks,
-    searchReviews,
   } = useSearchViewModel();
+
+  useEffect(() => {
+    if (initialQuery && !globalResults) {
+      globalSearch(initialQuery);
+    }
+  }, [initialQuery]);
 
   const handleSearch = async (searchQuery: string) => {
     if (!searchQuery.trim()) return;
     setCurrentQuery(searchQuery);
+    navigate({ to: "/search", search: { q: searchQuery }, replace: true });
     await globalSearch(searchQuery);
   };
 

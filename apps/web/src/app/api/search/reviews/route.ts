@@ -6,7 +6,7 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3333";
 export async function GET(request: NextRequest) {
   try {
     const cookieStore = await cookies();
-    const accessToken = cookieStore.get("accessToken")?.value;
+    const accessToken = cookieStore.get("tbr_access_token")?.value;
 
     if (!accessToken) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

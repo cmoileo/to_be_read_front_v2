@@ -72,7 +72,7 @@ export function useSearchViewModel() {
       if (append && booksResults) {
         setBooksResults({
           ...results,
-          items: [...booksResults.items, ...results.items],
+          data: [...booksResults.data, ...results.data],
         });
       } else {
         setBooksResults(results);

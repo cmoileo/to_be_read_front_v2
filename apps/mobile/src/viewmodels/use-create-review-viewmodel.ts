@@ -9,7 +9,7 @@ export function useCreateReviewViewModel() {
   const searchBooks = async (query: string): Promise<GoogleBook[]> => {
     try {
       const results = await BooksApi.searchBooks({ q: query, limit: 10 });
-      return results;
+      return results.data;
     } catch (err: any) {
       console.error("Failed to search books:", err);
       return [];

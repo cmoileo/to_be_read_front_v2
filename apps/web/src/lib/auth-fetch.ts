@@ -10,8 +10,11 @@ let refreshPromise: Promise<boolean> | null = null;
 export async function authFetch(url: string, options: FetchOptions = {}): Promise<Response> {
   const { skipAuth, ...fetchOptions } = options;
 
-  // First attempt
-  let response = await fetch(url, fetchOptions);
+  // First attempt - always include credentials to send cookies
+  let response = await fetch(url, {
+    ...fetchOptions,
+    credentials: "include",
+  });
 
   // If 401 and not skipping auth, try to refresh
   if (response.status === 401 && !skipAuth) {
@@ -27,9 +30,9 @@ export async function authFetch(url: string, options: FetchOptions = {}): Promis
           isRefreshing = false;
           refreshPromise = null;
         });
-      
+
       const refreshSuccess = await refreshPromise;
-      
+
       if (!refreshSuccess) {
         // Refresh failed, redirect to login
         window.location.href = "/login";
@@ -38,7 +41,10 @@ export async function authFetch(url: string, options: FetchOptions = {}): Promis
     }
 
     // Retry the original request after refresh
-    response = await fetch(url, fetchOptions);
+    response = await fetch(url, {
+      ...fetchOptions,
+      credentials: "include",
+    });
   }
 
   return response;

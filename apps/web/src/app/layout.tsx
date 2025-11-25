@@ -17,12 +17,14 @@ export default async function RootLayout({
   const user = await getUserFromCookies();
 
   return (
-    <html lang="fr">
-      <body className="antialiased">
-        <Providers initialUser={user}>
-          <Navigation />
-          {children}
-        </Providers>
+    <html lang="fr" suppressHydrationWarning>
+      <body className="antialiased" suppressHydrationWarning>
+        <div className="min-h-screen bg-background font-sans antialiased">
+          <Providers initialUser={user}>
+            <Navigation />
+            {children}
+          </Providers>
+        </div>
       </body>
     </html>
   );
