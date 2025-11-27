@@ -1,7 +1,7 @@
 import { createFileRoute, redirect, useNavigate, useRouterState } from "@tanstack/react-router";
-import { BottomNav, useTranslation } from "@repo/ui";
-import { useAuthModel } from "../models/hooks/use-auth-model";
+import { BottomNav, FeedScreen, useTranslation } from "@repo/ui";
 import { MobileStorage } from "../services/mobile-storage.service";
+import { useFeedViewModel } from "../viewmodels/use-feed-viewmodel";
 
 export const Route = createFileRoute("/")({
   beforeLoad: async () => {
@@ -14,11 +14,19 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
-  const { user } = useAuthModel();
   const navigate = useNavigate();
   const { t } = useTranslation();
   const routerState = useRouterState();
   const currentPath = routerState.location.pathname;
+
+  const {
+    reviews,
+    isLoading,
+    hasMore,
+    isFetchingMore,
+    handleLoadMore,
+    handleLike,
+  } = useFeedViewModel();
 
   const navItems = [
     {
@@ -51,26 +59,27 @@ function Index() {
     navigate({ to: href });
   };
 
+  const handleAuthorClick = (authorId: number) => {
+    navigate({ to: `/user/${authorId}` });
+  };
+
+  const handleReviewClick = (reviewId: number) => {
+    navigate({ to: `/review/${reviewId}` });
+  };
+
   return (
     <div className="flex min-h-screen flex-col">
-      <div className="flex-1 p-6 pb-20">
-        <header className="mb-8">
-          <h1 className="text-2xl font-bold">To Be Read</h1>
-        </header>
-
-        <div className="flex-1 flex flex-col items-center justify-center">
-          <div className="max-w-md w-full space-y-6 text-center">
-            <div className="space-y-2">
-              <h2 className="text-3xl font-bold">
-                {t("home.welcome")} {user?.userName} !
-              </h2>
-              <p className="text-muted-foreground">Votre bibliothèque littéraire personnelle</p>
-            </div>
-
-            <div className="text-4xl">📚</div>
-            <p className="text-muted-foreground">Contenu de la page d'accueil à venir</p>
-          </div>
-        </div>
+      <div className="flex-1 p-4 pb-20">
+        <FeedScreen
+          reviews={reviews}
+          isLoading={isLoading}
+          hasMore={hasMore}
+          isFetchingMore={isFetchingMore}
+          onLoadMore={handleLoadMore}
+          onLike={handleLike}
+          onAuthorClick={handleAuthorClick}
+          onReviewClick={handleReviewClick}
+        />
       </div>
 
       <BottomNav items={navItems} onNavigate={handleNavigate} />

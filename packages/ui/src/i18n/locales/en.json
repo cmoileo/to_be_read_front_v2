@@ -72,6 +72,16 @@
         "title": "Home",
         "welcome": "Welcome"
     },
+    "feed": {
+        "title": "My Feed",
+        "empty": {
+            "title": "Your feed is empty",
+            "description": "Follow other readers to see their reviews appear here."
+        },
+        "like": "Like",
+        "unlike": "Unlike",
+        "comments": "Comments"
+    },
     "common": {
         "loading": "Loading...",
         "error": "Error",

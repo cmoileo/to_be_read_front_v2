@@ -72,6 +72,16 @@
         "title": "Accueil",
         "welcome": "Bienvenue"
     },
+    "feed": {
+        "title": "Mon fil d'actualité",
+        "empty": {
+            "title": "Votre fil est vide",
+            "description": "Suivez d'autres lecteurs pour voir leurs critiques apparaître ici."
+        },
+        "like": "J'aime",
+        "unlike": "Je n'aime plus",
+        "comments": "Commentaires"
+    },
     "common": {
         "loading": "Chargement...",
         "error": "Erreur",
