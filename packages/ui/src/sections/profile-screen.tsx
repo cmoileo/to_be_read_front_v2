@@ -1,3 +1,5 @@
+import { ArrowLeft } from "lucide-react";
+import { Button } from "../components/button";
 import { Separator } from "../components/separator";
 import { ProfileHeader } from "./profile-header";
 import { ProfileReviewCard } from "./profile-review-card";
@@ -40,6 +42,8 @@ interface ProfileScreenProps {
   isFetchingMore?: boolean;
   isEditDialogOpen?: boolean;
   isUpdating?: boolean;
+  showBackButton?: boolean;
+  isFollowLoading?: boolean;
   onEdit?: () => void;
   onCloseEditDialog?: () => void;
   onUpdateProfile?: (data: any) => void;
@@ -47,6 +51,7 @@ interface ProfileScreenProps {
   onReviewClick?: (reviewId: number) => void;
   onFollow?: () => void;
   onUnfollow?: () => void;
+  onBack?: () => void;
 }
 
 export const ProfileScreen = ({
@@ -58,6 +63,8 @@ export const ProfileScreen = ({
   isFetchingMore = false,
   isEditDialogOpen = false,
   isUpdating = false,
+  showBackButton = false,
+  isFollowLoading = false,
   onEdit,
   onCloseEditDialog,
   onUpdateProfile,
@@ -65,6 +72,7 @@ export const ProfileScreen = ({
   onReviewClick,
   onFollow,
   onUnfollow,
+  onBack,
 }: ProfileScreenProps) => {
   const { t } = useTranslation();
 
@@ -87,9 +95,17 @@ export const ProfileScreen = ({
   return (
     <>
       <div className="container mx-auto px-4 py-6 space-y-6 max-w-4xl">
+        {showBackButton && onBack && (
+          <Button variant="ghost" size="sm" onClick={onBack} className="-ml-2 mb-2">
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            {t("common.back")}
+          </Button>
+        )}
+
         <ProfileHeader
           user={user}
           isOwnProfile={isOwnProfile}
+          isFollowLoading={isFollowLoading}
           onEdit={onEdit}
           onFollow={onFollow}
           onUnfollow={onUnfollow}

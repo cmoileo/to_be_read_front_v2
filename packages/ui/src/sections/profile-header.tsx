@@ -15,6 +15,7 @@ interface User {
 interface ProfileHeaderProps {
   user: User;
   isOwnProfile: boolean;
+  isFollowLoading?: boolean;
   onEdit?: () => void;
   onFollow?: () => void;
   onUnfollow?: () => void;
@@ -23,6 +24,7 @@ interface ProfileHeaderProps {
 export const ProfileHeader = ({
   user,
   isOwnProfile,
+  isFollowLoading = false,
   onEdit,
   onFollow,
   onUnfollow,
@@ -65,6 +67,7 @@ export const ProfileHeader = ({
             variant={user.isFollowing ? "outline" : "default"}
             onClick={handleFollowToggle}
             size="sm"
+            disabled={isFollowLoading}
           >
             {user.isFollowing ? t("profile.unfollow") : t("profile.follow")}
           </Button>

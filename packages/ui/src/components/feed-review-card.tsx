@@ -15,7 +15,7 @@ interface FeedReview {
   author: {
     id: number;
     userName: string;
-    avatarUrl?: string | null;
+    avatar?: string | null;
   };
   book: {
     id?: string;
@@ -62,7 +62,7 @@ export function FeedReviewCard({
           >
             <Avatar className="h-10 w-10">
               <AvatarImage
-                src={review.author?.avatarUrl || undefined}
+                src={review.author?.avatar || undefined}
                 alt={review.author?.userName}
               />
               <AvatarFallback>

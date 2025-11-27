@@ -135,7 +135,7 @@ export default function SearchPage() {
             title={t("search.users")}
             items={displayResults.users}
             renderItem={(user) => (
-              <UserCard user={user} onClick={() => router.push(`/profile/${user.id}`)} />
+              <UserCard user={user} onClick={() => router.push(`/user/${user.id}`)} />
             )}
             onShowMore={handleShowMoreUsers}
             showMoreButton={globalResults !== null && displayResults.users.length > 0}

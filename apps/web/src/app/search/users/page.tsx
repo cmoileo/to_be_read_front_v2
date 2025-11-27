@@ -60,7 +60,7 @@ export default function SearchUsersPage() {
             <UserCard
               key={user.id}
               user={user}
-              onClick={() => router.push(`/profile/${user.id}`)}
+              onClick={() => router.push(`/user/${user.id}`)}
             />
           ))}
 
