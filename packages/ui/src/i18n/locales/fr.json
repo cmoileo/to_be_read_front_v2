@@ -106,6 +106,8 @@
         "userReviews": "Critiques",
         "noReviews": "Aucune critique pour le moment",
         "notFound": "Profil introuvable",
+        "deleteReviewTitle": "Supprimer la critique",
+        "deleteReviewDescription": "Êtes-vous sûr de vouloir supprimer cette critique ? Cette action est irréversible.",
         "userName": "Nom d'utilisateur",
         "biography": "Biographie",
         "language": "Langue",

@@ -43,4 +43,8 @@ export class MobileProfileService {
   static async getUserReviews(userId: number, page: number = 1): Promise<PaginatedResponse<Review>> {
     return HttpInterceptor.get<PaginatedResponse<Review>>(`/user/${userId}/reviews/${page}`);
   }
+
+  static async deleteReview(reviewId: number): Promise<void> {
+    await HttpInterceptor.delete(`/review/${reviewId}`);
+  }
 }

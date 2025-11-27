@@ -21,6 +21,8 @@ export default function ProfileClient({ initialUser, initialReviewsResponse }: P
     isFetchingMore,
     handleUpdateProfile,
     handleLoadMore,
+    handleReviewClick,
+    handleDeleteReview,
   } = useProfileViewModel({ initialUser, initialReviewsResponse });
 
   if (!user) {
@@ -39,9 +41,8 @@ export default function ProfileClient({ initialUser, initialReviewsResponse }: P
       onCloseEditDialog={() => setIsEditOpen(false)}
       onUpdateProfile={handleUpdateProfile}
       onLoadMore={handleLoadMore}
-      onReviewClick={(reviewId) => {
-        console.log("Review pressed:", reviewId);
-      }}
+      onReviewClick={handleReviewClick}
+      onDeleteReview={handleDeleteReview}
       isOwnProfile={true}
     />
   );

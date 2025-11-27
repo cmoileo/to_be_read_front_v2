@@ -78,10 +78,11 @@ export const useSingleReviewViewModel = (reviewId: number) => {
             data: page.data.map((comment: SingleComment) => {
               if (comment.id === commentId) {
                 const isCurrentlyLiked = comment.isLiked;
+                const currentLikesCount = Number(comment.likesCount) || 0;
                 return {
                   ...comment,
                   isLiked: !isCurrentlyLiked,
-                  likesCount: isCurrentlyLiked ? comment.likesCount - 1 : comment.likesCount + 1,
+                  likesCount: isCurrentlyLiked ? currentLikesCount - 1 : currentLikesCount + 1,
                 };
               }
               return comment;

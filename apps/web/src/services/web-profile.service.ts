@@ -74,4 +74,10 @@ export class WebProfileService {
   static async getUserReviews(userId: number, page: number, accessToken: string): Promise<PaginatedResponse<Review>> {
     return callApi<PaginatedResponse<Review>>(`/user/${userId}/reviews/${page}`, {}, accessToken);
   }
+
+  static async deleteReview(reviewId: number, accessToken: string): Promise<void> {
+    await callApi<void>(`/review/${reviewId}`, {
+      method: "DELETE",
+    }, accessToken);
+  }
 }

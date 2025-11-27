@@ -1,5 +1,7 @@
 import { Card, CardContent } from "../components/card";
 import { Rating } from "../components/rating";
+import { Button } from "../components/button";
+import { Trash2 } from "lucide-react";
 
 interface Review {
   id: number;
@@ -21,12 +23,26 @@ interface Review {
 interface ProfileReviewCardProps {
   review: Review;
   onClick?: (reviewId: number) => void;
+  onDelete?: (reviewId: number) => void;
+  showDeleteButton?: boolean;
 }
 
-export const ProfileReviewCard = ({ review, onClick }: ProfileReviewCardProps) => {
+export const ProfileReviewCard = ({
+  review,
+  onClick,
+  onDelete,
+  showDeleteButton = false,
+}: ProfileReviewCardProps) => {
   const handleClick = () => {
     if (onClick) {
       onClick(review.id);
+    }
+  };
+
+  const handleDelete = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (onDelete) {
+      onDelete(review.id);
     }
   };
 
@@ -53,9 +69,22 @@ export const ProfileReviewCard = ({ review, onClick }: ProfileReviewCardProps) =
             <p className="text-sm line-clamp-2">{review.content}</p>
 
             <div className="flex gap-4 text-xs text-muted-foreground">
-              <span>❤️ {review.likesCount}</span>
-              <span>💬 {review.commentsCount}</span>
+              <span>❤️ {Number(review.likesCount) || 0}</span>
+              <span>💬 {Number(review.commentsCount) || 0}</span>
             </div>
+
+            {showDeleteButton && onDelete && (
+              <div className="flex justify-end">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-8 px-2 text-destructive hover:text-destructive hover:bg-destructive/10"
+                  onClick={handleDelete}
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </div>
+            )}
           </div>
         </div>
       </CardContent>

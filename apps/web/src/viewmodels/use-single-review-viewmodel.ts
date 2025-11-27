@@ -59,6 +59,7 @@ export const useSingleReviewViewModel = ({
     if (!comment) return;
 
     const wasLiked = comment.isLiked;
+    const currentLikesCount = Number(comment.likesCount) || 0;
 
     // Optimistic update
     setComments((prev) =>
@@ -67,7 +68,7 @@ export const useSingleReviewViewModel = ({
           ? {
               ...c,
               isLiked: !c.isLiked,
-              likesCount: c.isLiked ? c.likesCount - 1 : c.likesCount + 1,
+              likesCount: c.isLiked ? currentLikesCount - 1 : currentLikesCount + 1,
             }
           : c
       )
@@ -81,7 +82,7 @@ export const useSingleReviewViewModel = ({
             ? {
                 ...c,
                 isLiked: wasLiked,
-                likesCount: wasLiked ? c.likesCount + 1 : c.likesCount - 1,
+                likesCount: currentLikesCount,
               }
             : c
         )

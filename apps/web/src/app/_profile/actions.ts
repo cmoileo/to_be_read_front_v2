@@ -47,3 +47,14 @@ export async function getMyReviewsAction(page: number) {
 
   return WebProfileService.getMyReviews(page, accessToken);
 }
+
+export async function deleteReviewAction(reviewId: number) {
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get("tbr_access_token")?.value;
+
+  if (!accessToken) {
+    throw new Error("Non authentifié");
+  }
+
+  return WebProfileService.deleteReview(reviewId, accessToken);
+}

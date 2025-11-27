@@ -1,9 +1,20 @@
+import { useState } from "react";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "../components/button";
 import { Separator } from "../components/separator";
 import { ProfileHeader } from "./profile-header";
 import { ProfileReviewCard } from "./profile-review-card";
 import { ProfileEditDialog } from "./profile-edit-dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "../components/alert-dialog";
 import { useTranslation } from "react-i18next";
 
 interface User {
@@ -49,6 +60,7 @@ interface ProfileScreenProps {
   onUpdateProfile?: (data: any) => void;
   onLoadMore?: () => void;
   onReviewClick?: (reviewId: number) => void;
+  onDeleteReview?: (reviewId: number) => void;
   onFollow?: () => void;
   onUnfollow?: () => void;
   onBack?: () => void;
@@ -70,11 +82,20 @@ export const ProfileScreen = ({
   onUpdateProfile,
   onLoadMore,
   onReviewClick,
+  onDeleteReview,
   onFollow,
   onUnfollow,
   onBack,
 }: ProfileScreenProps) => {
   const { t } = useTranslation();
+  const [reviewToDelete, setReviewToDelete] = useState<number | null>(null);
+
+  const handleConfirmDelete = () => {
+    if (reviewToDelete !== null && onDeleteReview) {
+      onDeleteReview(reviewToDelete);
+    }
+    setReviewToDelete(null);
+  };
 
   if (isLoading && !user) {
     return (
@@ -125,7 +146,13 @@ export const ProfileScreen = ({
           ) : (
             <div className="space-y-3">
               {reviews.map((review) => (
-                <ProfileReviewCard key={review.id} review={review} onClick={onReviewClick} />
+                <ProfileReviewCard
+                  key={review.id}
+                  review={review}
+                  onClick={onReviewClick}
+                  onDelete={isOwnProfile ? (id) => setReviewToDelete(id) : undefined}
+                  showDeleteButton={isOwnProfile}
+                />
               ))}
 
               {hasMore && (
@@ -177,6 +204,23 @@ export const ProfileScreen = ({
           }}
         />
       )}
+
+      <AlertDialog open={reviewToDelete !== null} onOpenChange={(open) => !open && setReviewToDelete(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t("profile.deleteReviewTitle")}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {t("profile.deleteReviewDescription")}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
+            <AlertDialogAction onClick={handleConfirmDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              {t("common.delete")}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 };

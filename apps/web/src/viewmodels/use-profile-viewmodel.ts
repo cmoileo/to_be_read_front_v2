@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { useMutation, useQuery, useInfiniteQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 import type { User, Review } from "@repo/types";
-import { getMyReviewsAction, updateProfileAction } from "@/app/_profile/actions";
+import { getMyReviewsAction, updateProfileAction, deleteReviewAction } from "@/app/_profile/actions";
 
 interface UseProfileViewModelProps {
   initialUser: User | null;
@@ -10,6 +11,8 @@ interface UseProfileViewModelProps {
 
 export function useProfileViewModel({ initialUser, initialReviewsResponse }: UseProfileViewModelProps) {
   const [user, setUser] = useState<User | null>(initialUser);
+  const router = useRouter();
+  const queryClient = useQueryClient();
 
   const { data: reviewsData, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery({
     queryKey: ["my-reviews"],
@@ -62,6 +65,56 @@ export function useProfileViewModel({ initialUser, initialReviewsResponse }: Use
     }
   };
 
+  const handleReviewClick = (reviewId: number) => {
+    router.push(`/review/${reviewId}`);
+  };
+
+  const deleteMutation = useMutation({
+    mutationFn: async (reviewId: number) => {
+      return deleteReviewAction(reviewId);
+    },
+    onMutate: async (reviewId) => {
+      await queryClient.cancelQueries({ queryKey: ["my-reviews"] });
+      
+      const previousData = queryClient.getQueryData(["my-reviews"]);
+      const previousUser = user;
+      
+      queryClient.setQueryData(["my-reviews"], (oldData: any) => {
+        if (!oldData) return oldData;
+        return {
+          ...oldData,
+          pages: oldData.pages.map((page: any) => ({
+            ...page,
+            data: page.data.filter((review: any) => review.id !== reviewId),
+          })),
+        };
+      });
+
+      // Update reviewsCount in user state
+      setUser((prevUser) => {
+        if (!prevUser) return prevUser;
+        return {
+          ...prevUser,
+          reviewsCount: Math.max(0, (prevUser.reviewsCount || 0) - 1),
+        };
+      });
+
+      return { previousData, previousUser };
+    },
+    onError: (_err, _vars, context) => {
+      if (context?.previousData) {
+        queryClient.setQueryData(["my-reviews"], context.previousData);
+      }
+      if (context?.previousUser) {
+        setUser(context.previousUser);
+      }
+    },
+  });
+
+  const handleDeleteReview = (reviewId: number) => {
+    deleteMutation.mutate(reviewId);
+  };
+
   return {
     user,
     reviews,
@@ -70,5 +123,7 @@ export function useProfileViewModel({ initialUser, initialReviewsResponse }: Use
     isFetchingMore: isFetchingNextPage,
     handleUpdateProfile,
     handleLoadMore,
+    handleReviewClick,
+    handleDeleteReview,
   };
 }

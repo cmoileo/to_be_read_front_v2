@@ -30,6 +30,7 @@ function ProfilePage() {
     handleUpdateProfile,
     handleLoadMore,
     handleReviewClick,
+    handleDeleteReview,
   } = useProfileViewModel();
 
   const navItems = [
@@ -79,6 +80,7 @@ function ProfilePage() {
           onUpdateProfile={handleUpdateProfile}
           onLoadMore={handleLoadMore}
           onReviewClick={handleReviewClick}
+          onDeleteReview={handleDeleteReview}
         />
       </div>
 
