@@ -139,7 +139,14 @@
             "ratingRequired": "Veuillez donner une note",
             "contentMin": "La critique doit contenir au moins 3 caractères",
             "contentMax": "La critique ne peut pas dépasser 1000 caractères"
-        }
+        },
+        "notFound": "Critique introuvable"
+    },
+    "comments": {
+        "title": "Commentaires",
+        "placeholder": "Écrire un commentaire...",
+        "empty": "Aucun commentaire. Soyez le premier à commenter !",
+        "deleteConfirm": "Êtes-vous sûr de vouloir supprimer ce commentaire ?"
     },
     "search": {
         "title": "Rechercher",

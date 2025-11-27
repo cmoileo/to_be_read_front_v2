@@ -102,8 +102,8 @@ function SearchPage() {
     {
       label: t("navigation.createReview"),
       icon: "✍️",
-      href: "/review",
-      isActive: currentPath === "/review",
+      href: "/create-review",
+      isActive: currentPath === "/create-review",
     },
     {
       label: t("navigation.profile"),

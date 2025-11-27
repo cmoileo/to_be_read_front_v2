@@ -3,17 +3,17 @@ import { MobileStorage } from "../services/mobile-storage.service";
 import { BottomNav, useTranslation, CreateReviewForm, useToast } from "@repo/ui";
 import { useCreateReviewViewModel } from "../viewmodels/use-create-review-viewmodel";
 
-export const Route = createFileRoute("/review")({
+export const Route = createFileRoute("/create-review")({
   beforeLoad: async () => {
     const hasTokens = await MobileStorage.hasTokens();
     if (!hasTokens) {
       throw redirect({ to: "/onboarding" });
     }
   },
-  component: ReviewPage,
+  component: CreateReviewPage,
 });
 
-function ReviewPage() {
+function CreateReviewPage() {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const routerState = useRouterState();
@@ -37,8 +37,8 @@ function ReviewPage() {
     {
       label: t("navigation.createReview"),
       icon: "✍️",
-      href: "/review",
-      isActive: currentPath === "/review",
+      href: "/create-review",
+      isActive: currentPath === "/create-review",
     },
     {
       label: t("navigation.profile"),
