@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { ArrowLeft, Heart, MessageCircle } from "lucide-react";
 import { Button } from "../components/button";
 import { Avatar, AvatarFallback, AvatarImage } from "../components/avatar";
@@ -5,6 +6,16 @@ import { Rating } from "../components/rating";
 import { Separator } from "../components/separator";
 import { CommentCard } from "../components/comment-card";
 import { CommentForm } from "../components/comment-form";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "../components/alert-dialog";
 import { useTranslation } from "react-i18next";
 import { cn } from "../lib/utils";
 
@@ -86,6 +97,14 @@ export function SingleReviewScreen({
   onAuthorClick,
 }: SingleReviewScreenProps) {
   const { t } = useTranslation();
+  const [commentToDelete, setCommentToDelete] = useState<number | null>(null);
+
+  const handleConfirmDeleteComment = () => {
+    if (commentToDelete !== null && onDeleteComment) {
+      onDeleteComment(commentToDelete);
+    }
+    setCommentToDelete(null);
+  };
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -216,7 +235,7 @@ export function SingleReviewScreen({
                 key={comment.id}
                 comment={comment}
                 onLike={onLikeComment}
-                onDelete={onDeleteComment}
+                onDelete={(id) => setCommentToDelete(id)}
                 onAuthorClick={onAuthorClick}
               />
             ))
@@ -234,6 +253,23 @@ export function SingleReviewScreen({
           </Button>
         )}
       </div>
+
+      <AlertDialog open={commentToDelete !== null} onOpenChange={(open) => !open && setCommentToDelete(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t("comments.deleteTitle")}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {t("comments.deleteConfirm")}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
+            <AlertDialogAction onClick={handleConfirmDeleteComment} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              {t("common.delete")}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

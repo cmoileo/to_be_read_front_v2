@@ -148,6 +148,7 @@
         "title": "Commentaires",
         "placeholder": "Écrire un commentaire...",
         "empty": "Aucun commentaire. Soyez le premier à commenter !",
+        "deleteTitle": "Supprimer le commentaire",
         "deleteConfirm": "Êtes-vous sûr de vouloir supprimer ce commentaire ?"
     },
     "search": {
