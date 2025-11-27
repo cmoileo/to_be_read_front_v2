@@ -57,7 +57,11 @@ export default function SearchReviewsPage() {
       {reviewsResults && (
         <div className="space-y-3">
           {reviewsResults.data.map((review) => (
-            <ReviewCard key={review.id} review={review} onClick={() => {}} />
+            <ReviewCard
+              key={review.id}
+              review={review}
+              onClick={() => router.push(`/review/${review.id}`)}
+            />
           ))}
 
           {hasMore && (
