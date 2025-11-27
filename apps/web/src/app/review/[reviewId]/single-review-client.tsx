@@ -38,6 +38,10 @@ export default function SingleReviewClient({
     router.push(`/user/${authorId}`);
   };
 
+  const handleBookClick = (bookId: string) => {
+    router.push(`/book/${bookId}`);
+  };
+
   return (
     <SingleReviewScreen
       review={review}
@@ -53,6 +57,7 @@ export default function SingleReviewClient({
       onCreateComment={handleCreateComment}
       onLoadMoreComments={handleLoadMoreComments}
       onAuthorClick={handleAuthorClick}
+      onBookClick={handleBookClick}
     />
   );
 }

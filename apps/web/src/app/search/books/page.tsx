@@ -57,7 +57,11 @@ export default function SearchBooksPage() {
       {booksResults && (
         <div className="space-y-3">
           {booksResults.data.map((book) => (
-            <BookCard key={book.id} book={book} onClick={() => {}} />
+            <BookCard 
+              key={book.id} 
+              book={book} 
+              onClick={() => router.push(`/book/${book.id}`)} 
+            />
           ))}
 
           {hasMore && (

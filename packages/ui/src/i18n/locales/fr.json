@@ -144,6 +144,17 @@
         },
         "notFound": "Critique introuvable"
     },
+    "book": {
+        "notFound": "Livre introuvable",
+        "by": "par",
+        "description": "Description",
+        "reviews": "Critiques",
+        "review": "critique",
+        "reviewsCount": "critiques",
+        "noReviews": "Aucune critique pour ce livre. Soyez le premier à partager votre avis !",
+        "pages": "pages",
+        "ratings": "notes"
+    },
     "comments": {
         "title": "Commentaires",
         "placeholder": "Écrire un commentaire...",

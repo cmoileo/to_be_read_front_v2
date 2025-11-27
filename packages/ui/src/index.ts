@@ -35,6 +35,7 @@ export * from "./sections/create-review-form";
 export * from "./sections/search-section";
 export * from "./sections/feed-screen";
 export * from "./sections/single-review-screen";
+export * from "./sections/single-book-screen";
 export * from "./schemas/auth.schema";
 export * from "./schemas/profile.schema";
 export * from "./i18n/config";

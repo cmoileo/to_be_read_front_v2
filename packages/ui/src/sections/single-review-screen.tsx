@@ -79,6 +79,7 @@ interface SingleReviewScreenProps {
   onCreateComment?: (content: string) => Promise<void>;
   onLoadMoreComments?: () => void;
   onAuthorClick?: (authorId: number) => void;
+  onBookClick?: (bookId: string) => void;
 }
 
 export function SingleReviewScreen({
@@ -95,6 +96,7 @@ export function SingleReviewScreen({
   onCreateComment,
   onLoadMoreComments,
   onAuthorClick,
+  onBookClick,
 }: SingleReviewScreenProps) {
   const { t } = useTranslation();
   const [commentToDelete, setCommentToDelete] = useState<number | null>(null);
@@ -149,7 +151,17 @@ export function SingleReviewScreen({
         </Button>
       )}
 
-      <div className="flex gap-4 mb-6">
+      <div
+        role="button"
+        tabIndex={0}
+        className="flex gap-4 mb-6 text-left w-full hover:bg-accent/50 rounded-lg p-2 -ml-2 transition-colors cursor-pointer"
+        onClick={() => onBookClick?.(review.book.id)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            onBookClick?.(review.book.id);
+          }
+        }}
+      >
         {review.book.volumeInfo.imageLinks?.thumbnail && (
           <img
             src={review.book.volumeInfo.imageLinks.thumbnail}

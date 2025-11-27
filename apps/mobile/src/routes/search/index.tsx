@@ -177,7 +177,12 @@ function SearchPage() {
             <SearchSection
               title={t("search.books")}
               items={displayResults.books}
-              renderItem={(book) => <BookCard book={book} onClick={() => {}} />}
+              renderItem={(book) => (
+                <BookCard 
+                  book={book} 
+                  onClick={() => navigate({ to: "/book/$bookId", params: { bookId: book.id } })} 
+                />
+              )}
               onShowMore={handleShowMoreBooks}
               showMoreButton={globalResults !== null && displayResults.books.length > 0}
               emptyMessage={currentQuery ? t("search.noResults") : undefined}

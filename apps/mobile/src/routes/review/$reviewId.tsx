@@ -40,6 +40,10 @@ function SingleReviewPage() {
     navigate({ to: "/user/$userId", params: { userId: String(authorId) } });
   };
 
+  const handleBookClick = (bookId: string) => {
+    navigate({ to: "/book/$bookId", params: { bookId } });
+  };
+
   return (
     <SingleReviewScreen
       review={review}
@@ -55,6 +59,7 @@ function SingleReviewPage() {
       onCreateComment={handleCreateComment}
       onLoadMoreComments={handleLoadMoreComments}
       onAuthorClick={handleAuthorClick}
+      onBookClick={handleBookClick}
     />
   );
 }

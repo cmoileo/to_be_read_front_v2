@@ -144,6 +144,17 @@
         },
         "notFound": "Review not found"
     },
+    "book": {
+        "notFound": "Book not found",
+        "by": "by",
+        "description": "Description",
+        "reviews": "Reviews",
+        "review": "review",
+        "reviewsCount": "reviews",
+        "noReviews": "No reviews for this book yet. Be the first to share your thoughts!",
+        "pages": "pages",
+        "ratings": "ratings"
+    },
     "comments": {
         "title": "Comments",
         "placeholder": "Write a comment...",

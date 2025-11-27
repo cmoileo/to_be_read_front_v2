@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { createFileRoute, redirect, useSearch } from "@tanstack/react-router";
+import { createFileRoute, redirect, useSearch, useNavigate } from "@tanstack/react-router";
 import { MobileStorage } from "../../services/mobile-storage.service";
 import { Button, BookCard, useTranslation } from "@repo/ui";
 import { useSearchViewModel } from "../../viewmodels/use-search-viewmodel";
@@ -22,6 +22,7 @@ export const Route = createFileRoute("/search/books")({
 function SearchBooksPage() {
   const { t } = useTranslation();
   const { q } = useSearch({ from: "/search/books" });
+  const navigate = useNavigate();
 
   const [currentPage, setCurrentPage] = useState(1);
   const { booksResults, isLoadingBooks, searchBooks } = useSearchViewModel();
@@ -45,6 +46,10 @@ function SearchBooksPage() {
   };
 
   const hasMore = booksResults?.meta?.lastPage && currentPage < booksResults.meta.lastPage;
+
+  const handleBookClick = (bookId: string) => {
+    navigate({ to: "/book/$bookId", params: { bookId } });
+  };
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -70,7 +75,7 @@ function SearchBooksPage() {
         {booksResults && (
           <div className="space-y-3">
             {booksResults.data.map((book) => (
-              <BookCard key={book.id} book={book} onClick={() => {}} />
+              <BookCard key={book.id} book={book} onClick={() => handleBookClick(book.id)} />
             ))}
 
             {hasMore && (
