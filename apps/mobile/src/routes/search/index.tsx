@@ -167,7 +167,7 @@ function SearchPage() {
               title={t("search.users")}
               items={displayResults.users}
               renderItem={(user) => (
-                <UserCard user={user} onClick={() => navigate({ to: `/profile/${user.id}` })} />
+                <UserCard user={user} onClick={() => navigate({ to: `/user/${user.id}` })} />
               )}
               onShowMore={handleShowMoreUsers}
               showMoreButton={globalResults !== null && displayResults.users.length > 0}

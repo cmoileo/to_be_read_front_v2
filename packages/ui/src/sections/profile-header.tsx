@@ -73,15 +73,15 @@ export const ProfileHeader = ({
 
       <div className="flex gap-6 text-sm">
         <div className="text-center">
-          <div className="font-bold text-lg">{user.reviewsCount}</div>
+          <div className="font-bold text-lg">{Number(user.reviewsCount)}</div>
           <div className="text-muted-foreground">{t("profile.reviews")}</div>
         </div>
         <div className="text-center">
-          <div className="font-bold text-lg">{user.followersCount}</div>
+          <div className="font-bold text-lg">{Number(user.followersCount)}</div>
           <div className="text-muted-foreground">{t("profile.followers")}</div>
         </div>
         <div className="text-center">
-          <div className="font-bold text-lg">{user.followingCount}</div>
+          <div className="font-bold text-lg">{Number(user.followingCount)}</div>
           <div className="text-muted-foreground">{t("profile.following")}</div>
         </div>
       </div>

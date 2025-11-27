@@ -98,7 +98,9 @@ export const ProfileScreen = ({
         <Separator />
 
         <div className="space-y-4">
-          <h2 className="text-xl font-semibold">{t("profile.myReviews")}</h2>
+          <h2 className="text-xl font-semibold">
+            {isOwnProfile ? t("profile.myReviews") : t("profile.userReviews")}
+          </h2>
 
           {reviews.length === 0 && !isLoading ? (
             <div className="text-center py-12">

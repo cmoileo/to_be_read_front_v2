@@ -74,7 +74,7 @@ function SearchUsersPage() {
               <UserCard
                 key={user.id}
                 user={user}
-                onClick={() => navigate({ to: `/profile/${user.id}` })}
+                onClick={() => navigate({ to: `/user/${user.id}` })}
               />
             ))}
 
