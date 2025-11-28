@@ -2,6 +2,8 @@ import { Card, CardContent, CardHeader, CardFooter } from "./card";
 import { Avatar, AvatarFallback, AvatarImage } from "./avatar";
 import { Rating } from "./rating";
 import { Button } from "./button";
+import { cn } from "../lib/utils";
+import { Heart, MessageCircle } from "lucide-react";
 
 interface FeedReview {
   id: number;
@@ -52,19 +54,16 @@ export function FeedReviewCard({
   };
 
   return (
-    <Card className="w-full">
+    <Card className="w-full group hover:border-primary/30 transition-all duration-300">
       <CardHeader className="pb-3">
         <div className="flex items-start gap-3">
           <button
             onClick={() => onAuthorClick?.(review.author.id)}
-            className="flex-shrink-0"
+            className="flex-shrink-0 transition-transform duration-200 hover:scale-105"
             type="button"
           >
-            <Avatar className="h-10 w-10">
-              <AvatarImage
-                src={review.author?.avatar || undefined}
-                alt={review.author?.userName}
-              />
+            <Avatar className="h-11 w-11">
+              <AvatarImage src={review.author?.avatar || undefined} alt={review.author?.userName} />
               <AvatarFallback>
                 {review.author?.userName?.substring(0, 2).toUpperCase()}
               </AvatarFallback>
@@ -74,19 +73,19 @@ export function FeedReviewCard({
             <div className="flex items-center justify-between gap-2">
               <button
                 onClick={() => onAuthorClick?.(review.author.id)}
-                className="text-sm font-semibold hover:underline truncate"
+                className="text-sm font-semibold hover:text-primary transition-colors truncate"
                 type="button"
               >
                 @{review.author?.userName}
               </button>
-              <span className="text-xs text-muted-foreground flex-shrink-0">
+              <span className="text-xs text-muted-foreground flex-shrink-0 bg-muted/50 px-2 py-0.5 rounded-full">
                 {formatDate(review.createdAt)}
               </span>
             </div>
-            <p className="text-xs text-muted-foreground truncate">
+            <p className="text-xs text-muted-foreground truncate mt-0.5">
               {review.book?.volumeInfo?.title}
               {review.book?.volumeInfo?.authors?.length && (
-                <span> • {review.book.volumeInfo.authors[0]}</span>
+                <span className="text-primary/70"> • {review.book.volumeInfo.authors[0]}</span>
               )}
             </p>
           </div>
@@ -94,46 +93,60 @@ export function FeedReviewCard({
       </CardHeader>
 
       <CardContent
-        className="pb-3 cursor-pointer"
+        className="pb-3 cursor-pointer group/content"
         onClick={() => onReviewClick?.(review.id)}
       >
         <div className="flex gap-4">
           {review.book?.volumeInfo?.imageLinks?.thumbnail && (
-            <img
-              src={review.book.volumeInfo.imageLinks.thumbnail}
-              alt={review.book.volumeInfo.title}
-              className="w-16 h-24 object-cover rounded-md flex-shrink-0"
-            />
+            <div className="relative flex-shrink-0">
+              <img
+                src={review.book.volumeInfo.imageLinks.thumbnail}
+                alt={review.book.volumeInfo.title}
+                className="w-16 h-24 object-cover rounded-lg shadow-soft transition-transform duration-300 group-hover/content:scale-105"
+              />
+              <div className="absolute inset-0 rounded-lg bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover/content:opacity-100 transition-opacity duration-300" />
+            </div>
           )}
           <div className="flex-1 min-w-0">
             <div className="mb-2">
               <Rating value={review.value} readOnly size="sm" />
             </div>
-            <p className="text-sm line-clamp-4">{review.content}</p>
+            <p className="text-sm leading-relaxed line-clamp-4 text-foreground/90">
+              {review.content}
+            </p>
           </div>
         </div>
       </CardContent>
 
-      <CardFooter className="pt-0 border-t">
+      <CardFooter className="pt-0 border-t border-border/50">
         <div className="flex items-center justify-between w-full pt-3">
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
             <Button
               variant="ghost"
               size="sm"
               onClick={() => onLike?.(review.id)}
-              className={`gap-1.5 px-2 ${review.isLiked ? "text-red-500" : ""}`}
+              className={cn(
+                "gap-1.5 px-3 rounded-full transition-all duration-200",
+                "hover:bg-red-500/10",
+                review.isLiked ? "text-red-500" : "text-muted-foreground"
+              )}
             >
-              <span className="text-lg">{review.isLiked ? "❤️" : "🤍"}</span>
-              <span className="text-sm">{review.likesCount}</span>
+              <Heart
+                className={cn(
+                  "w-5 h-5 transition-transform duration-200",
+                  review.isLiked && "scale-110 fill-current"
+                )}
+              />
+              <span className="text-sm font-medium">{review.likesCount}</span>
             </Button>
             <Button
               variant="ghost"
               size="sm"
               onClick={() => onReviewClick?.(review.id)}
-              className="gap-1.5 px-2"
+              className="gap-1.5 px-3 rounded-full hover:bg-primary/10 text-muted-foreground hover:text-foreground transition-all duration-200"
             >
-              <span className="text-lg">💬</span>
-              <span className="text-sm">{review.commentsCount}</span>
+              <MessageCircle className="w-5 h-5" />
+              <span className="text-sm font-medium">{review.commentsCount}</span>
             </Button>
           </div>
         </div>

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { createFileRoute, redirect, useNavigate, useRouterState } from "@tanstack/react-router";
 import { MobileStorage } from "../services/mobile-storage.service";
-import { BottomNav, useTranslation, ProfileScreen } from "@repo/ui";
+import { BottomNav, useTranslation, ProfileScreen, Home, Search, PenSquare, User } from "@repo/ui";
 import { useProfileViewModel } from "../viewmodels/use-profile-viewmodel";
 
 export const Route = createFileRoute("/profile")({
@@ -36,25 +36,25 @@ function ProfilePage() {
   const navItems = [
     {
       label: t("navigation.home"),
-      icon: "🏠",
+      icon: <Home className="w-6 h-6" />,
       href: "/",
       isActive: currentPath === "/",
     },
     {
       label: t("navigation.search"),
-      icon: "🔍",
+      icon: <Search className="w-6 h-6" />,
       href: "/search",
       isActive: currentPath === "/search",
     },
     {
       label: t("navigation.createReview"),
-      icon: "✍️",
+      icon: <PenSquare className="w-6 h-6" />,
       href: "/create-review",
       isActive: currentPath === "/create-review",
     },
     {
       label: t("navigation.profile"),
-      icon: "👤",
+      icon: <User className="w-6 h-6" />,
       href: "/profile",
       isActive: currentPath === "/profile",
     },

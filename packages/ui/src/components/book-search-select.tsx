@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { X } from "lucide-react";
 import { Input } from "./input";
 import { Card, CardContent } from "./card";
 import { cn } from "../lib/utils";
@@ -90,10 +91,10 @@ export function BookSearchSelect({
               <button
                 type="button"
                 onClick={handleClear}
-                className="text-muted-foreground hover:text-foreground"
+                className="text-muted-foreground hover:text-foreground transition-colors"
                 aria-label="Clear selection"
               >
-                ✕
+                <X className="w-5 h-5" />
               </button>
             )}
           </div>

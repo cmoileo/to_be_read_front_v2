@@ -1,4 +1,13 @@
-import { ArrowLeft, BookOpen, Calendar, Building2, Globe, Hash } from "lucide-react";
+import {
+  ArrowLeft,
+  BookOpen,
+  Calendar,
+  Building2,
+  Globe,
+  Hash,
+  Heart,
+  MessageCircle,
+} from "lucide-react";
 import { Button } from "../components/button";
 import { Separator } from "../components/separator";
 import { Rating } from "../components/rating";
@@ -133,9 +142,10 @@ export function SingleBookScreen({
   }
 
   const { volumeInfo } = book;
-  const coverImage = volumeInfo.imageLinks?.medium || 
-                     volumeInfo.imageLinks?.large || 
-                     volumeInfo.imageLinks?.thumbnail;
+  const coverImage =
+    volumeInfo.imageLinks?.medium ||
+    volumeInfo.imageLinks?.large ||
+    volumeInfo.imageLinks?.thumbnail;
 
   return (
     <div className="container mx-auto px-4 py-6 max-w-4xl pb-24">
@@ -180,7 +190,8 @@ export function SingleBookScreen({
               <Rating value={volumeInfo.averageRating} readOnly size="sm" max={5} />
               <span className="text-sm text-muted-foreground">
                 {volumeInfo.averageRating.toFixed(1)}
-                {volumeInfo.ratingsCount && ` (${volumeInfo.ratingsCount.toLocaleString()} ${t("book.ratings")})`}
+                {volumeInfo.ratingsCount &&
+                  ` (${volumeInfo.ratingsCount.toLocaleString()} ${t("book.ratings")})`}
               </span>
             </div>
           )}
@@ -202,7 +213,9 @@ export function SingleBookScreen({
             {volumeInfo.pageCount && (
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <BookOpen className="h-4 w-4" />
-                <span>{volumeInfo.pageCount} {t("book.pages")}</span>
+                <span>
+                  {volumeInfo.pageCount} {t("book.pages")}
+                </span>
               </div>
             )}
 
@@ -242,7 +255,7 @@ export function SingleBookScreen({
           <Separator className="my-6" />
           <div className="space-y-3">
             <h2 className="text-xl font-semibold">{t("book.description")}</h2>
-            <p 
+            <p
               className="text-muted-foreground leading-relaxed"
               dangerouslySetInnerHTML={{ __html: volumeInfo.description }}
             />
@@ -267,8 +280,8 @@ export function SingleBookScreen({
         ) : (
           <div className="space-y-4">
             {reviews.map((review) => (
-              <Card 
-                key={review.id} 
+              <Card
+                key={review.id}
                 className="cursor-pointer hover:bg-accent/50 transition-colors"
                 onClick={() => onReviewClick?.(review.id)}
               >
@@ -283,8 +296,13 @@ export function SingleBookScreen({
                       className="flex-shrink-0"
                     >
                       <Avatar className="h-10 w-10">
-                        <AvatarImage src={review.author.avatar || undefined} alt={review.author.userName} />
-                        <AvatarFallback>{review.author.userName.substring(0, 2).toUpperCase()}</AvatarFallback>
+                        <AvatarImage
+                          src={review.author.avatar || undefined}
+                          alt={review.author.userName}
+                        />
+                        <AvatarFallback>
+                          {review.author.userName.substring(0, 2).toUpperCase()}
+                        </AvatarFallback>
                       </Avatar>
                     </button>
 
@@ -300,7 +318,9 @@ export function SingleBookScreen({
                         >
                           @{review.author.userName}
                         </button>
-                        <span className="text-xs text-muted-foreground">{formatDate(review.createdAt)}</span>
+                        <span className="text-xs text-muted-foreground">
+                          {formatDate(review.createdAt)}
+                        </span>
                       </div>
 
                       <Rating value={review.value} readOnly size="sm" />
@@ -308,8 +328,14 @@ export function SingleBookScreen({
                       <p className="text-sm line-clamp-3">{review.content}</p>
 
                       <div className="flex gap-4 text-xs text-muted-foreground pt-1">
-                        <span>❤️ {Number(review.likesCount) || 0}</span>
-                        <span>💬 {Number(review.commentsCount) || 0}</span>
+                        <span className="flex items-center gap-1">
+                          <Heart className="w-3.5 h-3.5" />
+                          {Number(review.likesCount) || 0}
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <MessageCircle className="w-3.5 h-3.5" />
+                          {Number(review.commentsCount) || 0}
+                        </span>
                       </div>
                     </div>
                   </div>

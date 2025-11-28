@@ -40,3 +40,28 @@ export * from "./schemas/auth.schema";
 export * from "./schemas/profile.schema";
 export * from "./i18n/config";
 export { useTranslation } from "react-i18next";
+
+// Re-export commonly used Lucide icons
+export {
+  Home,
+  Search,
+  PenSquare,
+  User,
+  BookOpen,
+  Star,
+  Users,
+  Heart,
+  MessageCircle,
+  ArrowLeft,
+  RefreshCw,
+  Loader2,
+  Menu,
+  X,
+  Pencil,
+  AlertCircle,
+  Sparkles,
+  Lightbulb,
+  PlusCircle,
+  FileText,
+  UserPlus,
+} from "lucide-react";

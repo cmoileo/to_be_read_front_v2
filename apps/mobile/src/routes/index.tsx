@@ -1,5 +1,5 @@
 import { createFileRoute, redirect, useNavigate, useRouterState } from "@tanstack/react-router";
-import { BottomNav, FeedScreen, useTranslation } from "@repo/ui";
+import { BottomNav, FeedScreen, useTranslation, Home, Search, PenSquare, User } from "@repo/ui";
 import { MobileStorage } from "../services/mobile-storage.service";
 import { useFeedViewModel } from "../viewmodels/use-feed-viewmodel";
 
@@ -24,32 +24,34 @@ function Index() {
     isLoading,
     hasMore,
     isFetchingMore,
+    isRefreshing,
     handleLoadMore,
     handleLike,
+    handleRefresh,
   } = useFeedViewModel();
 
   const navItems = [
     {
       label: t("navigation.home"),
-      icon: "🏠",
+      icon: <Home className="w-6 h-6" />,
       href: "/",
       isActive: currentPath === "/",
     },
     {
       label: t("navigation.search"),
-      icon: "🔍",
+      icon: <Search className="w-6 h-6" />,
       href: "/search",
       isActive: currentPath === "/search",
     },
     {
       label: t("navigation.createReview"),
-      icon: "✍️",
+      icon: <PenSquare className="w-6 h-6" />,
       href: "/create-review",
       isActive: currentPath === "/create-review",
     },
     {
       label: t("navigation.profile"),
-      icon: "👤",
+      icon: <User className="w-6 h-6" />,
       href: "/profile",
       isActive: currentPath === "/profile",
     },
@@ -75,10 +77,12 @@ function Index() {
           isLoading={isLoading}
           hasMore={hasMore}
           isFetchingMore={isFetchingMore}
+          isRefreshing={isRefreshing}
           onLoadMore={handleLoadMore}
           onLike={handleLike}
           onAuthorClick={handleAuthorClick}
           onReviewClick={handleReviewClick}
+          onRefresh={handleRefresh}
         />
       </div>
 

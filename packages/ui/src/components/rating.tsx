@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { cn } from "../lib/utils";
+import { Star } from "lucide-react";
 
 interface RatingProps {
   value: number;
@@ -24,9 +25,9 @@ export function Rating({
   const isInteractive = !disabled && !readOnly && onChange;
 
   const sizeClasses = {
-    sm: "text-lg",
-    md: "text-2xl",
-    lg: "text-4xl",
+    sm: { container: "gap-0.5", icon: "w-4 h-4" },
+    md: { container: "gap-1", icon: "w-6 h-6" },
+    lg: { container: "gap-1.5", icon: "w-8 h-8" },
   };
 
   const handleClick = (rating: number) => {
@@ -38,7 +39,7 @@ export function Rating({
   const displayValue = hoverValue ?? value;
 
   return (
-    <div className={cn("flex gap-1", className)}>
+    <div className={cn("flex items-center", sizeClasses[size].container, className)}>
       {Array.from({ length: max }, (_, i) => i + 1).map((rating) => (
         <button
           key={rating}
@@ -48,23 +49,28 @@ export function Rating({
           onMouseLeave={() => setHoverValue(null)}
           disabled={disabled || readOnly}
           className={cn(
-            "transition-all duration-150 ease-in-out",
-            isInteractive && "cursor-pointer hover:scale-110",
-            (disabled || readOnly) && "cursor-default",
-            sizeClasses[size]
+            "transition-all duration-200 ease-out p-0.5 -mx-0.5 rounded",
+            isInteractive && "cursor-pointer hover:scale-125 active:scale-110",
+            (disabled || readOnly) && "cursor-default"
           )}
           aria-label={`Rate ${rating} out of ${max}`}
         >
-          <span
+          <Star
             className={cn(
-              "transition-colors",
-              rating <= displayValue ? "text-yellow-500" : "text-gray-300 dark:text-gray-600"
+              sizeClasses[size].icon,
+              "transition-all duration-200",
+              rating <= displayValue
+                ? "text-amber-400 fill-amber-400 drop-shadow-[0_0_6px_rgba(251,191,36,0.5)]"
+                : "text-muted-foreground/30"
             )}
-          >
-            {rating <= displayValue ? "★" : "☆"}
-          </span>
+          />
         </button>
       ))}
+      {value > 0 && (
+        <span className="ml-2 text-sm font-medium text-muted-foreground">
+          {value}/{max}
+        </span>
+      )}
     </div>
   );
 }

@@ -1,5 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { FeedReviewCard } from "../components/feed-review-card";
+import { cn } from "../lib/utils";
+import { BookOpen, RefreshCw, PlusCircle, Loader2 } from "lucide-react";
 
 interface FeedReview {
   id: number;
@@ -45,19 +47,26 @@ export function FeedScreen({
   isLoading = false,
   hasMore = false,
   isFetchingMore = false,
+  isRefreshing = false,
   onLoadMore,
   onLike,
   onAuthorClick,
   onReviewClick,
+  onRefresh,
 }: FeedScreenProps) {
   const { t } = useTranslation();
 
   if (isLoading && reviews.length === 0) {
     return (
-      <div className="flex items-center justify-center py-12">
+      <div className="flex items-center justify-center py-16">
         <div className="flex flex-col items-center gap-4">
-          <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full" />
-          <p className="text-muted-foreground">{t("common.loading")}</p>
+          <div className="relative">
+            <div className="animate-spin h-10 w-10 border-4 border-primary/30 border-t-primary rounded-full" />
+            <div className="absolute inset-0 animate-pulse flex items-center justify-center">
+              <BookOpen className="w-5 h-5 text-primary" />
+            </div>
+          </div>
+          <p className="text-muted-foreground font-medium animate-pulse">{t("common.loading")}</p>
         </div>
       </div>
     );
@@ -65,10 +74,12 @@ export function FeedScreen({
 
   if (!isLoading && reviews.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-12 px-4">
-        <div className="text-6xl mb-4">📚</div>
-        <h2 className="text-xl font-semibold mb-2">{t("feed.empty.title")}</h2>
-        <p className="text-muted-foreground text-center max-w-sm">
+      <div className="flex flex-col items-center justify-center py-16 px-4">
+        <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mb-6 animate-bounce-slow">
+          <BookOpen className="w-10 h-10 text-primary" />
+        </div>
+        <h2 className="text-xl font-bold mb-2">{t("feed.empty.title")}</h2>
+        <p className="text-muted-foreground text-center max-w-sm leading-relaxed">
           {t("feed.empty.description")}
         </p>
       </div>
@@ -76,49 +87,65 @@ export function FeedScreen({
   }
 
   return (
-    <div className="space-y-4">
-      <h1 className="text-2xl font-bold">{t("feed.title")}</h1>
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text">
+          {t("feed.title")}
+        </h1>
+        {onRefresh && (
+          <button
+            onClick={onRefresh}
+            disabled={isRefreshing}
+            className={cn(
+              "p-2.5 rounded-full transition-all duration-200",
+              "bg-muted/50 hover:bg-muted active:scale-95",
+              "disabled:opacity-50 disabled:cursor-not-allowed"
+            )}
+            aria-label={t("common.refresh")}
+          >
+            <RefreshCw
+              className={cn(
+                "w-5 h-5 text-muted-foreground transition-transform duration-500",
+                isRefreshing && "animate-spin text-primary"
+              )}
+            />
+          </button>
+        )}
+      </div>
 
       <div className="space-y-4">
-        {reviews.map((review) => (
-          <FeedReviewCard
+        {reviews.map((review, index) => (
+          <div
             key={review.id}
-            review={review}
-            onLike={onLike}
-            onAuthorClick={onAuthorClick}
-            onReviewClick={onReviewClick}
-          />
+            className="animate-in fade-in slide-in-from-bottom-4"
+            style={{ animationDelay: `${Math.min(index * 50, 300)}ms` }}
+          >
+            <FeedReviewCard
+              review={review}
+              onLike={onLike}
+              onAuthorClick={onAuthorClick}
+              onReviewClick={onReviewClick}
+            />
+          </div>
         ))}
 
         {hasMore && (
           <button
             onClick={onLoadMore}
             disabled={isFetchingMore}
-            className="w-full flex justify-center items-center py-4 text-muted-foreground hover:text-foreground transition-colors disabled:opacity-50"
+            className={cn(
+              "w-full flex justify-center items-center py-4 rounded-xl",
+              "text-muted-foreground hover:text-foreground hover:bg-muted/50",
+              "transition-all duration-200 disabled:opacity-50",
+              "active:scale-[0.98]"
+            )}
             aria-label={t("common.loadMore")}
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="32"
-              height="32"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className={isFetchingMore ? "animate-spin" : ""}
-            >
-              {isFetchingMore ? (
-                <path d="M21 12a9 9 0 1 1-6.219-8.56" />
-              ) : (
-                <>
-                  <circle cx="12" cy="12" r="10" />
-                  <path d="M12 8v8" />
-                  <path d="M8 12h8" />
-                </>
-              )}
-            </svg>
+            {isFetchingMore ? (
+              <Loader2 className="w-8 h-8 animate-spin text-primary" />
+            ) : (
+              <PlusCircle className="w-8 h-8" />
+            )}
           </button>
         )}
       </div>

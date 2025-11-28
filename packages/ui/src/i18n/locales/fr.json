@@ -92,7 +92,8 @@
         "delete": "Supprimer",
         "edit": "Modifier",
         "loadMore": "Charger plus",
-        "back": "Retour"
+        "back": "Retour",
+        "refresh": "Actualiser"
     },
     "profile": {
         "edit": "Modifier le profil",

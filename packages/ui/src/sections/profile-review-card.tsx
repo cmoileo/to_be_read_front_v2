@@ -1,7 +1,7 @@
 import { Card, CardContent } from "../components/card";
 import { Rating } from "../components/rating";
 import { Button } from "../components/button";
-import { Trash2 } from "lucide-react";
+import { Trash2, Heart, MessageCircle } from "lucide-react";
 
 interface Review {
   id: number;
@@ -69,8 +69,14 @@ export const ProfileReviewCard = ({
             <p className="text-sm line-clamp-2">{review.content}</p>
 
             <div className="flex gap-4 text-xs text-muted-foreground">
-              <span>❤️ {Number(review.likesCount) || 0}</span>
-              <span>💬 {Number(review.commentsCount) || 0}</span>
+              <span className="flex items-center gap-1">
+                <Heart className="w-3.5 h-3.5" />
+                {Number(review.likesCount) || 0}
+              </span>
+              <span className="flex items-center gap-1">
+                <MessageCircle className="w-3.5 h-3.5" />
+                {Number(review.commentsCount) || 0}
+              </span>
             </div>
 
             {showDeleteButton && onDelete && (

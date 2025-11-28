@@ -4,6 +4,7 @@ import { cn } from "../lib/utils";
 import { Button } from "./button";
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
+import { Home, Search, PenSquare, User, BookOpen, Menu, X } from "lucide-react";
 
 interface TopNavProps {
   userName?: string;
@@ -24,47 +25,56 @@ export function TopNav({ userName, onLogout, currentPath, Link }: TopNavProps) {
   const navItems = [
     {
       label: t("navigation.home"),
-      icon: "🏠",
+      icon: <Home className="w-5 h-5" />,
       href: "/",
     },
     {
       label: t("navigation.search"),
-      icon: "🔍",
+      icon: <Search className="w-5 h-5" />,
       href: "/search",
     },
     {
       label: t("navigation.createReview"),
-      icon: "✍️",
+      icon: <PenSquare className="w-5 h-5" />,
       href: "/review",
     },
     {
       label: t("navigation.profile"),
-      icon: "👤",
+      icon: <User className="w-5 h-5" />,
       href: "/profile",
     },
   ];
 
   return (
     <>
-      <nav className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <nav className="sticky top-0 z-50 w-full border-b border-border/50 bg-background/95 backdrop-blur-lg supports-[backdrop-filter]:bg-background/80 shadow-soft">
         <div className="container flex h-16 items-center justify-between px-4">
           <div className="flex items-center gap-6 md:gap-10">
-            <Link href="/" className="flex items-center space-x-2">
-              <span className="text-xl font-bold">📚 To Be Read</span>
+            <Link href="/" className="flex items-center space-x-2 group">
+              <BookOpen className="w-6 h-6 text-primary" />
+              <span className="text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent transition-transform duration-200 group-hover:scale-105">
+                To Be Read
+              </span>
             </Link>
 
-            <div className="hidden md:flex md:gap-6">
+            <div className="hidden md:flex md:gap-2">
               {navItems.map((item) => (
                 <Link
                   key={item.href}
                   href={item.href}
                   className={cn(
-                    "flex items-center gap-2 text-sm font-medium transition-colors hover:text-primary",
-                    currentPath === item.href ? "text-primary" : "text-muted-foreground"
+                    "relative flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200",
+                    "hover:bg-accent/50",
+                    currentPath === item.href
+                      ? "text-primary bg-primary/10"
+                      : "text-muted-foreground hover:text-foreground"
                   )}
                 >
-                  <span>{item.icon}</span>
+                  {item.icon}
                   <span>{item.label}</span>
+                  {currentPath === item.href && (
+                    <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-primary rounded-full" />
+                  )}
                 </Link>
               ))}
             </div>
@@ -73,27 +83,41 @@ export function TopNav({ userName, onLogout, currentPath, Link }: TopNavProps) {
           <div className="flex items-center gap-4">
             {userName && (
               <div className="hidden md:flex items-center gap-3">
-                <span className="text-sm text-muted-foreground">{userName}</span>
+                <div className="flex items-center gap-2 px-3 py-1.5 bg-muted/50 rounded-full">
+                  <span className="w-6 h-6 bg-primary/20 rounded-full flex items-center justify-center text-xs">
+                    {userName.charAt(0).toUpperCase()}
+                  </span>
+                  <span className="text-sm font-medium text-foreground">{userName}</span>
+                </div>
                 {onLogout && (
-                  <Button variant="ghost" size="sm" onClick={onLogout}>
-                    Déconnexion
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={onLogout}
+                    className="text-muted-foreground hover:text-destructive"
+                  >
+                    {t("auth.logout")}
                   </Button>
                 )}
               </div>
             )}
 
             <button
-              className="md:hidden"
+              className={cn(
+                "md:hidden p-2 rounded-lg transition-all duration-200",
+                "hover:bg-accent active:scale-95",
+                mobileMenuOpen && "bg-accent"
+              )}
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               aria-label="Toggle menu"
             >
-              <span className="text-2xl">{mobileMenuOpen ? "✕" : "☰"}</span>
+              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
           </div>
         </div>
 
         {mobileMenuOpen && (
-          <div className="border-t md:hidden">
+          <div className="border-t border-border/50 md:hidden animate-in slide-in-from-top-2 duration-200">
             <div className="container space-y-1 px-4 py-4">
               {navItems.map((item) => (
                 <Link
@@ -101,26 +125,34 @@ export function TopNav({ userName, onLogout, currentPath, Link }: TopNavProps) {
                   href={item.href}
                   onClick={() => setMobileMenuOpen(false)}
                   className={cn(
-                    "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-accent",
-                    currentPath === item.href ? "bg-accent text-primary" : "text-muted-foreground"
+                    "flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-all duration-200",
+                    "hover:bg-accent/50 active:scale-[0.98]",
+                    currentPath === item.href
+                      ? "bg-primary/10 text-primary"
+                      : "text-muted-foreground hover:text-foreground"
                   )}
                 >
-                  <span className="text-xl">{item.icon}</span>
+                  {item.icon}
                   <span>{item.label}</span>
                 </Link>
               ))}
 
               {userName && (
-                <div className="border-t pt-4 mt-4 space-y-2">
-                  <div className="px-3 py-2 text-sm text-muted-foreground">{userName}</div>
+                <div className="border-t border-border/50 pt-4 mt-4 space-y-2">
+                  <div className="flex items-center gap-3 px-4 py-2">
+                    <span className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center text-sm font-medium">
+                      {userName.charAt(0).toUpperCase()}
+                    </span>
+                    <span className="text-sm font-medium text-foreground">{userName}</span>
+                  </div>
                   {onLogout && (
                     <Button
                       variant="ghost"
                       size="sm"
                       onClick={onLogout}
-                      className="w-full justify-start"
+                      className="w-full justify-start text-muted-foreground hover:text-destructive hover:bg-destructive/10"
                     >
-                      Déconnexion
+                      {t("auth.logout")}
                     </Button>
                   )}
                 </div>

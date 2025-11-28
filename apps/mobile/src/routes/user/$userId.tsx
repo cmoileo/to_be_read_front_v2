@@ -1,6 +1,15 @@
 import { createFileRoute, redirect, useNavigate, useRouterState } from "@tanstack/react-router";
 import { MobileStorage } from "../../services/mobile-storage.service";
-import { BottomNav, ProfileScreen, useTranslation } from "@repo/ui";
+import {
+  BottomNav,
+  ProfileScreen,
+  useTranslation,
+  Home,
+  Search,
+  PenSquare,
+  User,
+  ArrowLeft,
+} from "@repo/ui";
 import { useUserProfileViewModel } from "../../viewmodels/use-user-profile-viewmodel";
 
 export const Route = createFileRoute("/user/$userId")({
@@ -36,25 +45,25 @@ function UserProfilePage() {
   const navItems = [
     {
       label: t("navigation.home"),
-      icon: "🏠",
+      icon: <Home className="w-6 h-6" />,
       href: "/",
       isActive: currentPath === "/",
     },
     {
       label: t("navigation.search"),
-      icon: "🔍",
+      icon: <Search className="w-6 h-6" />,
       href: "/search",
       isActive: currentPath === "/search",
     },
     {
       label: t("navigation.createReview"),
-      icon: "✍️",
+      icon: <PenSquare className="w-6 h-6" />,
       href: "/create-review",
       isActive: currentPath === "/create-review",
     },
     {
       label: t("navigation.profile"),
-      icon: "👤",
+      icon: <User className="w-6 h-6" />,
       href: "/profile",
       isActive: currentPath === "/profile",
     },
@@ -80,7 +89,7 @@ function UserProfilePage() {
             onClick={handleBack}
             className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
           >
-            <span>←</span>
+            <ArrowLeft className="w-5 h-5" />
             <span>{t("common.back")}</span>
           </button>
         </div>

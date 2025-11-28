@@ -92,7 +92,8 @@
         "delete": "Delete",
         "edit": "Edit",
         "loadMore": "Load more",
-        "back": "Back"
+        "back": "Back",
+        "refresh": "Refresh"
     },
     "profile": {
         "edit": "Edit profile",

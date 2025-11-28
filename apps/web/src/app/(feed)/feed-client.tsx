@@ -17,8 +17,10 @@ export default function FeedClient({ initialFeedResponse }: FeedClientProps) {
     isLoading,
     hasMore,
     isFetchingMore,
+    isRefreshing,
     handleLoadMore,
     handleLike,
+    handleRefresh,
   } = useFeedViewModel({ initialFeedResponse });
 
   const handleAuthorClick = (authorId: number) => {
@@ -36,10 +38,12 @@ export default function FeedClient({ initialFeedResponse }: FeedClientProps) {
         isLoading={isLoading}
         hasMore={hasMore}
         isFetchingMore={isFetchingMore}
+        isRefreshing={isRefreshing}
         onLoadMore={handleLoadMore}
         onLike={handleLike}
         onAuthorClick={handleAuthorClick}
         onReviewClick={handleReviewClick}
+        onRefresh={handleRefresh}
       />
     </div>
   );

@@ -1,5 +1,6 @@
 import { Button } from "../components/button";
 import { useTranslation } from "react-i18next";
+import { cn } from "../lib/utils";
 
 interface SearchSectionProps<T> {
   title: string;
@@ -25,21 +26,34 @@ export function SearchSection<T>({
   }
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-semibold">{title}</h2>
+        <h2 className="text-xl font-bold text-foreground">{title}</h2>
         {showMoreButton && onShowMore && items.length > 0 && (
-          <Button variant="ghost" size="sm" onClick={onShowMore}>
-            {t("search.showMore")}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onShowMore}
+            className="text-primary hover:text-primary/80 hover:bg-primary/10 font-medium"
+          >
+            {t("search.showMore")} →
           </Button>
         )}
       </div>
       {items.length === 0 ? (
-        <p className="text-muted-foreground text-sm">{emptyMessage}</p>
+        <div className="py-8 text-center">
+          <p className="text-muted-foreground text-sm">{emptyMessage}</p>
+        </div>
       ) : (
-        <div className="space-y-2">
+        <div className="space-y-3">
           {items.map((item, index) => (
-            <div key={index}>{renderItem(item, index)}</div>
+            <div
+              key={index}
+              className="animate-in fade-in slide-in-from-left-2"
+              style={{ animationDelay: `${index * 50}ms` }}
+            >
+              {renderItem(item, index)}
+            </div>
           ))}
         </div>
       )}

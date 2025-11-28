@@ -16,6 +16,10 @@ import {
   SearchSection,
   useTranslation,
   useToast,
+  Home,
+  Search as SearchIcon,
+  PenSquare,
+  User,
 } from "@repo/ui";
 import { useSearchViewModel } from "../../viewmodels/use-search-viewmodel";
 
@@ -89,25 +93,25 @@ function SearchPage() {
   const navItems = [
     {
       label: t("navigation.home"),
-      icon: "🏠",
+      icon: <Home className="w-6 h-6" />,
       href: "/",
       isActive: currentPath === "/",
     },
     {
       label: t("navigation.search"),
-      icon: "🔍",
+      icon: <SearchIcon className="w-6 h-6" />,
       href: "/search",
       isActive: currentPath === "/search",
     },
     {
       label: t("navigation.createReview"),
-      icon: "✍️",
+      icon: <PenSquare className="w-6 h-6" />,
       href: "/create-review",
       isActive: currentPath === "/create-review",
     },
     {
       label: t("navigation.profile"),
-      icon: "👤",
+      icon: <User className="w-6 h-6" />,
       href: "/profile",
       isActive: currentPath === "/profile",
     },
@@ -178,9 +182,9 @@ function SearchPage() {
               title={t("search.books")}
               items={displayResults.books}
               renderItem={(book) => (
-                <BookCard 
-                  book={book} 
-                  onClick={() => navigate({ to: "/book/$bookId", params: { bookId: book.id } })} 
+                <BookCard
+                  book={book}
+                  onClick={() => navigate({ to: "/book/$bookId", params: { bookId: book.id } })}
                 />
               )}
               onShowMore={handleShowMoreBooks}
