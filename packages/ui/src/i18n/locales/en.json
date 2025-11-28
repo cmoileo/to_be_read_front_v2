@@ -186,5 +186,18 @@
         "noFollowing": "Not following anyone",
         "noFollowersDescription": "When someone follows this user, they will appear here.",
         "noFollowingDescription": "This user isn't following anyone yet."
+    },
+    "toReadList": {
+        "title": "My Reading List",
+        "empty": "Your list is empty",
+        "emptyDescription": "Add books to your list to find them easily later.",
+        "noCover": "No cover",
+        "addedOn": "Added on {{date}}",
+        "addToList": "Add to my list",
+        "removeFromList": "Remove from my list",
+        "inList": "In my list",
+        "addSuccess": "Book added to your list",
+        "removeSuccess": "Book removed from your list",
+        "alreadyInList": "This book is already in your list"
     }
 }

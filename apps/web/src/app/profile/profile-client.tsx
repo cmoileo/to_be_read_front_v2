@@ -39,6 +39,10 @@ export default function ProfileClient({ initialUser, initialReviewsResponse }: P
     }
   };
 
+  const handleReadingListClick = () => {
+    router.push("/reading-list");
+  };
+
   if (!user) {
     return null;
   }
@@ -59,6 +63,7 @@ export default function ProfileClient({ initialUser, initialReviewsResponse }: P
       onDeleteReview={handleDeleteReview}
       onFollowersClick={handleFollowersClick}
       onFollowingClick={handleFollowingClick}
+      onReadingListClick={handleReadingListClick}
       isOwnProfile={true}
     />
   );

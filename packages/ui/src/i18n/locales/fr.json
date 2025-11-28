@@ -186,5 +186,18 @@
         "noFollowing": "Aucun abonnement",
         "noFollowersDescription": "Quand quelqu'un suivra cet utilisateur, il apparaîtra ici.",
         "noFollowingDescription": "Cet utilisateur ne suit personne pour le moment."
+    },
+    "toReadList": {
+        "title": "Ma liste de lecture",
+        "empty": "Votre liste est vide",
+        "emptyDescription": "Ajoutez des livres à votre liste pour les retrouver facilement plus tard.",
+        "noCover": "Pas de couverture",
+        "addedOn": "Ajouté le {{date}}",
+        "addToList": "Ajouter à ma liste",
+        "removeFromList": "Retirer de ma liste",
+        "inList": "Dans ma liste",
+        "addSuccess": "Livre ajouté à votre liste",
+        "removeSuccess": "Livre retiré de votre liste",
+        "alreadyInList": "Ce livre est déjà dans votre liste"
     }
 }

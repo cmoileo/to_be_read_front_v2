@@ -2,7 +2,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "../components/avatar";
 import { Button } from "../components/button";
 import { useTranslation } from "react-i18next";
 import { cn } from "../lib/utils";
-import { Pencil, Loader2, FileText, Users, UserPlus } from "lucide-react";
+import { Pencil, Loader2, FileText, Users, UserPlus, BookMarked } from "lucide-react";
 
 interface User {
   id: number;
@@ -24,6 +24,7 @@ interface ProfileHeaderProps {
   onUnfollow?: () => void;
   onFollowersClick?: () => void;
   onFollowingClick?: () => void;
+  onReadingListClick?: () => void;
 }
 
 export const ProfileHeader = ({
@@ -35,6 +36,7 @@ export const ProfileHeader = ({
   onUnfollow,
   onFollowersClick,
   onFollowingClick,
+  onReadingListClick,
 }: ProfileHeaderProps) => {
   const { t } = useTranslation();
 
@@ -120,36 +122,50 @@ export const ProfileHeader = ({
               label: t("profile.reviews"),
               icon: <FileText className="w-4 h-4" />,
               onClick: undefined,
+              show: true,
             },
             {
               value: user.followersCount,
               label: t("profile.followers"),
               icon: <Users className="w-4 h-4" />,
               onClick: onFollowersClick,
+              show: true,
             },
             {
               value: user.followingCount,
               label: t("profile.following"),
               icon: <UserPlus className="w-4 h-4" />,
               onClick: onFollowingClick,
+              show: true,
             },
-          ].map((stat, index) => (
-            <button
-              key={index}
-              className={cn(
-                "text-center flex-1 rounded-xl py-2 transition-colors",
-                stat.onClick && "hover:bg-muted/50 cursor-pointer"
-              )}
-              onClick={stat.onClick}
-              disabled={!stat.onClick}
-            >
-              <div className="text-xl font-bold text-foreground">{Number(stat.value)}</div>
-              <div className="text-xs text-muted-foreground mt-0.5 flex items-center justify-center gap-1">
-                {stat.icon}
-                {stat.label}
-              </div>
-            </button>
-          ))}
+            {
+              value: null,
+              label: t("toReadList.title"),
+              icon: <BookMarked className="w-4 h-4" />,
+              onClick: onReadingListClick,
+              show: isOwnProfile && onReadingListClick,
+            },
+          ]
+            .filter((stat) => stat.show)
+            .map((stat, index) => (
+              <button
+                key={index}
+                className={cn(
+                  "text-center flex-1 rounded-xl py-2 transition-colors",
+                  stat.onClick && "hover:bg-muted/50 cursor-pointer"
+                )}
+                onClick={stat.onClick}
+                disabled={!stat.onClick}
+              >
+                {stat.value !== null && (
+                  <div className="text-xl font-bold text-foreground">{Number(stat.value)}</div>
+                )}
+                <div className="text-xs text-muted-foreground mt-0.5 flex items-center justify-center gap-1">
+                  {stat.icon}
+                  {stat.label}
+                </div>
+              </button>
+            ))}
         </div>
       </div>
     </div>

@@ -24,6 +24,9 @@ export default function SingleBookClient({
     handleBack,
     handleReviewClick,
     handleAuthorClick,
+    isInReadList,
+    isAddingToList,
+    handleToggleReadList,
   } = useSingleBookViewModel({ initialBook, initialReviewsResponse });
 
   return (
@@ -34,10 +37,13 @@ export default function SingleBookClient({
       isLoading={isLoading}
       hasMoreReviews={hasMoreReviews}
       isFetchingMoreReviews={isFetchingMoreReviews}
+      isInReadList={isInReadList}
+      isAddingToList={isAddingToList}
       onBack={handleBack}
       onLoadMoreReviews={handleLoadMoreReviews}
       onReviewClick={handleReviewClick}
       onAuthorClick={handleAuthorClick}
+      onToggleReadList={handleToggleReadList}
     />
   );
 }

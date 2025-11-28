@@ -19,6 +19,9 @@ function SingleBookPage() {
     hasMoreReviews,
     isFetchingMoreReviews,
     handleLoadMoreReviews,
+    isInReadList,
+    isAddingToList,
+    handleToggleReadList,
   } = useSingleBookViewModel(bookId);
 
   const handleBack = () => {
@@ -41,10 +44,13 @@ function SingleBookPage() {
       isLoading={isLoading}
       hasMoreReviews={hasMoreReviews}
       isFetchingMoreReviews={isFetchingMoreReviews}
+      isInReadList={isInReadList}
+      isAddingToList={isAddingToList}
       onBack={handleBack}
       onLoadMoreReviews={handleLoadMoreReviews}
       onReviewClick={handleReviewClick}
       onAuthorClick={handleAuthorClick}
+      onToggleReadList={handleToggleReadList}
     />
   );
 }

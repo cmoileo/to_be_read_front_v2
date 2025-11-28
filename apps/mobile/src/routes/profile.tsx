@@ -83,6 +83,10 @@ function ProfilePage() {
     }
   };
 
+  const handleReadingListClick = () => {
+    navigate({ to: "/to-read-list" });
+  };
+
   return (
     <div className="flex min-h-screen flex-col">
       <div className="flex-1 p-6 pb-20">
@@ -102,6 +106,7 @@ function ProfilePage() {
           onDeleteReview={handleDeleteReview}
           onFollowersClick={handleFollowersClick}
           onFollowingClick={handleFollowingClick}
+          onReadingListClick={handleReadingListClick}
         />
       </div>
 

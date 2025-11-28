@@ -32,7 +32,7 @@ export class HttpInterceptor {
     this.refreshPromise = (async () => {
       try {
         const refreshToken = await MobileStorage.getRefreshToken();
-        
+
         if (!refreshToken) {
           throw new Error("No refresh token available");
         }
@@ -72,11 +72,11 @@ export class HttpInterceptor {
     const { requiresAuth = true, skipRefresh = false, ...fetchConfig } = config;
 
     const headers: Record<string, string> = {};
-    
+
     if (!(fetchConfig.body instanceof FormData)) {
       headers["Content-Type"] = "application/json";
     }
-    
+
     if (fetchConfig.headers) {
       Object.assign(headers, fetchConfig.headers);
     }
@@ -97,9 +97,16 @@ export class HttpInterceptor {
       });
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ message: "Une erreur est survenue" }));
+        const errorData = await response
+          .json()
+          .catch(() => ({ message: "Une erreur est survenue" }));
 
-        if (response.status === 401 && errorData.code === "UNAUTHENTICATED" && !skipRefresh && requiresAuth) {
+        if (
+          response.status === 401 &&
+          errorData.code === "UNAUTHENTICATED" &&
+          !skipRefresh &&
+          requiresAuth
+        ) {
           try {
             const newToken = await this.refreshAccessToken();
             (headers as Record<string, string>)["Authorization"] = `Bearer ${newToken}`;
@@ -110,8 +117,15 @@ export class HttpInterceptor {
             });
 
             if (!retryResponse.ok) {
-              const retryErrorData = await retryResponse.json().catch(() => ({ message: "Une erreur est survenue" }));
-              throw new HttpError(retryErrorData.message, retryResponse.status, retryErrorData.code, retryErrorData.errors);
+              const retryErrorData = await retryResponse
+                .json()
+                .catch(() => ({ message: "Une erreur est survenue" }));
+              throw new HttpError(
+                retryErrorData.message,
+                retryResponse.status,
+                retryErrorData.code,
+                retryErrorData.errors
+              );
             }
 
             if (retryResponse.status === 204) {
@@ -147,35 +161,39 @@ export class HttpInterceptor {
 
   static post<T>(endpoint: string, data?: unknown, config?: RequestConfig): Promise<T> {
     const isFormData = data instanceof FormData;
-    
+
     return this.request<T>(endpoint, {
       ...config,
       method: "POST",
-      body: isFormData ? data : (data ? JSON.stringify(data) : undefined),
+      body: isFormData ? data : data ? JSON.stringify(data) : undefined,
     });
   }
 
   static put<T>(endpoint: string, data?: unknown, config?: RequestConfig): Promise<T> {
     const isFormData = data instanceof FormData;
     const headers: Record<string, string> = {};
-    
+
     if (!isFormData) {
       headers["Content-Type"] = "application/json";
     }
-    
+
     if (config?.headers) {
       Object.assign(headers, config.headers);
     }
-    
+
     return this.request<T>(endpoint, {
       ...config,
       method: "PUT",
       headers,
-      body: isFormData ? data : (data ? JSON.stringify(data) : undefined),
+      body: isFormData ? data : data ? JSON.stringify(data) : undefined,
     });
   }
 
-  static delete<T>(endpoint: string, config?: RequestConfig): Promise<T> {
-    return this.request<T>(endpoint, { ...config, method: "DELETE" });
+  static delete<T>(endpoint: string, data?: unknown, config?: RequestConfig): Promise<T> {
+    return this.request<T>(endpoint, {
+      ...config,
+      method: "DELETE",
+      body: data ? JSON.stringify(data) : undefined,
+    });
   }
 }

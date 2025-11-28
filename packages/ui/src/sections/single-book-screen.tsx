@@ -7,6 +7,8 @@ import {
   Hash,
   Heart,
   MessageCircle,
+  BookmarkPlus,
+  BookmarkCheck,
 } from "lucide-react";
 import { Button } from "../components/button";
 import { Separator } from "../components/separator";
@@ -68,10 +70,13 @@ interface SingleBookScreenProps {
   isLoading?: boolean;
   hasMoreReviews?: boolean;
   isFetchingMoreReviews?: boolean;
+  isInReadList?: boolean;
+  isAddingToList?: boolean;
   onBack?: () => void;
   onLoadMoreReviews?: () => void;
   onReviewClick?: (reviewId: number) => void;
   onAuthorClick?: (authorId: number) => void;
+  onToggleReadList?: () => void;
 }
 
 export function SingleBookScreen({
@@ -81,10 +86,13 @@ export function SingleBookScreen({
   isLoading = false,
   hasMoreReviews = false,
   isFetchingMoreReviews = false,
+  isInReadList = false,
+  isAddingToList = false,
   onBack,
   onLoadMoreReviews,
   onReviewClick,
   onAuthorClick,
+  onToggleReadList,
 }: SingleBookScreenProps) {
   const { t } = useTranslation();
 
@@ -247,6 +255,27 @@ export function SingleBookScreen({
               </div>
             )}
           </div>
+
+          {onToggleReadList && (
+            <Button
+              variant={isInReadList ? "secondary" : "default"}
+              className="w-full mt-4"
+              onClick={onToggleReadList}
+              disabled={isAddingToList}
+            >
+              {isInReadList ? (
+                <>
+                  <BookmarkCheck className="h-4 w-4 mr-2" />
+                  {t("toReadList.inList")}
+                </>
+              ) : (
+                <>
+                  <BookmarkPlus className="h-4 w-4 mr-2" />
+                  {t("toReadList.addToList")}
+                </>
+              )}
+            </Button>
+          )}
         </div>
       </div>
 

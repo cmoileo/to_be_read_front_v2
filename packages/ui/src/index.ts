@@ -37,7 +37,9 @@ export * from "./sections/feed-screen";
 export * from "./sections/single-review-screen";
 export * from "./sections/single-book-screen";
 export * from "./sections/follow-list-screen";
+export * from "./sections/to-read-list-screen";
 export * from "./components/user-list-item";
+export * from "./components/to-read-list-item-card";
 export * from "./schemas/auth.schema";
 export * from "./schemas/profile.schema";
 export * from "./i18n/config";
@@ -67,4 +69,8 @@ export {
   FileText,
   UserPlus,
   UserX,
+  Trash2,
+  BookmarkPlus,
+  BookmarkCheck,
+  BookMarked,
 } from "lucide-react";
