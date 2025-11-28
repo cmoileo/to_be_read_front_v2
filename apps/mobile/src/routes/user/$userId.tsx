@@ -2,6 +2,7 @@ import {
   createFileRoute,
   redirect,
   useNavigate,
+  useRouter,
   useRouterState,
   Outlet,
   useMatch,
@@ -46,6 +47,7 @@ function UserProfileLayout() {
 function UserProfilePage() {
   const { userId } = Route.useParams();
   const navigate = useNavigate();
+  const router = useRouter();
   const { t } = useTranslation();
   const routerState = useRouterState();
   const currentPath = routerState.location.pathname;
@@ -99,7 +101,7 @@ function UserProfilePage() {
   };
 
   const handleBack = () => {
-    window.history.back();
+    router.history.back();
   };
 
   const handleFollowersClick = () => {

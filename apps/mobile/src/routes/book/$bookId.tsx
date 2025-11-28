@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, useRouter } from "@tanstack/react-router";
 import { SingleBookScreen } from "@repo/ui";
 import { useSingleBookViewModel } from "../../viewmodels/use-single-book-viewmodel";
 
@@ -9,6 +9,7 @@ export const Route = createFileRoute("/book/$bookId")({
 function SingleBookPage() {
   const { bookId } = Route.useParams();
   const navigate = useNavigate();
+  const router = useRouter();
 
   const {
     book,
@@ -21,7 +22,7 @@ function SingleBookPage() {
   } = useSingleBookViewModel(bookId);
 
   const handleBack = () => {
-    navigate({ to: "/" });
+    router.history.back();
   };
 
   const handleReviewClick = (reviewId: number) => {

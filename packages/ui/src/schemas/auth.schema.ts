@@ -1,15 +1,17 @@
 import { z } from "zod";
 import i18n from "../i18n/config";
 
-export const getEmailSchema = () =>
-  z.string().email(i18n.t("auth.validation.emailInvalid"));
+export const getEmailSchema = () => z.string().email(i18n.t("auth.validation.emailInvalid"));
 
 export const getUsernameSchema = () =>
   z
     .string()
     .min(3, i18n.t("auth.validation.usernameMin"))
     .max(32, i18n.t("auth.validation.usernameMax"))
-    .regex(/^[a-zA-Z0-9_]+$/, i18n.t("auth.validation.usernameFormat"));
+    .transform((val) => val.toLowerCase())
+    .refine((val) => /^[a-z0-9_]+$/.test(val), {
+      message: i18n.t("auth.validation.usernameFormat"),
+    });
 
 export const getPasswordSchema = () =>
   z
@@ -32,15 +34,17 @@ export const getLoginSchema = () =>
   });
 
 export const getRegisterSchema = () =>
-  z.object({
-    username: getUsernameSchema(),
-    email: getEmailSchema(),
-    password: getPasswordSchema(),
-    confirmPassword: z.string(),
-  }).refine((data) => data.password === data.confirmPassword, {
-    message: i18n.t("auth.validation.passwordMismatch"),
-    path: ["confirmPassword"],
-  });
+  z
+    .object({
+      username: getUsernameSchema(),
+      email: getEmailSchema(),
+      password: getPasswordSchema(),
+      confirmPassword: z.string(),
+    })
+    .refine((data) => data.password === data.confirmPassword, {
+      message: i18n.t("auth.validation.passwordMismatch"),
+      path: ["confirmPassword"],
+    });
 
 export const getResetPasswordRequestSchema = () =>
   z.object({
@@ -48,14 +52,16 @@ export const getResetPasswordRequestSchema = () =>
   });
 
 export const getResetPasswordConfirmSchema = () =>
-  z.object({
-    token: z.string().min(1, "Token requis"),
-    password: getPasswordSchema(),
-    confirmPassword: z.string(),
-  }).refine((data) => data.password === data.confirmPassword, {
-    message: i18n.t("auth.validation.passwordMismatch"),
-    path: ["confirmPassword"],
-  });
+  z
+    .object({
+      token: z.string().min(1, "Token requis"),
+      password: getPasswordSchema(),
+      confirmPassword: z.string(),
+    })
+    .refine((data) => data.password === data.confirmPassword, {
+      message: i18n.t("auth.validation.passwordMismatch"),
+      path: ["confirmPassword"],
+    });
 
 // Backward compatibility
 export const loginSchema = getLoginSchema();

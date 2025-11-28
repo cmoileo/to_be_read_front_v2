@@ -48,7 +48,7 @@
             "emailInvalid": "Invalid email",
             "usernameMin": "Username must be at least 3 characters",
             "usernameMax": "Username cannot exceed 32 characters",
-            "usernameFormat": "Username can only contain letters, numbers and underscores",
+            "usernameFormat": "Username can only contain lowercase letters, numbers and underscores",
             "passwordMin": "Password must be at least 8 characters",
             "passwordUppercase": "Password must contain at least one uppercase letter",
             "passwordLowercase": "Password must contain at least one lowercase letter",

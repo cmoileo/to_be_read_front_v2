@@ -1,5 +1,11 @@
 import { useState, useEffect } from "react";
-import { createFileRoute, redirect, useSearch, useNavigate } from "@tanstack/react-router";
+import {
+  createFileRoute,
+  redirect,
+  useSearch,
+  useNavigate,
+  useRouter,
+} from "@tanstack/react-router";
 import { MobileStorage } from "../../services/mobile-storage.service";
 import { Button, ReviewCard, useTranslation } from "@repo/ui";
 import { useSearchViewModel } from "../../viewmodels/use-search-viewmodel";
@@ -23,6 +29,7 @@ function SearchReviewsPage() {
   const { t } = useTranslation();
   const { q } = useSearch({ from: "/search/reviews" });
   const navigate = useNavigate();
+  const router = useRouter();
 
   const [currentPage, setCurrentPage] = useState(1);
   const { reviewsResults, isLoadingReviews, searchReviews } = useSearchViewModel();
@@ -52,7 +59,7 @@ function SearchReviewsPage() {
       <div className="flex-1 p-6">
         <header className="mb-6">
           <div className="flex items-center gap-3 mb-4">
-            <Button variant="ghost" size="sm" onClick={() => window.history.back()}>
+            <Button variant="ghost" size="sm" onClick={() => router.history.back()}>
               ← {t("common.back")}
             </Button>
           </div>
@@ -74,7 +81,9 @@ function SearchReviewsPage() {
               <ReviewCard
                 key={review.id}
                 review={review}
-                onClick={() => navigate({ to: "/review/$reviewId", params: { reviewId: String(review.id) } })}
+                onClick={() =>
+                  navigate({ to: "/review/$reviewId", params: { reviewId: String(review.id) } })
+                }
               />
             ))}
 

@@ -1,4 +1,4 @@
-import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, redirect, useNavigate, useRouter } from "@tanstack/react-router";
 import { MobileStorage } from "../../services/mobile-storage.service";
 import { SingleReviewScreen } from "@repo/ui";
 import { useSingleReviewViewModel } from "../../viewmodels/use-single-review-viewmodel";
@@ -15,6 +15,7 @@ export const Route = createFileRoute("/review/$reviewId")({
 
 function SingleReviewPage() {
   const navigate = useNavigate();
+  const router = useRouter();
   const { reviewId } = Route.useParams();
   const reviewIdNum = parseInt(reviewId, 10);
 
@@ -33,7 +34,7 @@ function SingleReviewPage() {
   } = useSingleReviewViewModel(reviewIdNum);
 
   const handleBack = () => {
-    navigate({ to: "/" });
+    router.history.back();
   };
 
   const handleAuthorClick = (authorId: number) => {

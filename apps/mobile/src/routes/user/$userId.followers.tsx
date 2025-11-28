@@ -1,4 +1,10 @@
-import { createFileRoute, redirect, useNavigate, useRouterState } from "@tanstack/react-router";
+import {
+  createFileRoute,
+  redirect,
+  useNavigate,
+  useRouter,
+  useRouterState,
+} from "@tanstack/react-router";
 import { MobileStorage } from "../../services/mobile-storage.service";
 import {
   BottomNav,
@@ -35,6 +41,7 @@ function FollowersPage() {
   const { userId } = Route.useParams();
   const { userName } = Route.useSearch();
   const navigate = useNavigate();
+  const router = useRouter();
   const { t } = useTranslation();
   const routerState = useRouterState();
   const currentPath = routerState.location.pathname;
@@ -87,7 +94,7 @@ function FollowersPage() {
   };
 
   const handleBack = () => {
-    window.history.back();
+    router.history.back();
   };
 
   return (

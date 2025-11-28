@@ -22,25 +22,23 @@ export default async function UserProfilePage({ params }: UserProfilePageProps) 
     redirect("/login");
   }
 
+  let user;
+  let initialReviewsResponse;
+
   try {
-    const [user, initialReviewsResponse] = await Promise.all([
+    [user, initialReviewsResponse] = await Promise.all([
       WebUserService.getUser(userIdNum, accessToken),
       WebUserService.getUserReviews(userIdNum, 1, accessToken),
     ]);
-
-    // If it's the current user, redirect to /profile
-    if (user.isMe) {
-      redirect("/profile");
-    }
-
-    return (
-      <UserProfileClient
-        initialUser={user}
-        initialReviewsResponse={initialReviewsResponse}
-      />
-    );
   } catch (error) {
     console.error("Failed to fetch user profile:", error);
     notFound();
   }
+
+  // If it's the current user, redirect to /profile (must be outside try/catch)
+  if (user.isMe) {
+    redirect("/profile");
+  }
+
+  return <UserProfileClient initialUser={user} initialReviewsResponse={initialReviewsResponse} />;
 }

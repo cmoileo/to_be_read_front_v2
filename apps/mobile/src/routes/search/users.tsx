@@ -1,5 +1,11 @@
 import { useState, useEffect } from "react";
-import { createFileRoute, redirect, useNavigate, useSearch } from "@tanstack/react-router";
+import {
+  createFileRoute,
+  redirect,
+  useNavigate,
+  useSearch,
+  useRouter,
+} from "@tanstack/react-router";
 import { MobileStorage } from "../../services/mobile-storage.service";
 import { Button, UserCard, useTranslation } from "@repo/ui";
 import { useSearchViewModel } from "../../viewmodels/use-search-viewmodel";
@@ -21,6 +27,7 @@ export const Route = createFileRoute("/search/users")({
 
 function SearchUsersPage() {
   const navigate = useNavigate();
+  const router = useRouter();
   const { t } = useTranslation();
   const { q } = useSearch({ from: "/search/users" });
 
@@ -52,7 +59,7 @@ function SearchUsersPage() {
       <div className="flex-1 p-6">
         <header className="mb-6">
           <div className="flex items-center gap-3 mb-4">
-            <Button variant="ghost" size="sm" onClick={() => window.history.back()}>
+            <Button variant="ghost" size="sm" onClick={() => router.history.back()}>
               ← {t("common.back")}
             </Button>
           </div>
