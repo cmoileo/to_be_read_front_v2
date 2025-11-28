@@ -177,5 +177,13 @@
         "errors": {
             "loadFailed": "Failed to load results"
         }
+    },
+    "followList": {
+        "followersTitle": "{{userName}}'s Followers",
+        "followingTitle": "{{userName}} is Following",
+        "noFollowers": "No followers yet",
+        "noFollowing": "Not following anyone",
+        "noFollowersDescription": "When someone follows this user, they will appear here.",
+        "noFollowingDescription": "This user isn't following anyone yet."
     }
 }

@@ -36,6 +36,8 @@ export * from "./sections/search-section";
 export * from "./sections/feed-screen";
 export * from "./sections/single-review-screen";
 export * from "./sections/single-book-screen";
+export * from "./sections/follow-list-screen";
+export * from "./components/user-list-item";
 export * from "./schemas/auth.schema";
 export * from "./schemas/profile.schema";
 export * from "./i18n/config";
@@ -64,4 +66,5 @@ export {
   PlusCircle,
   FileText,
   UserPlus,
+  UserX,
 } from "lucide-react";

@@ -23,6 +23,7 @@ function ProfilePage() {
 
   const {
     user,
+    userId,
     reviews,
     isLoading,
     hasMore,
@@ -64,6 +65,24 @@ function ProfilePage() {
     navigate({ to: href });
   };
 
+  const handleFollowersClick = () => {
+    if (userId) {
+      navigate({
+        to: `/user/${userId}/followers`,
+        search: { userName: user?.userName },
+      });
+    }
+  };
+
+  const handleFollowingClick = () => {
+    if (userId) {
+      navigate({
+        to: `/user/${userId}/following`,
+        search: { userName: user?.userName },
+      });
+    }
+  };
+
   return (
     <div className="flex min-h-screen flex-col">
       <div className="flex-1 p-6 pb-20">
@@ -81,6 +100,8 @@ function ProfilePage() {
           onLoadMore={handleLoadMore}
           onReviewClick={handleReviewClick}
           onDeleteReview={handleDeleteReview}
+          onFollowersClick={handleFollowersClick}
+          onFollowingClick={handleFollowingClick}
         />
       </div>
 

@@ -130,7 +130,7 @@ export default function SearchPage() {
       )}
 
       {!isSearching && displayResults && (
-        <div className="space-y-8 max-w-4xl">
+        <div className="space-y-8">
           <SearchSection
             title={t("search.users")}
             items={displayResults.users}

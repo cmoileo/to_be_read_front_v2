@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { ProfileScreen } from "@repo/ui";
 import { useProfileViewModel } from "@/viewmodels/use-profile-viewmodel";
 import type { User, Review } from "@repo/types";
@@ -11,6 +12,7 @@ interface ProfileClientProps {
 }
 
 export default function ProfileClient({ initialUser, initialReviewsResponse }: ProfileClientProps) {
+  const router = useRouter();
   const [isEditOpen, setIsEditOpen] = useState(false);
 
   const {
@@ -24,6 +26,18 @@ export default function ProfileClient({ initialUser, initialReviewsResponse }: P
     handleReviewClick,
     handleDeleteReview,
   } = useProfileViewModel({ initialUser, initialReviewsResponse });
+
+  const handleFollowersClick = () => {
+    if (user?.id) {
+      router.push(`/user/${user.id}/followers`);
+    }
+  };
+
+  const handleFollowingClick = () => {
+    if (user?.id) {
+      router.push(`/user/${user.id}/following`);
+    }
+  };
 
   if (!user) {
     return null;
@@ -43,6 +57,8 @@ export default function ProfileClient({ initialUser, initialReviewsResponse }: P
       onLoadMore={handleLoadMore}
       onReviewClick={handleReviewClick}
       onDeleteReview={handleDeleteReview}
+      onFollowersClick={handleFollowersClick}
+      onFollowingClick={handleFollowingClick}
       isOwnProfile={true}
     />
   );

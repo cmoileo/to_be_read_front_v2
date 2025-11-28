@@ -5,6 +5,7 @@ import { cn } from "../lib/utils";
 import { Pencil, Loader2, FileText, Users, UserPlus } from "lucide-react";
 
 interface User {
+  id: number;
   userName: string;
   avatar: string | null;
   biography: string | null;
@@ -21,6 +22,8 @@ interface ProfileHeaderProps {
   onEdit?: () => void;
   onFollow?: () => void;
   onUnfollow?: () => void;
+  onFollowersClick?: () => void;
+  onFollowingClick?: () => void;
 }
 
 export const ProfileHeader = ({
@@ -30,6 +33,8 @@ export const ProfileHeader = ({
   onEdit,
   onFollow,
   onUnfollow,
+  onFollowersClick,
+  onFollowingClick,
 }: ProfileHeaderProps) => {
   const { t } = useTranslation();
 
@@ -114,25 +119,36 @@ export const ProfileHeader = ({
               value: user.reviewsCount,
               label: t("profile.reviews"),
               icon: <FileText className="w-4 h-4" />,
+              onClick: undefined,
             },
             {
               value: user.followersCount,
               label: t("profile.followers"),
               icon: <Users className="w-4 h-4" />,
+              onClick: onFollowersClick,
             },
             {
               value: user.followingCount,
               label: t("profile.following"),
               icon: <UserPlus className="w-4 h-4" />,
+              onClick: onFollowingClick,
             },
           ].map((stat, index) => (
-            <div key={index} className="text-center flex-1">
+            <button
+              key={index}
+              className={cn(
+                "text-center flex-1 rounded-xl py-2 transition-colors",
+                stat.onClick && "hover:bg-muted/50 cursor-pointer"
+              )}
+              onClick={stat.onClick}
+              disabled={!stat.onClick}
+            >
               <div className="text-xl font-bold text-foreground">{Number(stat.value)}</div>
               <div className="text-xs text-muted-foreground mt-0.5 flex items-center justify-center gap-1">
                 {stat.icon}
                 {stat.label}
               </div>
-            </div>
+            </button>
           ))}
         </div>
       </div>

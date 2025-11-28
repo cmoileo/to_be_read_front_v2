@@ -66,9 +66,9 @@ export const useProfileViewModel = () => {
     mutationFn: (reviewId: number) => MobileProfileService.deleteReview(reviewId),
     onMutate: async (reviewId) => {
       await queryClient.cancelQueries({ queryKey: ["myReviews", currentUser?.id] });
-      
+
       const previousData = queryClient.getQueryData(["myReviews", currentUser?.id]);
-      
+
       queryClient.setQueryData(["myReviews", currentUser?.id], (oldData: any) => {
         if (!oldData) return oldData;
         return {
@@ -109,6 +109,7 @@ export const useProfileViewModel = () => {
 
   return {
     user,
+    userId: currentUser?.id ?? null,
     reviews: allReviews,
     isLoading: isLoadingProfile || isLoadingReviews,
     hasMore: hasNextPage,

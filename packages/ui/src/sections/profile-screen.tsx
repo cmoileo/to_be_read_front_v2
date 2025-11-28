@@ -18,6 +18,7 @@ import {
 import { useTranslation } from "react-i18next";
 
 interface User {
+  id: number;
   userName: string;
   avatar: string | null;
   biography: string | null;
@@ -64,6 +65,8 @@ interface ProfileScreenProps {
   onFollow?: () => void;
   onUnfollow?: () => void;
   onBack?: () => void;
+  onFollowersClick?: () => void;
+  onFollowingClick?: () => void;
 }
 
 export const ProfileScreen = ({
@@ -86,6 +89,8 @@ export const ProfileScreen = ({
   onFollow,
   onUnfollow,
   onBack,
+  onFollowersClick,
+  onFollowingClick,
 }: ProfileScreenProps) => {
   const { t } = useTranslation();
   const [reviewToDelete, setReviewToDelete] = useState<number | null>(null);
@@ -130,6 +135,8 @@ export const ProfileScreen = ({
           onEdit={onEdit}
           onFollow={onFollow}
           onUnfollow={onUnfollow}
+          onFollowersClick={onFollowersClick}
+          onFollowingClick={onFollowingClick}
         />
 
         <Separator />
@@ -205,17 +212,21 @@ export const ProfileScreen = ({
         />
       )}
 
-      <AlertDialog open={reviewToDelete !== null} onOpenChange={(open) => !open && setReviewToDelete(null)}>
+      <AlertDialog
+        open={reviewToDelete !== null}
+        onOpenChange={(open) => !open && setReviewToDelete(null)}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>{t("profile.deleteReviewTitle")}</AlertDialogTitle>
-            <AlertDialogDescription>
-              {t("profile.deleteReviewDescription")}
-            </AlertDialogDescription>
+            <AlertDialogDescription>{t("profile.deleteReviewDescription")}</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
-            <AlertDialogAction onClick={handleConfirmDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+            <AlertDialogAction
+              onClick={handleConfirmDelete}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
               {t("common.delete")}
             </AlertDialogAction>
           </AlertDialogFooter>

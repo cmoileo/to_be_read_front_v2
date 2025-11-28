@@ -177,5 +177,13 @@
         "errors": {
             "loadFailed": "Échec du chargement des résultats"
         }
+    },
+    "followList": {
+        "followersTitle": "Abonnés de {{userName}}",
+        "followingTitle": "Abonnements de {{userName}}",
+        "noFollowers": "Aucun abonné",
+        "noFollowing": "Aucun abonnement",
+        "noFollowersDescription": "Quand quelqu'un suivra cet utilisateur, il apparaîtra ici.",
+        "noFollowingDescription": "Cet utilisateur ne suit personne pour le moment."
     }
 }

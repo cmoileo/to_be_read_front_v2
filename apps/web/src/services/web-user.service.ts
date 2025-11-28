@@ -16,6 +16,25 @@ interface ApiUser {
   createdAt: string;
 }
 
+interface ApiFollowUser {
+  id: number;
+  userName: string;
+  avatar?: string | null;
+  avatarUrl?: string | null;
+  biography: string | null;
+  isFollowing: boolean;
+  isMe: boolean;
+}
+
+export interface FollowUser {
+  id: number;
+  userName: string;
+  avatar: string | null;
+  biography: string | null;
+  isFollowing: boolean;
+  isMe: boolean;
+}
+
 function mapApiUserToUser(apiUser: ApiUser): User {
   // Use the computed 'avatar' field from backend which contains the full URL
   return {
@@ -33,9 +52,20 @@ function mapApiUserToUser(apiUser: ApiUser): User {
   };
 }
 
+function mapApiFollowUserToFollowUser(apiUser: ApiFollowUser): FollowUser {
+  return {
+    id: apiUser.id,
+    userName: apiUser.userName,
+    avatar: apiUser.avatar || apiUser.avatarUrl || null,
+    biography: apiUser.biography,
+    isFollowing: apiUser.isFollowing,
+    isMe: apiUser.isMe,
+  };
+}
+
 async function callApi<T>(path: string, init?: RequestInit, accessToken?: string): Promise<T> {
   const headers: Record<string, string> = {
-    ...(init?.headers as Record<string, string> || {}),
+    ...((init?.headers as Record<string, string>) || {}),
   };
 
   if (accessToken) {
@@ -66,7 +96,11 @@ export class WebUserService {
     return mapApiUserToUser(apiUser);
   }
 
-  static async getUserReviews(userId: number, page: number, accessToken: string): Promise<PaginatedResponse<Review>> {
+  static async getUserReviews(
+    userId: number,
+    page: number,
+    accessToken: string
+  ): Promise<PaginatedResponse<Review>> {
     return callApi<PaginatedResponse<Review>>(`/user/${userId}/reviews/${page}`, {}, accessToken);
   }
 
@@ -76,5 +110,37 @@ export class WebUserService {
 
   static async unfollowUser(userId: number, accessToken: string): Promise<{ message: string }> {
     return callApi<{ message: string }>(`/user/${userId}/unfollow`, {}, accessToken);
+  }
+
+  static async getFollowers(
+    userId: number,
+    page: number,
+    accessToken: string
+  ): Promise<PaginatedResponse<FollowUser>> {
+    const response = await callApi<PaginatedResponse<ApiFollowUser>>(
+      `/followers/${userId}/${page}`,
+      {},
+      accessToken
+    );
+    return {
+      ...response,
+      data: response.data.map(mapApiFollowUserToFollowUser),
+    };
+  }
+
+  static async getFollowings(
+    userId: number,
+    page: number,
+    accessToken: string
+  ): Promise<PaginatedResponse<FollowUser>> {
+    const response = await callApi<PaginatedResponse<ApiFollowUser>>(
+      `/followings/${userId}/${page}`,
+      {},
+      accessToken
+    );
+    return {
+      ...response,
+      data: response.data.map(mapApiFollowUserToFollowUser),
+    };
   }
 }

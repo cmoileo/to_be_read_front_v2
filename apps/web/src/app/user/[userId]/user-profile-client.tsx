@@ -36,6 +36,14 @@ export default function UserProfileClient({
     router.push(`/review/${reviewId}`);
   };
 
+  const handleFollowersClick = () => {
+    router.push(`/user/${user.id}/followers`);
+  };
+
+  const handleFollowingClick = () => {
+    router.push(`/user/${user.id}/following`);
+  };
+
   return (
     <ProfileScreen
       user={user}
@@ -51,6 +59,8 @@ export default function UserProfileClient({
       onUnfollow={handleUnfollow}
       onLoadMore={handleLoadMore}
       onReviewClick={handleReviewClick}
+      onFollowersClick={handleFollowersClick}
+      onFollowingClick={handleFollowingClick}
     />
   );
 }

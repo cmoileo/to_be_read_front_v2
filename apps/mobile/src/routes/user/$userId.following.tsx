@@ -1,15 +1,8 @@
-import {
-  createFileRoute,
-  redirect,
-  useNavigate,
-  useRouterState,
-  Outlet,
-  useMatch,
-} from "@tanstack/react-router";
+import { createFileRoute, redirect, useNavigate, useRouterState } from "@tanstack/react-router";
 import { MobileStorage } from "../../services/mobile-storage.service";
 import {
   BottomNav,
-  ProfileScreen,
+  FollowListScreen,
   useTranslation,
   Home,
   Search,
@@ -17,34 +10,30 @@ import {
   User,
   ArrowLeft,
 } from "@repo/ui";
-import { useUserProfileViewModel } from "../../viewmodels/use-user-profile-viewmodel";
+import { useFollowListViewModel } from "../../viewmodels/use-follow-list-viewmodel";
 
-export const Route = createFileRoute("/user/$userId")({
+interface FollowingSearchParams {
+  userName?: string;
+}
+
+export const Route = createFileRoute("/user/$userId/following")({
   beforeLoad: async () => {
     const hasTokens = await MobileStorage.hasTokens();
     if (!hasTokens) {
       throw redirect({ to: "/onboarding" });
     }
   },
-  component: UserProfileLayout,
+  validateSearch: (search: Record<string, unknown>): FollowingSearchParams => {
+    return {
+      userName: typeof search.userName === "string" ? search.userName : undefined,
+    };
+  },
+  component: FollowingPage,
 });
 
-function UserProfileLayout() {
+function FollowingPage() {
   const { userId } = Route.useParams();
-  const routerState = useRouterState();
-  const currentPath = routerState.location.pathname;
-
-  const isExactMatch = currentPath === `/user/${userId}`;
-
-  if (!isExactMatch) {
-    return <Outlet />;
-  }
-
-  return <UserProfilePage />;
-}
-
-function UserProfilePage() {
-  const { userId } = Route.useParams();
+  const { userName } = Route.useSearch();
   const navigate = useNavigate();
   const { t } = useTranslation();
   const routerState = useRouterState();
@@ -53,15 +42,14 @@ function UserProfilePage() {
   const userIdNumber = parseInt(userId, 10);
 
   const {
-    user,
-    reviews,
+    users,
     isLoading,
     hasMore,
     isFetchingMore,
+    handleLoadMore,
     handleFollow,
     handleUnfollow,
-    handleLoadMore,
-  } = useUserProfileViewModel(userIdNumber);
+  } = useFollowListViewModel(userIdNumber, "following");
 
   const navItems = [
     {
@@ -94,57 +82,40 @@ function UserProfilePage() {
     navigate({ to: href });
   };
 
-  const handleReviewClick = (reviewId: number) => {
-    navigate({ to: `/review/${reviewId}` });
+  const handleUserClick = (clickedUserId: number) => {
+    navigate({ to: `/user/${clickedUserId}` });
   };
 
   const handleBack = () => {
     window.history.back();
   };
 
-  const handleFollowersClick = () => {
-    navigate({
-      to: `/user/${userIdNumber}/followers`,
-      search: { userName: user?.userName },
-    });
-  };
-
-  const handleFollowingClick = () => {
-    navigate({
-      to: `/user/${userIdNumber}/following`,
-      search: { userName: user?.userName },
-    });
-  };
-
   return (
     <div className="flex min-h-screen flex-col">
       <div className="flex-1 pb-20">
-        <div className="p-4 border-b">
+        <div className="p-4 border-b flex items-center gap-3">
           <button
             onClick={handleBack}
             className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
           >
             <ArrowLeft className="w-5 h-5" />
-            <span>{t("common.back")}</span>
           </button>
+          <h1 className="text-lg font-semibold">
+            {t("followList.followingTitle", { userName: userName || "" })}
+          </h1>
         </div>
 
-        <div className="p-4">
-          <ProfileScreen
-            user={user}
-            reviews={reviews}
-            isOwnProfile={user?.isMe ?? false}
-            isLoading={isLoading}
-            hasMore={hasMore}
-            isFetchingMore={isFetchingMore}
-            onFollow={handleFollow}
-            onUnfollow={handleUnfollow}
-            onLoadMore={handleLoadMore}
-            onReviewClick={handleReviewClick}
-            onFollowersClick={handleFollowersClick}
-            onFollowingClick={handleFollowingClick}
-          />
-        </div>
+        <FollowListScreen
+          type="following"
+          users={users}
+          isLoading={isLoading}
+          hasMore={hasMore}
+          isFetchingMore={isFetchingMore}
+          onLoadMore={handleLoadMore}
+          onUserClick={handleUserClick}
+          onFollow={handleFollow}
+          onUnfollow={handleUnfollow}
+        />
       </div>
 
       <BottomNav items={navItems} onNavigate={handleNavigate} />
