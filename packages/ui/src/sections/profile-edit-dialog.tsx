@@ -8,6 +8,8 @@ import { useTranslation } from "react-i18next";
 import { useForm } from "@tanstack/react-form";
 import type { ProfileUpdateFormData } from "../schemas/profile.schema";
 
+const MAX_AVATAR_SIZE = 1.9 * 1024 * 1024; // 1.9MB in bytes
+
 interface ProfileEditDialogProps {
   isOpen: boolean;
   onClose: () => void;
@@ -29,6 +31,7 @@ export const ProfileEditDialog = ({
 }: ProfileEditDialogProps) => {
   const { t } = useTranslation();
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+  const [avatarError, setAvatarError] = useState<string | null>(null);
 
   const form = useForm({
     defaultValues: {
@@ -53,7 +56,15 @@ export const ProfileEditDialog = ({
 
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
+    setAvatarError(null);
+
     if (file) {
+      if (file.size > MAX_AVATAR_SIZE) {
+        setAvatarError(t("profile.avatarTooLarge"));
+        e.target.value = "";
+        return;
+      }
+
       form.setFieldValue("avatar", file);
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -89,9 +100,7 @@ export const ProfileEditDialog = ({
                   onBlur={field.handleBlur}
                 />
                 {field.state.meta.errors && field.state.meta.errors[0] && (
-                  <p className="text-sm text-destructive">
-                    {t(field.state.meta.errors[0])}
-                  </p>
+                  <p className="text-sm text-destructive">{t(field.state.meta.errors[0])}</p>
                 )}
               </div>
             )}
@@ -109,9 +118,7 @@ export const ProfileEditDialog = ({
                   rows={4}
                 />
                 {field.state.meta.errors && field.state.meta.errors[0] && (
-                  <p className="text-sm text-destructive">
-                    {t(field.state.meta.errors[0])}
-                  </p>
+                  <p className="text-sm text-destructive">{t(field.state.meta.errors[0])}</p>
                 )}
               </div>
             )}
@@ -143,6 +150,7 @@ export const ProfileEditDialog = ({
               accept="image/jpeg,image/jpg,image/png,image/webp"
               onChange={handleAvatarChange}
             />
+            {avatarError && <p className="text-sm text-destructive">{avatarError}</p>}
             {avatarPreview && (
               <img
                 src={avatarPreview}

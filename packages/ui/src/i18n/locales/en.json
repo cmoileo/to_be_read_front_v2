@@ -113,6 +113,7 @@
         "biography": "Biography",
         "language": "Language",
         "avatar": "Profile picture",
+        "avatarTooLarge": "Profile picture must not exceed 2 MB",
         "validation": {
             "userNameTooShort": "Username must be at least 3 characters",
             "userNameTooLong": "Username cannot exceed 30 characters",
