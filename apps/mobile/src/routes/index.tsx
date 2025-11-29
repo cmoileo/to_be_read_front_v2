@@ -1,8 +1,10 @@
 import { createFileRoute, redirect, useNavigate, useRouterState } from "@tanstack/react-router";
 import { BottomNav, FeedScreen, useTranslation, Home, Search, PenSquare, User } from "@repo/ui";
+import { Bell } from "lucide-react";
 import { MobileStorage } from "../services/mobile-storage.service";
 import { useFeedViewModel } from "../viewmodels/use-feed-viewmodel";
 import { useNotificationRegistration } from "../hooks/use-notification-registration";
+import { useUnreadNotificationCount } from "../viewmodels/use-notifications-viewmodel";
 
 export const Route = createFileRoute("/")({
   beforeLoad: async () => {
@@ -19,6 +21,7 @@ function Index() {
   const { t } = useTranslation();
   const routerState = useRouterState();
   const currentPath = routerState.location.pathname;
+  const unreadCount = useUnreadNotificationCount();
 
   useNotificationRegistration();
 
@@ -74,6 +77,20 @@ function Index() {
 
   return (
     <div className="flex min-h-screen flex-col">
+      <header className="sticky top-0 z-40 bg-background/95 backdrop-blur-lg border-b border-border/50 px-4 py-3 flex items-center justify-between">
+        <h1 className="text-xl font-bold">InkerClub</h1>
+        <button
+          onClick={() => navigate({ to: "/notifications" })}
+          className="relative p-2 hover:bg-accent rounded-full transition-colors"
+        >
+          <Bell className="w-6 h-6" />
+          {unreadCount > 0 && (
+            <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] bg-destructive text-destructive-foreground text-xs font-bold rounded-full flex items-center justify-center px-1">
+              {unreadCount > 99 ? "99+" : unreadCount}
+            </span>
+          )}
+        </button>
+      </header>
       <div className="flex-1 p-4 pb-20">
         <FeedScreen
           reviews={reviews}

@@ -138,7 +138,8 @@
         "home": "Accueil",
         "search": "Rechercher",
         "createReview": "Critique",
-        "profile": "Profil"
+        "profile": "Profil",
+        "notifications": "Notifications"
     },
     "review": {
         "create": {
@@ -214,6 +215,7 @@
         "alreadyInList": "Ce livre est déjà dans votre liste"
     },
     "notifications": {
+        "title": "Notifications",
         "permissionTitle": "Activer les notifications",
         "permissionDescription": "Recevez des alertes lorsque quelqu'un aime vos critiques, commente ou vous suit.",
         "enable": "Activer",
@@ -223,6 +225,14 @@
         "error": "Impossible d'activer les notifications",
         "like": "{{userName}} a aimé votre critique",
         "comment": "{{userName}} a commenté votre critique",
-        "follow": "{{userName}} vous suit maintenant"
+        "follow": "{{userName}} vous suit maintenant",
+        "empty": "Aucune notification",
+        "emptyDescription": "Vous n'avez pas encore de notifications. Elles apparaîtront ici.",
+        "unreadCount": "{{count}} non lue(s)",
+        "markAllAsRead": "Tout marquer comme lu",
+        "justNow": "À l'instant",
+        "minutesAgo": "Il y a {{count}} min",
+        "hoursAgo": "Il y a {{count}}h",
+        "daysAgo": "Il y a {{count}}j"
     }
 }

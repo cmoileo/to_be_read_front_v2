@@ -138,7 +138,8 @@
         "home": "Home",
         "search": "Search",
         "createReview": "Review",
-        "profile": "Profile"
+        "profile": "Profile",
+        "notifications": "Notifications"
     },
     "review": {
         "create": {
@@ -214,6 +215,7 @@
         "alreadyInList": "This book is already in your list"
     },
     "notifications": {
+        "title": "Notifications",
         "permissionTitle": "Enable Notifications",
         "permissionDescription": "Get alerted when someone likes your reviews, comments, or follows you.",
         "enable": "Enable",
@@ -223,6 +225,14 @@
         "error": "Unable to enable notifications",
         "like": "{{userName}} liked your review",
         "comment": "{{userName}} commented on your review",
-        "follow": "{{userName}} is now following you"
+        "follow": "{{userName}} is now following you",
+        "empty": "No notifications",
+        "emptyDescription": "You don't have any notifications yet. They will appear here.",
+        "unreadCount": "{{count}} unread",
+        "markAllAsRead": "Mark all as read",
+        "justNow": "Just now",
+        "minutesAgo": "{{count}}m ago",
+        "hoursAgo": "{{count}}h ago",
+        "daysAgo": "{{count}}d ago"
     }
 }

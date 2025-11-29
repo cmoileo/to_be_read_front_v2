@@ -1,9 +1,9 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL!;
 
-export async function POST(request: NextRequest) {
+export async function POST() {
   try {
     const cookieStore = await cookies();
     const accessToken = cookieStore.get("tbr_access_token")?.value;
@@ -12,33 +12,25 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const body = await request.json();
-    const { token, platform } = body;
-
-    if (!token || !platform) {
-      return NextResponse.json({ error: "Missing token or platform" }, { status: 400 });
-    }
-
-    const response = await fetch(`${API_URL}/device-token`, {
+    const response = await fetch(`${API_URL}/notifications/mark-all-read`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${accessToken}`,
       },
-      body: JSON.stringify({ fcmToken: token }),
     });
 
     if (!response.ok) {
       const error = await response.json().catch(() => ({}));
       return NextResponse.json(
-        { error: error.message || "Failed to register token" },
+        { error: error.message || "Failed to mark all as read" },
         { status: response.status }
       );
     }
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Failed to register notification token:", error);
+    console.error("Failed to mark all notifications as read:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

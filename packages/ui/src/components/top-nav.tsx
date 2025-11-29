@@ -4,7 +4,7 @@ import { cn } from "../lib/utils";
 import { Button } from "./button";
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
-import { Home, Search, PenSquare, User, BookOpen, Menu, X, LogIn } from "lucide-react";
+import { Home, Search, PenSquare, User, BookOpen, Menu, X, LogIn, Bell } from "lucide-react";
 
 interface TopNavProps {
   userName?: string;
@@ -17,9 +17,17 @@ interface TopNavProps {
     children: React.ReactNode;
   }>;
   isVisitor?: boolean;
+  unreadNotificationsCount?: number;
 }
 
-export function TopNav({ userName, onLogout, currentPath, Link, isVisitor = false }: TopNavProps) {
+export function TopNav({
+  userName,
+  onLogout,
+  currentPath,
+  Link,
+  isVisitor = false,
+  unreadNotificationsCount = 0,
+}: TopNavProps) {
   const { t } = useTranslation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -90,6 +98,24 @@ export function TopNav({ userName, onLogout, currentPath, Link, isVisitor = fals
           <div className="flex items-center gap-4">
             {userName ? (
               <div className="hidden md:flex items-center gap-3">
+                {/* Notification Bell */}
+                <Link
+                  href="/notifications"
+                  className={cn(
+                    "relative p-2 rounded-lg transition-all duration-200",
+                    "hover:bg-accent/50",
+                    currentPath === "/notifications"
+                      ? "text-primary bg-primary/10"
+                      : "text-muted-foreground hover:text-foreground"
+                  )}
+                >
+                  <Bell className="w-5 h-5" />
+                  {unreadNotificationsCount > 0 && (
+                    <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] bg-destructive text-destructive-foreground text-xs font-bold rounded-full flex items-center justify-center px-1">
+                      {unreadNotificationsCount > 99 ? "99+" : unreadNotificationsCount}
+                    </span>
+                  )}
+                </Link>
                 <div className="flex items-center gap-2 px-3 py-1.5 bg-muted/50 rounded-full">
                   <span className="w-6 h-6 bg-primary/20 rounded-full flex items-center justify-center text-xs">
                     {userName.charAt(0).toUpperCase()}
@@ -157,6 +183,28 @@ export function TopNav({ userName, onLogout, currentPath, Link, isVisitor = fals
 
               {userName ? (
                 <div className="border-t border-border/50 pt-4 mt-4 space-y-2">
+                  {/* Notifications link for mobile */}
+                  <Link
+                    href="/notifications"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={cn(
+                      "flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-all duration-200",
+                      "hover:bg-accent/50 active:scale-[0.98]",
+                      currentPath === "/notifications"
+                        ? "bg-primary/10 text-primary"
+                        : "text-muted-foreground hover:text-foreground"
+                    )}
+                  >
+                    <div className="relative">
+                      <Bell className="w-5 h-5" />
+                      {unreadNotificationsCount > 0 && (
+                        <span className="absolute -top-1 -right-1 min-w-[14px] h-[14px] bg-destructive text-destructive-foreground text-[10px] font-bold rounded-full flex items-center justify-center px-0.5">
+                          {unreadNotificationsCount > 99 ? "99+" : unreadNotificationsCount}
+                        </span>
+                      )}
+                    </div>
+                    <span>{t("navigation.notifications")}</span>
+                  </Link>
                   <div className="flex items-center gap-3 px-4 py-2">
                     <span className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center text-sm font-medium">
                       {userName.charAt(0).toUpperCase()}
