@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { FeedScreen } from "@repo/ui";
 import { useFeedViewModel } from "@/viewmodels/use-feed-viewmodel";
+import { useNotificationRegistration } from "@/hooks/use-notification-registration";
 import type { Review, PaginatedResponse } from "@repo/types";
 
 interface FeedClientProps {
@@ -11,6 +12,8 @@ interface FeedClientProps {
 
 export default function FeedClient({ initialFeedResponse }: FeedClientProps) {
   const router = useRouter();
+
+  useNotificationRegistration();
 
   const {
     reviews,

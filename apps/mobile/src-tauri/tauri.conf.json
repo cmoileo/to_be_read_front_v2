@@ -1,8 +1,8 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
-  "productName": "To Be Read",
+  "productName": "InkerClub",
   "version": "1.0.0",
-  "identifier": "com.toberead.app",
+  "identifier": "com.inkerclub.app",
   "build": {
     "frontendDist": "../dist",
     "devUrl": "http://localhost:1420",
@@ -12,7 +12,7 @@
   "app": {
     "windows": [
       {
-        "title": "To Be Read",
+        "title": "InkerClub",
         "width": 1200,
         "height": 800,
         "minWidth": 800,
@@ -40,7 +40,7 @@
       "icons/icon.ico"
     ],
     "iOS": {
-      "developmentTeam": ""
+      "developmentTeam": "65VGZ4677Q"
     }
   }
 }

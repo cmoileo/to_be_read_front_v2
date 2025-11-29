@@ -2,7 +2,7 @@
     "auth": {
         "login": {
             "title": "Connexion",
-            "description": "Connectez-vous à votre compte To Be Read",
+            "description": "Connectez-vous à votre compte InkerClub",
             "email": "Email",
             "password": "Mot de passe",
             "forgotPassword": "Mot de passe oublié ?",
@@ -14,7 +14,7 @@
         },
         "register": {
             "title": "Inscription",
-            "description": "Créez votre compte To Be Read",
+            "description": "Créez votre compte InkerClub",
             "username": "Nom d'utilisateur",
             "email": "Email",
             "password": "Mot de passe",
@@ -59,7 +59,7 @@
         "logout": "Déconnexion"
     },
     "visitor": {
-        "title": "Rejoindre To Be Read",
+        "title": "Rejoindre InkerClub",
         "description": "Créez un compte pour interagir avec la communauté",
         "likePrompt": "Connectez-vous pour aimer ce contenu",
         "commentPrompt": "Connectez-vous pour laisser un commentaire",
@@ -71,7 +71,7 @@
         "continueAsVisitor": "Continuer en visiteur"
     },
     "onboarding": {
-        "appTitle": "To Be Read",
+        "appTitle": "InkerClub",
         "subtitle": "Partagez vos critiques littéraires",
         "welcomeTitle": "Bienvenue",
         "welcomeDescription": "Rejoignez notre communauté de lecteurs passionnés",
@@ -212,5 +212,17 @@
         "addSuccess": "Livre ajouté à votre liste",
         "removeSuccess": "Livre retiré de votre liste",
         "alreadyInList": "Ce livre est déjà dans votre liste"
+    },
+    "notifications": {
+        "permissionTitle": "Activer les notifications",
+        "permissionDescription": "Recevez des alertes lorsque quelqu'un aime vos critiques, commente ou vous suit.",
+        "enable": "Activer",
+        "later": "Plus tard",
+        "enabled": "Notifications activées",
+        "disabled": "Notifications désactivées",
+        "error": "Impossible d'activer les notifications",
+        "like": "{{userName}} a aimé votre critique",
+        "comment": "{{userName}} a commenté votre critique",
+        "follow": "{{userName}} vous suit maintenant"
     }
 }

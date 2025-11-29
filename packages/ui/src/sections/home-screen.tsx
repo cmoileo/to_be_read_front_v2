@@ -10,7 +10,7 @@ export function HomeScreen({ userName, onLogout }: HomeScreenProps) {
   return (
     <div className="flex min-h-screen flex-col p-6">
       <header className="flex justify-between items-center mb-8">
-        <h1 className="text-2xl font-bold">To Be Read</h1>
+        <h1 className="text-2xl font-bold">InkerClub</h1>
         <Button variant="ghost" onClick={onLogout}>
           Déconnexion
         </Button>

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "836932540070",
+    "project_id": "inkerclub",
+    "storage_bucket": "inkerclub.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:836932540070:android:e27ffec004c4904ddf0667",
+        "android_client_info": {
+          "package_name": "com.inkerclub.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAiCu1GGnTy2bzaieFf1mj_sWJDW-MXVKk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

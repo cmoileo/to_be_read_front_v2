@@ -23,7 +23,9 @@
         "@tanstack/react-router": "^1.94.4",
         "@tanstack/react-store": "^0.8.0",
         "@tauri-apps/api": "^2.2.0",
+        "@tauri-apps/plugin-notification": "~2.3.3",
         "@tauri-apps/plugin-shell": "^2.0.2",
+        "firebase": "^12.6.0",
         "react": "^18.3.1",
         "react-dom": "^18.3.1"
     },

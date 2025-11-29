@@ -5,9 +5,16 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { useState, type ReactNode } from "react";
 import { AuthProvider } from "@/providers/auth-provider";
 import { I18nProvider } from "@/providers/i18n-provider";
+import { NotificationProvider } from "@/providers/notification-provider";
 import type { User } from "@repo/types";
 
-export function Providers({ children, initialUser }: { children: ReactNode; initialUser: User | null }) {
+export function Providers({
+  children,
+  initialUser,
+}: {
+  children: ReactNode;
+  initialUser: User | null;
+}) {
   const [queryClient] = useState(
     () =>
       new QueryClient({
@@ -24,7 +31,7 @@ export function Providers({ children, initialUser }: { children: ReactNode; init
     <QueryClientProvider client={queryClient}>
       <I18nProvider>
         <AuthProvider initialUser={initialUser}>
-          {children}
+          <NotificationProvider>{children}</NotificationProvider>
         </AuthProvider>
       </I18nProvider>
       <ReactQueryDevtools initialIsOpen={false} />

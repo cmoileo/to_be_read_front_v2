@@ -5,7 +5,7 @@ import { Navigation } from "@/components/navigation";
 import { getUserFromCookies } from "./_auth/actions";
 
 export const metadata: Metadata = {
-  title: "To Be Read - Partagez vos critiques littéraires",
+  title: "InkerClub - Partagez vos critiques littéraires",
   description: "Réseau social de critiques de livres",
 };
 

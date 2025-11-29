@@ -2,6 +2,7 @@ import { createFileRoute, redirect, useNavigate, useRouterState } from "@tanstac
 import { BottomNav, FeedScreen, useTranslation, Home, Search, PenSquare, User } from "@repo/ui";
 import { MobileStorage } from "../services/mobile-storage.service";
 import { useFeedViewModel } from "../viewmodels/use-feed-viewmodel";
+import { useNotificationRegistration } from "../hooks/use-notification-registration";
 
 export const Route = createFileRoute("/")({
   beforeLoad: async () => {
@@ -18,6 +19,8 @@ function Index() {
   const { t } = useTranslation();
   const routerState = useRouterState();
   const currentPath = routerState.location.pathname;
+
+  useNotificationRegistration();
 
   const {
     reviews,

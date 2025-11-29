@@ -2,7 +2,7 @@
     "auth": {
         "login": {
             "title": "Login",
-            "description": "Sign in to your To Be Read account",
+            "description": "Sign in to your InkerClub account",
             "email": "Email",
             "password": "Password",
             "forgotPassword": "Forgot password?",
@@ -14,7 +14,7 @@
         },
         "register": {
             "title": "Sign up",
-            "description": "Create your To Be Read account",
+            "description": "Create your InkerClub account",
             "username": "Username",
             "email": "Email",
             "password": "Password",
@@ -59,7 +59,7 @@
         "logout": "Logout"
     },
     "visitor": {
-        "title": "Join To Be Read",
+        "title": "Join InkerClub",
         "description": "Create an account to interact with the community",
         "likePrompt": "Sign in to like this content",
         "commentPrompt": "Sign in to leave a comment",
@@ -71,7 +71,7 @@
         "continueAsVisitor": "Continue as visitor"
     },
     "onboarding": {
-        "appTitle": "To Be Read",
+        "appTitle": "InkerClub",
         "subtitle": "Share your literary reviews",
         "welcomeTitle": "Welcome",
         "welcomeDescription": "Join our community of passionate readers",
@@ -212,5 +212,17 @@
         "addSuccess": "Book added to your list",
         "removeSuccess": "Book removed from your list",
         "alreadyInList": "This book is already in your list"
+    },
+    "notifications": {
+        "permissionTitle": "Enable Notifications",
+        "permissionDescription": "Get alerted when someone likes your reviews, comments, or follows you.",
+        "enable": "Enable",
+        "later": "Later",
+        "enabled": "Notifications enabled",
+        "disabled": "Notifications disabled",
+        "error": "Unable to enable notifications",
+        "like": "{{userName}} liked your review",
+        "comment": "{{userName}} commented on your review",
+        "follow": "{{userName}} is now following you"
     }
 }

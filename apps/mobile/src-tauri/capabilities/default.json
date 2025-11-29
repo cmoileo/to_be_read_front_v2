@@ -13,6 +13,7 @@
     "store:allow-has",
     "store:allow-clear",
     "store:allow-load",
-    "store:allow-save"
+    "store:allow-save",
+    "notification:default"
   ]
 }
