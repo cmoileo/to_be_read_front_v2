@@ -32,4 +32,18 @@ export class MobileAuthService {
       await HttpInterceptor.post("/revoke-refresh-token", { refreshToken });
     }
   }
+
+  static async deleteAccount(): Promise<{ isSuccessfull: boolean }> {
+    const result = await HttpInterceptor.delete<{ isSuccessfull: boolean }>("/me");
+    await MobileStorage.clearTokens();
+    return result;
+  }
+
+  static async updateNotificationSettings(
+    pushNotificationsEnabled: boolean
+  ): Promise<{ pushNotificationsEnabled: boolean }> {
+    return HttpInterceptor.put<{ pushNotificationsEnabled: boolean }>("/me/notification-settings", {
+      pushNotificationsEnabled,
+    });
+  }
 }
