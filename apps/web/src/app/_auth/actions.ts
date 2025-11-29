@@ -24,7 +24,7 @@ export async function logoutAction() {
 export async function refreshAction() {
   const refreshToken = await WebStorageService.getRefreshToken();
   if (!refreshToken) throw new Error("Missing refresh token");
-  
+
   const data = await WebAuthService.refresh(refreshToken);
   await WebStorageService.setAccessToken(data.token.token);
   await WebStorageService.setRefreshToken(data.refreshToken);
@@ -52,4 +52,16 @@ export async function resetPasswordRequest(email: string) {
 
 export async function resetPasswordConfirm(data: { token: string; password: string }) {
   return WebAuthService.resetPasswordConfirm(data);
+}
+
+export async function deleteAccountAction() {
+  const result = await WebAuthService.deleteAccount();
+  await WebStorageService.clearAuthCookies();
+  return result;
+}
+
+export async function updateNotificationSettingsAction(pushNotificationsEnabled: boolean) {
+  const accessToken = await WebStorageService.getAccessToken();
+  if (!accessToken) throw new Error("Not authenticated");
+  return WebAuthService.updateNotificationSettings(accessToken, pushNotificationsEnabled);
 }

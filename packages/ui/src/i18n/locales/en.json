@@ -234,5 +234,23 @@
         "minutesAgo": "{{count}}m ago",
         "hoursAgo": "{{count}}h ago",
         "daysAgo": "{{count}}d ago"
+    },
+    "settings": {
+        "title": "Settings",
+        "language": "Language",
+        "languageDescription": "Choose your preferred language",
+        "notifications": "Push Notifications",
+        "notificationsDescription": "Receive push notifications",
+        "logout": "Logout",
+        "logoutDescription": "Sign out of your account",
+        "logoutConfirmTitle": "Logout",
+        "logoutConfirmDescription": "Are you sure you want to logout? You will need to sign in again to access your account.",
+        "deleteAccount": "Delete Account",
+        "deleteAccountDescription": "Permanently delete your account and all data",
+        "deleteAccountConfirmTitle": "Delete Account",
+        "deleteAccountConfirmDescription": "This action cannot be undone. All your reviews, comments, and personal data will be permanently deleted.",
+        "deleteAccountConfirm": "Delete my account",
+        "deleteAccountSuccess": "Your account has been deleted",
+        "deleteAccountError": "Failed to delete account"
     }
 }

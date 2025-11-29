@@ -68,6 +68,7 @@ interface ProfileScreenProps {
   onFollowersClick?: () => void;
   onFollowingClick?: () => void;
   onReadingListClick?: () => void;
+  onSettingsClick?: () => void;
 }
 
 export const ProfileScreen = ({
@@ -93,6 +94,7 @@ export const ProfileScreen = ({
   onFollowersClick,
   onFollowingClick,
   onReadingListClick,
+  onSettingsClick,
 }: ProfileScreenProps) => {
   const { t } = useTranslation();
   const [reviewToDelete, setReviewToDelete] = useState<number | null>(null);
@@ -140,6 +142,7 @@ export const ProfileScreen = ({
           onFollowersClick={onFollowersClick}
           onFollowingClick={onFollowingClick}
           onReadingListClick={onReadingListClick}
+          onSettingsClick={onSettingsClick}
         />
 
         <Separator />

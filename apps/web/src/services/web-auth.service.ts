@@ -1,8 +1,4 @@
-import type {
-  AuthResponse,
-  LoginCredentials,
-  RegisterCredentials,
-} from "@repo/types";
+import type { AuthResponse, LoginCredentials, RegisterCredentials } from "@repo/types";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL!;
 
@@ -52,7 +48,9 @@ export class WebAuthService {
     return res.json();
   }
 
-  static async refresh(refreshToken: string): Promise<{ token: { token: string }; refreshToken: string }> {
+  static async refresh(
+    refreshToken: string
+  ): Promise<{ token: { token: string }; refreshToken: string }> {
     return callApi("/refresh", {
       method: "POST",
       body: JSON.stringify({ refreshToken }),
@@ -75,5 +73,26 @@ export class WebAuthService {
       method: "POST",
       body: JSON.stringify(data),
     });
+  }
+
+  static async deleteAccount(): Promise<{ isSuccessfull: boolean }> {
+    return callApi<{ isSuccessfull: boolean }>("/me", { method: "DELETE" });
+  }
+
+  static async updateNotificationSettings(
+    accessToken: string,
+    pushNotificationsEnabled: boolean
+  ): Promise<{ pushNotificationsEnabled: boolean }> {
+    const res = await fetch(`${API_URL}/me/notification-settings`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify({ pushNotificationsEnabled }),
+      cache: "no-store",
+    });
+    if (!res.ok) throw new Error("Failed to update notification settings");
+    return res.json();
   }
 }

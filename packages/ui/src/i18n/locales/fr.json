@@ -234,5 +234,23 @@
         "minutesAgo": "Il y a {{count}} min",
         "hoursAgo": "Il y a {{count}}h",
         "daysAgo": "Il y a {{count}}j"
+    },
+    "settings": {
+        "title": "Paramètres",
+        "language": "Langue",
+        "languageDescription": "Choisissez votre langue préférée",
+        "notifications": "Notifications push",
+        "notificationsDescription": "Recevoir les notifications push",
+        "logout": "Déconnexion",
+        "logoutDescription": "Se déconnecter de votre compte",
+        "logoutConfirmTitle": "Déconnexion",
+        "logoutConfirmDescription": "Êtes-vous sûr de vouloir vous déconnecter ? Vous devrez vous reconnecter pour accéder à votre compte.",
+        "deleteAccount": "Supprimer le compte",
+        "deleteAccountDescription": "Supprimer définitivement votre compte et toutes vos données",
+        "deleteAccountConfirmTitle": "Supprimer le compte",
+        "deleteAccountConfirmDescription": "Cette action est irréversible. Toutes vos critiques, commentaires et données personnelles seront définitivement supprimés.",
+        "deleteAccountConfirm": "Supprimer mon compte",
+        "deleteAccountSuccess": "Votre compte a été supprimé",
+        "deleteAccountError": "Échec de la suppression du compte"
     }
 }

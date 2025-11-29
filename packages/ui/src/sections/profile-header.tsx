@@ -2,7 +2,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "../components/avatar";
 import { Button } from "../components/button";
 import { useTranslation } from "react-i18next";
 import { cn } from "../lib/utils";
-import { Pencil, Loader2, FileText, Users, UserPlus, BookMarked } from "lucide-react";
+import { Pencil, Loader2, FileText, Users, UserPlus, BookMarked, Settings } from "lucide-react";
 
 interface User {
   id: number;
@@ -25,6 +25,7 @@ interface ProfileHeaderProps {
   onFollowersClick?: () => void;
   onFollowingClick?: () => void;
   onReadingListClick?: () => void;
+  onSettingsClick?: () => void;
 }
 
 export const ProfileHeader = ({
@@ -37,6 +38,7 @@ export const ProfileHeader = ({
   onFollowersClick,
   onFollowingClick,
   onReadingListClick,
+  onSettingsClick,
 }: ProfileHeaderProps) => {
   const { t } = useTranslation();
 
@@ -83,14 +85,26 @@ export const ProfileHeader = ({
           </div>
 
           {isOwnProfile ? (
-            <Button
-              variant="outline"
-              onClick={onEdit}
-              size="sm"
-              className="shrink-0 rounded-full border-2 hover:bg-muted/50"
-            >
-              {t("profile.edit")}
-            </Button>
+            <div className="flex items-center gap-2 shrink-0">
+              <Button
+                variant="outline"
+                onClick={onEdit}
+                size="sm"
+                className="rounded-full border-2 hover:bg-muted/50"
+              >
+                {t("profile.edit")}
+              </Button>
+              {onSettingsClick && (
+                <Button
+                  variant="ghost"
+                  onClick={onSettingsClick}
+                  size="icon"
+                  className="rounded-full h-9 w-9 hover:bg-muted/50"
+                >
+                  <Settings className="h-5 w-5" />
+                </Button>
+              )}
+            </div>
           ) : (
             <Button
               variant={user.isFollowing ? "outline" : "default"}
