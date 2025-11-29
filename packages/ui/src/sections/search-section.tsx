@@ -1,6 +1,5 @@
 import { Button } from "../components/button";
 import { useTranslation } from "react-i18next";
-import { cn } from "../lib/utils";
 
 interface SearchSectionProps<T> {
   title: string;

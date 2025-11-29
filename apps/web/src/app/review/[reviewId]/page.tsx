@@ -1,5 +1,5 @@
 import { cookies } from "next/headers";
-import { redirect, notFound } from "next/navigation";
+import { notFound } from "next/navigation";
 import { WebReviewService } from "@/services/web-review.service";
 import SingleReviewClient from "./single-review-client";
 
@@ -17,10 +17,6 @@ export default async function SingleReviewPage({ params }: SingleReviewPageProps
 
   const cookieStore = await cookies();
   const accessToken = cookieStore.get("tbr_access_token")?.value;
-
-  if (!accessToken) {
-    redirect("/login");
-  }
 
   try {
     const [review, initialCommentsResponse] = await Promise.all([

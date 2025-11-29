@@ -91,7 +91,7 @@ async function callApi<T>(path: string, init?: RequestInit, accessToken?: string
 }
 
 export class WebUserService {
-  static async getUser(userId: number, accessToken: string): Promise<User> {
+  static async getUser(userId: number, accessToken?: string): Promise<User> {
     const apiUser = await callApi<ApiUser>(`/user/${userId}`, {}, accessToken);
     return mapApiUserToUser(apiUser);
   }
@@ -99,7 +99,7 @@ export class WebUserService {
   static async getUserReviews(
     userId: number,
     page: number,
-    accessToken: string
+    accessToken?: string
   ): Promise<PaginatedResponse<Review>> {
     return callApi<PaginatedResponse<Review>>(`/user/${userId}/reviews/${page}`, {}, accessToken);
   }

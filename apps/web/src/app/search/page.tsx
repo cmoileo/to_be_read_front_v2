@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useAuthContext } from "@/models/hooks/use-auth-context";
 import {
   Input,
   UserCard,
@@ -17,7 +16,6 @@ import { useSearchViewModel } from "../../viewmodels/use-search-viewmodel";
 export default function SearchPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { user } = useAuthContext();
   const { t } = useTranslation();
   const { toast } = useToast();
 
@@ -44,12 +42,6 @@ export default function SearchPage() {
   }, []);
 
   useEffect(() => {
-    if (mounted && !user) {
-      router.push("/login");
-    }
-  }, [mounted, user, router]);
-
-  useEffect(() => {
     if (mounted && initialQuery && !globalResults) {
       globalSearch(initialQuery);
     }
@@ -65,7 +57,7 @@ export default function SearchPage() {
     }
   }, [error, t, toast]);
 
-  if (!mounted || !user) {
+  if (!mounted) {
     return null;
   }
 

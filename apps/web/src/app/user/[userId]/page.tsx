@@ -18,10 +18,6 @@ export default async function UserProfilePage({ params }: UserProfilePageProps) 
   const cookieStore = await cookies();
   const accessToken = cookieStore.get("tbr_access_token")?.value;
 
-  if (!accessToken) {
-    redirect("/login");
-  }
-
   let user;
   let initialReviewsResponse;
 
@@ -35,7 +31,6 @@ export default async function UserProfilePage({ params }: UserProfilePageProps) 
     notFound();
   }
 
-  // If it's the current user, redirect to /profile (must be outside try/catch)
   if (user.isMe) {
     redirect("/profile");
   }

@@ -137,7 +137,7 @@ function mapApiCommentToComment(apiComment: ApiComment): SingleComment {
 
 async function callApi<T>(path: string, init?: RequestInit, accessToken?: string): Promise<T> {
   const headers: Record<string, string> = {
-    ...(init?.headers as Record<string, string> || {}),
+    ...((init?.headers as Record<string, string>) || {}),
   };
 
   if (accessToken) {
@@ -163,12 +163,16 @@ async function callApi<T>(path: string, init?: RequestInit, accessToken?: string
 }
 
 export class WebReviewService {
-  static async getReview(reviewId: number, accessToken: string): Promise<SingleReview> {
+  static async getReview(reviewId: number, accessToken?: string): Promise<SingleReview> {
     const apiReview = await callApi<ApiReview>(`/review/${reviewId}`, {}, accessToken);
     return mapApiReviewToReview(apiReview);
   }
 
-  static async getComments(reviewId: number, page: number, accessToken: string): Promise<CommentsPaginatedResponse> {
+  static async getComments(
+    reviewId: number,
+    page: number,
+    accessToken?: string
+  ): Promise<CommentsPaginatedResponse> {
     const response = await callApi<{
       data: ApiComment[];
       meta: { total: number; perPage: number; currentPage: number; lastPage: number };
@@ -180,11 +184,19 @@ export class WebReviewService {
     };
   }
 
-  static async createComment(reviewId: number, content: string, accessToken: string): Promise<SingleComment> {
-    const apiComment = await callApi<ApiComment>("/comment", {
-      method: "POST",
-      body: JSON.stringify({ reviewId, content }),
-    }, accessToken);
+  static async createComment(
+    reviewId: number,
+    content: string,
+    accessToken: string
+  ): Promise<SingleComment> {
+    const apiComment = await callApi<ApiComment>(
+      "/comment",
+      {
+        method: "POST",
+        body: JSON.stringify({ reviewId, content }),
+      },
+      accessToken
+    );
     return mapApiCommentToComment(apiComment);
   }
 
@@ -192,11 +204,25 @@ export class WebReviewService {
     await callApi(`/comment/${commentId}`, { method: "DELETE" }, accessToken);
   }
 
-  static async likeComment(commentId: number, accessToken: string): Promise<{ isLiked?: boolean; isUnLiked?: boolean }> {
-    return callApi<{ isLiked?: boolean; isUnLiked?: boolean }>(`/comment/${commentId}/like`, {}, accessToken);
+  static async likeComment(
+    commentId: number,
+    accessToken: string
+  ): Promise<{ isLiked?: boolean; isUnLiked?: boolean }> {
+    return callApi<{ isLiked?: boolean; isUnLiked?: boolean }>(
+      `/comment/${commentId}/like`,
+      {},
+      accessToken
+    );
   }
 
-  static async likeReview(reviewId: number, accessToken: string): Promise<{ isLiked?: boolean; isUnliked?: boolean }> {
-    return callApi<{ isLiked?: boolean; isUnliked?: boolean }>(`/review/${reviewId}/like`, {}, accessToken);
+  static async likeReview(
+    reviewId: number,
+    accessToken: string
+  ): Promise<{ isLiked?: boolean; isUnliked?: boolean }> {
+    return callApi<{ isLiked?: boolean; isUnliked?: boolean }>(
+      `/review/${reviewId}/like`,
+      {},
+      accessToken
+    );
   }
 }

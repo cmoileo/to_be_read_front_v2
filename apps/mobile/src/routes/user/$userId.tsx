@@ -5,7 +5,6 @@ import {
   useRouter,
   useRouterState,
   Outlet,
-  useMatch,
 } from "@tanstack/react-router";
 import { MobileStorage } from "../../services/mobile-storage.service";
 import {

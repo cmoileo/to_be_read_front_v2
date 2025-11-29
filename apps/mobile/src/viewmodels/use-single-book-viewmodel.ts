@@ -43,7 +43,7 @@ export const useSingleBookViewModel = (bookId: string) => {
   });
 
   // Check if book is in the user's to-read list
-  const { data: isInReadList = false, isLoading: isCheckingList } = useQuery({
+  const { data: isInReadList = false } = useQuery({
     queryKey: bookKeys.isInList(bookId),
     queryFn: async () => {
       const result = await MobileToReadListService.getToReadList(1);

@@ -55,7 +55,20 @@
             "passwordNumber": "Le mot de passe doit contenir au moins un chiffre",
             "passwordSpecial": "Le mot de passe doit contenir au moins un caractère spécial",
             "passwordMismatch": "Les mots de passe ne correspondent pas"
-        }
+        },
+        "logout": "Déconnexion"
+    },
+    "visitor": {
+        "title": "Rejoindre To Be Read",
+        "description": "Créez un compte pour interagir avec la communauté",
+        "likePrompt": "Connectez-vous pour aimer ce contenu",
+        "commentPrompt": "Connectez-vous pour laisser un commentaire",
+        "followPrompt": "Connectez-vous pour suivre cet utilisateur",
+        "toReadListPrompt": "Connectez-vous pour ajouter des livres à votre liste",
+        "reviewPrompt": "Connectez-vous pour rédiger une critique",
+        "login": "Se connecter",
+        "register": "Créer un compte",
+        "continueAsVisitor": "Continuer en visiteur"
     },
     "onboarding": {
         "appTitle": "To Be Read",

@@ -55,7 +55,20 @@
             "passwordNumber": "Password must contain at least one number",
             "passwordSpecial": "Password must contain at least one special character",
             "passwordMismatch": "Passwords do not match"
-        }
+        },
+        "logout": "Logout"
+    },
+    "visitor": {
+        "title": "Join To Be Read",
+        "description": "Create an account to interact with the community",
+        "likePrompt": "Sign in to like this content",
+        "commentPrompt": "Sign in to leave a comment",
+        "followPrompt": "Sign in to follow this user",
+        "toReadListPrompt": "Sign in to add books to your reading list",
+        "reviewPrompt": "Sign in to write a review",
+        "login": "Sign in",
+        "register": "Create an account",
+        "continueAsVisitor": "Continue as visitor"
     },
     "onboarding": {
         "appTitle": "To Be Read",

@@ -8,10 +8,6 @@ export async function GET(request: NextRequest) {
     const cookieStore = await cookies();
     const accessToken = cookieStore.get("tbr_access_token")?.value;
 
-    if (!accessToken) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
     const searchParams = request.nextUrl.searchParams;
     const query = searchParams.get("q");
 
@@ -19,10 +15,13 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Query required" }, { status: 400 });
     }
 
+    const headers: Record<string, string> = {};
+    if (accessToken) {
+      headers["Authorization"] = `Bearer ${accessToken}`;
+    }
+
     const response = await fetch(`${API_URL}/search?q=${encodeURIComponent(query)}`, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
+      headers,
     });
 
     if (!response.ok) {

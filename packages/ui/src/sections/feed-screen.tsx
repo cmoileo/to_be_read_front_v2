@@ -10,7 +10,7 @@ interface FeedReview {
   likesCount: number;
   commentsCount: number;
   isLiked: boolean;
-  isFromMe: boolean;
+  isFromMe?: boolean;
   createdAt: string;
   author: {
     id: number;

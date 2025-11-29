@@ -4,7 +4,7 @@ import { cn } from "../lib/utils";
 import { Button } from "./button";
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
-import { Home, Search, PenSquare, User, BookOpen, Menu, X } from "lucide-react";
+import { Home, Search, PenSquare, User, BookOpen, Menu, X, LogIn } from "lucide-react";
 
 interface TopNavProps {
   userName?: string;
@@ -16,34 +16,41 @@ interface TopNavProps {
     onClick?: () => void;
     children: React.ReactNode;
   }>;
+  isVisitor?: boolean;
 }
 
-export function TopNav({ userName, onLogout, currentPath, Link }: TopNavProps) {
+export function TopNav({ userName, onLogout, currentPath, Link, isVisitor = false }: TopNavProps) {
   const { t } = useTranslation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const navItems = [
+  const allNavItems = [
     {
       label: t("navigation.home"),
       icon: <Home className="w-5 h-5" />,
       href: "/",
+      visitorAccess: true,
     },
     {
       label: t("navigation.search"),
       icon: <Search className="w-5 h-5" />,
       href: "/search",
+      visitorAccess: true,
     },
     {
       label: t("navigation.createReview"),
       icon: <PenSquare className="w-5 h-5" />,
       href: "/review",
+      visitorAccess: false,
     },
     {
       label: t("navigation.profile"),
       icon: <User className="w-5 h-5" />,
       href: "/profile",
+      visitorAccess: false,
     },
   ];
+
+  const navItems = isVisitor ? allNavItems.filter((item) => item.visitorAccess) : allNavItems;
 
   return (
     <>
@@ -81,7 +88,7 @@ export function TopNav({ userName, onLogout, currentPath, Link }: TopNavProps) {
           </div>
 
           <div className="flex items-center gap-4">
-            {userName && (
+            {userName ? (
               <div className="hidden md:flex items-center gap-3">
                 <div className="flex items-center gap-2 px-3 py-1.5 bg-muted/50 rounded-full">
                   <span className="w-6 h-6 bg-primary/20 rounded-full flex items-center justify-center text-xs">
@@ -100,7 +107,18 @@ export function TopNav({ userName, onLogout, currentPath, Link }: TopNavProps) {
                   </Button>
                 )}
               </div>
-            )}
+            ) : isVisitor ? (
+              <div className="hidden md:flex items-center gap-2">
+                <Link href="/login">
+                  <Button variant="ghost" size="sm">
+                    {t("visitor.login")}
+                  </Button>
+                </Link>
+                <Link href="/register">
+                  <Button size="sm">{t("visitor.register")}</Button>
+                </Link>
+              </div>
+            ) : null}
 
             <button
               className={cn(
@@ -137,7 +155,7 @@ export function TopNav({ userName, onLogout, currentPath, Link }: TopNavProps) {
                 </Link>
               ))}
 
-              {userName && (
+              {userName ? (
                 <div className="border-t border-border/50 pt-4 mt-4 space-y-2">
                   <div className="flex items-center gap-3 px-4 py-2">
                     <span className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center text-sm font-medium">
@@ -156,7 +174,26 @@ export function TopNav({ userName, onLogout, currentPath, Link }: TopNavProps) {
                     </Button>
                   )}
                 </div>
-              )}
+              ) : isVisitor ? (
+                <div className="border-t border-border/50 pt-4 mt-4 space-y-2">
+                  <Link
+                    href="/login"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent/50"
+                  >
+                    <LogIn className="w-5 h-5" />
+                    <span>{t("visitor.login")}</span>
+                  </Link>
+                  <Link
+                    href="/register"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90"
+                  >
+                    <User className="w-5 h-5" />
+                    <span>{t("visitor.register")}</span>
+                  </Link>
+                </div>
+              ) : null}
             </div>
           </div>
         )}

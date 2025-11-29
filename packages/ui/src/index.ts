@@ -19,6 +19,7 @@ export * from "./components/review-card";
 export * from "./components/feed-review-card";
 export * from "./components/comment-card";
 export * from "./components/comment-form";
+export * from "./components/auth-prompt-dialog";
 export * from "./lib/utils";
 export * from "./hooks/use-toast";
 export * from "./sections/login-form";
@@ -57,6 +58,7 @@ export {
   Heart,
   MessageCircle,
   ArrowLeft,
+  ArrowRight,
   RefreshCw,
   Loader2,
   Menu,

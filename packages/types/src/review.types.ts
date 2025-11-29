@@ -10,6 +10,7 @@ export interface Review {
   likesCount: number;
   commentsCount: number;
   isLiked: boolean;
+  isFromMe?: boolean;
   createdAt: string;
   updatedAt: string;
   author: UserAuthor;
