@@ -1,5 +1,5 @@
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useMemo, useCallback, useEffect } from "react";
+import { useMemo, useCallback } from "react";
 import type { NotificationItem } from "@repo/types";
 
 export const notificationKeys = {
@@ -56,20 +56,14 @@ export const useNotificationsViewModel = () => {
         return undefined;
       },
       initialPageParam: 1,
-      staleTime: 0,
-      refetchOnMount: "always",
+      staleTime: 30000,
     });
 
   const { data: unreadCount = 0 } = useQuery({
     queryKey: notificationKeys.unreadCount(),
     queryFn: fetchUnreadCount,
-    staleTime: 0,
-    refetchOnMount: "always",
+    staleTime: 30000,
   });
-
-  useEffect(() => {
-    refetch();
-  }, []);
 
   const notifications = useMemo(() => {
     if (!data) return [];
