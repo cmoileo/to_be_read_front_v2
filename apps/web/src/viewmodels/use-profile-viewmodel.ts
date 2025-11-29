@@ -90,7 +90,6 @@ export function useProfileViewModel({ initialUser, initialReviewsResponse }: Use
         };
       });
 
-      // Update reviewsCount in user state
       setUser((prevUser) => {
         if (!prevUser) return prevUser;
         return {

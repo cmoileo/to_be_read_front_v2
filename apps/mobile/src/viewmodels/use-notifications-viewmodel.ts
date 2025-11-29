@@ -209,7 +209,7 @@ export const useUnreadNotificationCount = () => {
   const { data: count = 0 } = useQuery({
     queryKey: notificationKeys.unreadCount(),
     queryFn: fetchUnreadCount,
-    refetchInterval: 30000,
+    staleTime: Infinity,
   });
 
   return count;

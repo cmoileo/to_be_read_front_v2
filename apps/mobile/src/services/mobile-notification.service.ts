@@ -48,9 +48,6 @@ class MobileNotificationService {
     try {
       await this.setupNotificationChannel();
 
-      // Firebase Web Messaging requires a service worker which doesn't work
-      // in Tauri dev mode (localhost). Skip Firebase init in dev mode.
-      // For production mobile builds, push notifications are handled natively.
       if (this.isFirebaseConfigured() && !this.isTauriDevMode()) {
         this.firebaseApp = initializeApp(FIREBASE_CONFIG);
         this.messaging = getMessaging(this.firebaseApp);
@@ -69,8 +66,6 @@ class MobileNotificationService {
   }
 
   private isTauriDevMode(): boolean {
-    // In Tauri dev mode, we're running on localhost and service workers won't work
-    // for Firebase messaging. Skip FCM initialization in this case.
     return window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
   }
 
@@ -120,7 +115,6 @@ class MobileNotificationService {
   }
 
   async getToken(): Promise<string | null> {
-    // Skip FCM token in Tauri dev mode (no service worker available)
     if (this.isTauriDevMode()) {
       console.info("FCM token not available in Tauri dev mode");
       return null;

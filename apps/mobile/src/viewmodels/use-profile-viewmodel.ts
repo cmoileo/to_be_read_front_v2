@@ -80,7 +80,6 @@ export const useProfileViewModel = () => {
         };
       });
 
-      // Also update reviewsCount in user state
       setUser((prevUser: any) => {
         if (!prevUser) return prevUser;
         return {

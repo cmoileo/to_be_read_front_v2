@@ -36,7 +36,6 @@ export interface FollowUser {
 }
 
 function mapApiUserToUser(apiUser: ApiUser): User {
-  // Use the computed 'avatar' field from backend which contains the full URL
   return {
     id: apiUser.id,
     userName: apiUser.userName,

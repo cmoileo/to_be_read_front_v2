@@ -5,6 +5,8 @@ import { MobileStorage } from "../services/mobile-storage.service";
 import { useFeedViewModel } from "../viewmodels/use-feed-viewmodel";
 import { useNotificationRegistration } from "../hooks/use-notification-registration";
 import { useUnreadNotificationCount } from "../viewmodels/use-notifications-viewmodel";
+import { useSSENotifications } from "../hooks/use-sse-notifications";
+import { useAuthModel } from "../models/hooks/use-auth-model";
 
 export const Route = createFileRoute("/")({
   beforeLoad: async () => {
@@ -21,7 +23,10 @@ function Index() {
   const { t } = useTranslation();
   const routerState = useRouterState();
   const currentPath = routerState.location.pathname;
+  const { user } = useAuthModel();
   const unreadCount = useUnreadNotificationCount();
+
+  useSSENotifications(user?.id);
 
   useNotificationRegistration();
 

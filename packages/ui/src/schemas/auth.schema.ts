@@ -22,7 +22,6 @@ export const getPasswordSchema = () =>
     .regex(/[0-9]/, i18n.t("auth.validation.passwordNumber"))
     .regex(/[^a-zA-Z0-9]/, i18n.t("auth.validation.passwordSpecial"));
 
-// Backward compatibility - these will use current language
 export const emailSchema = getEmailSchema();
 export const usernameSchema = getUsernameSchema();
 export const passwordSchema = getPasswordSchema();
@@ -63,7 +62,6 @@ export const getResetPasswordConfirmSchema = () =>
       path: ["confirmPassword"],
     });
 
-// Backward compatibility
 export const loginSchema = getLoginSchema();
 export const registerSchema = getRegisterSchema();
 export const resetPasswordRequestSchema = getResetPasswordRequestSchema();

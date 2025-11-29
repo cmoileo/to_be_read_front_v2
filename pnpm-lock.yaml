@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@adonisjs/transmit-client':
+        specifier: ^1.0.0
+        version: 1.0.0
       i18next:
         specifier: ^25.6.3
         version: 25.6.3(typescript@5.9.3)
@@ -298,6 +301,10 @@ importers:
         version: 5.9.3
 
 packages:
+
+  '@adonisjs/transmit-client@1.0.0':
+    resolution: {integrity: sha512-S8P4ouxoDRpHA6iEu13OxzVuG9aV6eObxBYFlsAouIDmqoiUjcgDWUJrtI26nediV2nGvaAuK98ObIEy1UWGFg==}
+    engines: {node: '>=18.16.0'}
 
   '@alloc/quick-lru@5.2.0':
     resolution: {integrity: sha512-UrcABB+4bUrFABwbluTIBErXwvbsU/V7TZWfmbgJfbkwiBuziS9gxdODUyuiecfdGQ85jglMW6juS3+z5TsKLw==}
@@ -3848,6 +3855,8 @@ packages:
     resolution: {integrity: sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==}
 
 snapshots:
+
+  '@adonisjs/transmit-client@1.0.0': {}
 
   '@alloc/quick-lru@5.2.0': {}
 

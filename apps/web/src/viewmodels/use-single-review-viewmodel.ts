@@ -1,7 +1,11 @@
 "use client";
 
 import { useState, useCallback, useTransition } from "react";
-import type { SingleReview, SingleComment, CommentsPaginatedResponse } from "@/services/web-review.service";
+import type {
+  SingleReview,
+  SingleComment,
+  CommentsPaginatedResponse,
+} from "@/services/web-review.service";
 import {
   likeReviewAction,
   likeCommentAction,
@@ -32,8 +36,7 @@ export const useSingleReviewViewModel = ({
   const handleLikeReview = useCallback(() => {
     startLikeTransition(async () => {
       const wasLiked = review.isLiked;
-      
-      // Optimistic update
+
       setReview((prev) => ({
         ...prev,
         isLiked: !prev.isLiked,
@@ -43,7 +46,6 @@ export const useSingleReviewViewModel = ({
       try {
         await likeReviewAction(review.id);
       } catch (error) {
-        // Rollback on error
         setReview((prev) => ({
           ...prev,
           isLiked: wasLiked,
@@ -54,72 +56,79 @@ export const useSingleReviewViewModel = ({
     });
   }, [review.id, review.isLiked]);
 
-  const handleLikeComment = useCallback((commentId: number) => {
-    const comment = comments.find((c) => c.id === commentId);
-    if (!comment) return;
+  const handleLikeComment = useCallback(
+    (commentId: number) => {
+      const comment = comments.find((c) => c.id === commentId);
+      if (!comment) return;
 
-    const wasLiked = comment.isLiked;
-    const currentLikesCount = Number(comment.likesCount) || 0;
+      const wasLiked = comment.isLiked;
+      const currentLikesCount = Number(comment.likesCount) || 0;
 
-    // Optimistic update
-    setComments((prev) =>
-      prev.map((c) =>
-        c.id === commentId
-          ? {
-              ...c,
-              isLiked: !c.isLiked,
-              likesCount: c.isLiked ? currentLikesCount - 1 : currentLikesCount + 1,
-            }
-          : c
-      )
-    );
-
-    likeCommentAction(commentId).catch((error) => {
-      // Rollback on error
       setComments((prev) =>
         prev.map((c) =>
           c.id === commentId
             ? {
                 ...c,
-                isLiked: wasLiked,
-                likesCount: currentLikesCount,
+                isLiked: !c.isLiked,
+                likesCount: c.isLiked ? currentLikesCount - 1 : currentLikesCount + 1,
               }
             : c
         )
       );
-      console.error("Failed to like comment:", error);
-    });
-  }, [comments]);
 
-  const handleCreateComment = useCallback(async (content: string) => {
-    setIsCreatingComment(true);
-    try {
-      const newComment = await createCommentAction(review.id, content);
-      setComments((prev) => [newComment, ...prev]);
-    } catch (error) {
-      console.error("Failed to create comment:", error);
-      throw error;
-    } finally {
-      setIsCreatingComment(false);
-    }
-  }, [review.id]);
+      likeCommentAction(commentId).catch((error) => {
+        setComments((prev) =>
+          prev.map((c) =>
+            c.id === commentId
+              ? {
+                  ...c,
+                  isLiked: wasLiked,
+                  likesCount: currentLikesCount,
+                }
+              : c
+          )
+        );
+        console.error("Failed to like comment:", error);
+      });
+    },
+    [comments]
+  );
 
-  const handleDeleteComment = useCallback((commentId: number) => {
-    const commentToDelete = comments.find((c) => c.id === commentId);
-    
-    // Optimistic update
-    setComments((prev) => prev.filter((c) => c.id !== commentId));
-
-    deleteCommentAction(commentId).catch((error) => {
-      // Rollback on error
-      if (commentToDelete) {
-        setComments((prev) => [...prev, commentToDelete].sort((a, b) => 
-          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-        ));
+  const handleCreateComment = useCallback(
+    async (content: string) => {
+      setIsCreatingComment(true);
+      try {
+        const newComment = await createCommentAction(review.id, content);
+        setComments((prev) => [newComment, ...prev]);
+      } catch (error) {
+        console.error("Failed to create comment:", error);
+        throw error;
+      } finally {
+        setIsCreatingComment(false);
       }
-      console.error("Failed to delete comment:", error);
-    });
-  }, [comments]);
+    },
+    [review.id]
+  );
+
+  const handleDeleteComment = useCallback(
+    (commentId: number) => {
+      const commentToDelete = comments.find((c) => c.id === commentId);
+
+      setComments((prev) => prev.filter((c) => c.id !== commentId));
+
+      deleteCommentAction(commentId).catch((error) => {
+        if (commentToDelete) {
+          setComments((prev) =>
+            [...prev, commentToDelete].sort(
+              (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+            )
+          );
+        }
+        console.error("Failed to delete comment:", error);
+      });
+    },
+    [comments]
+  );
 
   const handleLoadMoreComments = useCallback(async () => {
     if (isFetchingMoreComments || !hasMoreComments) return;

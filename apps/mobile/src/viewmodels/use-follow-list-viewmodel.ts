@@ -10,7 +10,6 @@ export const followListKeys = {
 
 export const useFollowListViewModel = (userId: number, type: "followers" | "following") => {
   const queryClient = useQueryClient();
-  // Track optimistic updates for isFollowing state
   const [optimisticUpdates, setOptimisticUpdates] = useState<Map<number, boolean>>(new Map());
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } = useInfiniteQuery({
@@ -30,7 +29,6 @@ export const useFollowListViewModel = (userId: number, type: "followers" | "foll
     enabled: !!userId,
   });
 
-  // Merge API data with optimistic updates
   const users = useMemo(() => {
     if (!data) return [];
     return data.pages

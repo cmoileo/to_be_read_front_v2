@@ -42,7 +42,6 @@ export const useSingleBookViewModel = (bookId: string) => {
     enabled: !!bookId,
   });
 
-  // Check if book is in the user's to-read list
   const { data: isInReadList = false } = useQuery({
     queryKey: bookKeys.isInList(bookId),
     queryFn: async () => {

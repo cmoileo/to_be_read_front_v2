@@ -2,7 +2,11 @@
 
 import { useState, useCallback, useTransition } from "react";
 import type { User, Review, PaginatedResponse } from "@repo/types";
-import { followUserAction, unfollowUserAction, getUserReviewsAction } from "@/app/user/[userId]/actions";
+import {
+  followUserAction,
+  unfollowUserAction,
+  getUserReviewsAction,
+} from "@/app/user/[userId]/actions";
 
 interface UseUserProfileViewModelProps {
   initialUser: User;
@@ -25,7 +29,6 @@ export const useUserProfileViewModel = ({
   const handleFollow = useCallback(() => {
     startFollowTransition(async () => {
       try {
-        // Optimistic update
         setUser((prev) => ({
           ...prev,
           isFollowing: true,
@@ -34,7 +37,6 @@ export const useUserProfileViewModel = ({
 
         await followUserAction(user.id);
       } catch (error) {
-        // Rollback on error
         setUser((prev) => ({
           ...prev,
           isFollowing: false,
@@ -48,7 +50,6 @@ export const useUserProfileViewModel = ({
   const handleUnfollow = useCallback(() => {
     startFollowTransition(async () => {
       try {
-        // Optimistic update
         setUser((prev) => ({
           ...prev,
           isFollowing: false,
@@ -57,7 +58,6 @@ export const useUserProfileViewModel = ({
 
         await unfollowUserAction(user.id);
       } catch (error) {
-        // Rollback on error
         setUser((prev) => ({
           ...prev,
           isFollowing: true,

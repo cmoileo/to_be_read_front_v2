@@ -38,7 +38,6 @@ export const useSingleBookViewModel = ({
   const [isFetchingMoreReviews, setIsFetchingMoreReviews] = useState(false);
   const totalReviews = initialReviewsResponse.meta.total;
 
-  // Check if book is in the user's to-read list
   const { data: isInReadList = false } = useQuery({
     queryKey: bookKeys.isInList(initialBook.id),
     queryFn: async () => {

@@ -10,15 +10,12 @@ let refreshPromise: Promise<boolean> | null = null;
 export async function authFetch(url: string, options: FetchOptions = {}): Promise<Response> {
   const { skipAuth, ...fetchOptions } = options;
 
-  // First attempt - always include credentials to send cookies
   let response = await fetch(url, {
     ...fetchOptions,
     credentials: "include",
   });
 
-  // If 401 and not skipping auth, try to refresh
   if (response.status === 401 && !skipAuth) {
-    // Wait for ongoing refresh or start a new one
     if (isRefreshing && refreshPromise) {
       await refreshPromise;
     } else {
@@ -34,13 +31,11 @@ export async function authFetch(url: string, options: FetchOptions = {}): Promis
       const refreshSuccess = await refreshPromise;
 
       if (!refreshSuccess) {
-        // Refresh failed, redirect to login
         window.location.href = "/login";
         return response;
       }
     }
 
-    // Retry the original request after refresh
     response = await fetch(url, {
       ...fetchOptions,
       credentials: "include",
