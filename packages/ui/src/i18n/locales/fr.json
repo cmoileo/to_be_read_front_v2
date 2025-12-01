@@ -106,7 +106,8 @@
         "edit": "Modifier",
         "loadMore": "Charger plus",
         "back": "Retour",
-        "refresh": "Actualiser"
+        "refresh": "Actualiser",
+        "toggleMenu": "Basculer le menu"
     },
     "profile": {
         "edit": "Modifier le profil",
@@ -151,6 +152,10 @@
             "contentLabel": "Votre critique",
             "contentPlaceholder": "Partagez votre avis sur ce livre...",
             "submit": "Publier la critique"
+        },
+        "success": {
+            "title": "Critique publiée",
+            "description": "Votre critique a été publiée avec succès"
         },
         "errors": {
             "bookRequired": "Veuillez sélectionner un livre",
@@ -252,5 +257,33 @@
         "deleteAccountConfirm": "Supprimer mon compte",
         "deleteAccountSuccess": "Votre compte a été supprimé",
         "deleteAccountError": "Échec de la suppression du compte"
+    },
+    "visitorHome": {
+        "heroTitle": "Inkgora",
+        "heroSubtitle": "Partagez vos critiques littéraires et découvrez de nouveaux livres",
+        "exploreCta": "Explorer les livres et critiques",
+        "whyJoin": "Pourquoi rejoindre notre communauté ?",
+        "feature1Title": "Découvrez des livres",
+        "feature1Description": "Explorez des milliers de critiques pour trouver votre prochaine lecture.",
+        "feature2Title": "Partagez vos avis",
+        "feature2Description": "Créez vos propres critiques et partagez votre passion pour la lecture.",
+        "feature3Title": "Rejoignez une communauté",
+        "feature3Description": "Suivez d'autres lecteurs et découvrez leurs recommandations.",
+        "readyToStart": "Prêt à commencer ?",
+        "readyDescription": "Créez un compte gratuitement et rejoignez notre communauté de lecteurs passionnés.",
+        "createAccount": "Créer un compte",
+        "signIn": "Se connecter"
+    },
+    "bookSearch": {
+        "placeholder": "Rechercher un livre...",
+        "loading": "Chargement...",
+        "noResults": "Aucun livre trouvé",
+        "clearSelection": "Effacer la sélection"
+    },
+    "toast": {
+        "reviewPublished": "Critique publiée",
+        "reviewPublishedDescription": "Votre critique a été publiée avec succès",
+        "error": "Erreur",
+        "success": "Succès"
     }
 }

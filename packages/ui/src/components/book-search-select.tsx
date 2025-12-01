@@ -5,6 +5,7 @@ import { X } from "lucide-react";
 import { Input } from "./input";
 import { Card, CardContent } from "./card";
 import { cn } from "../lib/utils";
+import { useTranslation } from "react-i18next";
 import type { GoogleBook } from "@repo/types";
 
 interface BookSearchSelectProps {
@@ -20,14 +21,17 @@ export function BookSearchSelect({
   value,
   onChange,
   onSearch,
-  placeholder = "Search for a book...",
+  placeholder,
   disabled = false,
   error,
 }: BookSearchSelectProps) {
+  const { t } = useTranslation();
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<GoogleBook[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+
+  const resolvedPlaceholder = placeholder || t("bookSearch.placeholder");
 
   useEffect(() => {
     const delayDebounceFn = setTimeout(async () => {
@@ -92,7 +96,7 @@ export function BookSearchSelect({
                 type="button"
                 onClick={handleClear}
                 className="text-muted-foreground hover:text-foreground transition-colors"
-                aria-label="Clear selection"
+                aria-label={t("bookSearch.clearSelection")}
               >
                 <X className="w-5 h-5" />
               </button>
@@ -109,7 +113,7 @@ export function BookSearchSelect({
         type="text"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        placeholder={placeholder}
+        placeholder={resolvedPlaceholder}
         disabled={disabled}
         className={cn(error && "border-destructive")}
       />
@@ -118,7 +122,7 @@ export function BookSearchSelect({
       {isOpen && (
         <div className="absolute z-50 w-full mt-1 bg-background border rounded-md shadow-lg max-h-80 overflow-auto">
           {isLoading ? (
-            <div className="p-4 text-center text-sm text-muted-foreground">Loading...</div>
+            <div className="p-4 text-center text-sm text-muted-foreground">{t("bookSearch.loading")}</div>
           ) : results.length > 0 ? (
             results.map((book) => (
               <button
@@ -148,7 +152,7 @@ export function BookSearchSelect({
               </button>
             ))
           ) : (
-            <div className="p-4 text-center text-sm text-muted-foreground">No books found</div>
+            <div className="p-4 text-center text-sm text-muted-foreground">{t("bookSearch.noResults")}</div>
           )}
         </div>
       )}

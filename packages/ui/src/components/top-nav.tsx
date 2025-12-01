@@ -153,7 +153,7 @@ export function TopNav({
                 mobileMenuOpen && "bg-accent"
               )}
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              aria-label="Toggle menu"
+              aria-label={t("common.toggleMenu")}
             >
               {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>

@@ -2,13 +2,14 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { CreateReviewForm, useToast } from "@repo/ui";
+import { CreateReviewForm, useToast, useTranslation } from "@repo/ui";
 import { useCreateReviewViewModel } from "@/viewmodels/use-create-review-viewmodel";
 import { useAuthContext } from "@/models/hooks/use-auth-context";
 
 export default function ReviewPage() {
   const { user } = useAuthContext();
   const { toast } = useToast();
+  const { t } = useTranslation();
   const viewModel = useCreateReviewViewModel();
   const router = useRouter();
 
@@ -26,8 +27,8 @@ export default function ReviewPage() {
     const success = await viewModel.createReview(data);
     if (success) {
       toast({
-        title: "Critique publiée",
-        description: "Votre critique a été publiée avec succès",
+        title: t("toast.reviewPublished"),
+        description: t("toast.reviewPublishedDescription"),
       });
     }
   };

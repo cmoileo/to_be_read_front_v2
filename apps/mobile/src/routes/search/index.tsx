@@ -20,6 +20,7 @@ import {
   Search as SearchIcon,
   PenSquare,
   User,
+  Button,
 } from "@repo/ui";
 import { useSearchViewModel } from "../../viewmodels/use-search-viewmodel";
 
@@ -156,6 +157,15 @@ function SearchPage() {
               }}
               className="flex-1"
             />
+            <Button
+              type="button"
+              size="icon"
+              onClick={() => handleSearch(query)}
+              disabled={isSearching || !query.trim()}
+              aria-label={t("search.title")}
+            >
+              <SearchIcon className="w-5 h-5" />
+            </Button>
           </div>
         </header>
 

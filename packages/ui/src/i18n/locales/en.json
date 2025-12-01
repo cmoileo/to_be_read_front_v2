@@ -106,7 +106,8 @@
         "edit": "Edit",
         "loadMore": "Load more",
         "back": "Back",
-        "refresh": "Refresh"
+        "refresh": "Refresh",
+        "toggleMenu": "Toggle menu"
     },
     "profile": {
         "edit": "Edit profile",
@@ -151,6 +152,10 @@
             "contentLabel": "Your review",
             "contentPlaceholder": "Share your thoughts about this book...",
             "submit": "Publish review"
+        },
+        "success": {
+            "title": "Review published",
+            "description": "Your review has been published successfully"
         },
         "errors": {
             "bookRequired": "Please select a book",
@@ -252,5 +257,33 @@
         "deleteAccountConfirm": "Delete my account",
         "deleteAccountSuccess": "Your account has been deleted",
         "deleteAccountError": "Failed to delete account"
+    },
+    "visitorHome": {
+        "heroTitle": "Inkgora",
+        "heroSubtitle": "Share your literary reviews and discover new books",
+        "exploreCta": "Explore books and reviews",
+        "whyJoin": "Why join our community?",
+        "feature1Title": "Discover books",
+        "feature1Description": "Explore thousands of reviews to find your next read.",
+        "feature2Title": "Share your opinions",
+        "feature2Description": "Create your own reviews and share your passion for reading.",
+        "feature3Title": "Join a community",
+        "feature3Description": "Follow other readers and discover their recommendations.",
+        "readyToStart": "Ready to get started?",
+        "readyDescription": "Create a free account and join our community of passionate readers.",
+        "createAccount": "Create an account",
+        "signIn": "Sign in"
+    },
+    "bookSearch": {
+        "placeholder": "Search for a book...",
+        "loading": "Loading...",
+        "noResults": "No books found",
+        "clearSelection": "Clear selection"
+    },
+    "toast": {
+        "reviewPublished": "Review published",
+        "reviewPublishedDescription": "Your review has been published successfully",
+        "error": "Error",
+        "success": "Success"
     }
 }
