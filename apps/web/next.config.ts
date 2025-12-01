@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: "standalone",
   transpilePackages: ["@repo/ui", "@repo/api-client", "@repo/services", "@repo/types"],
   images: {
     remotePatterns: [

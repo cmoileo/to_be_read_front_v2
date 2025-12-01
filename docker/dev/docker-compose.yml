@@ -1,0 +1,28 @@
+version: '3'
+
+# ================================
+# Development Docker Compose - Next.js Web App
+# ================================
+# Usage: docker compose -f docker/dev/docker-compose.yml up -d
+
+services:
+  web:
+    build:
+      context: ../..
+      dockerfile: docker/dev/Dockerfile
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=development
+      - NEXT_PUBLIC_API_URL=http://localhost:3333
+    ports:
+      - "3000:3000"
+    volumes:
+      - ../../:/app
+      - /app/node_modules
+      - /app/apps/web/.next
+    networks:
+      - inkgora-dev
+
+networks:
+  inkgora-dev:
+    driver: bridge

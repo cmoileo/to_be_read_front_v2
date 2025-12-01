@@ -1,0 +1,33 @@
+version: '3'
+
+# ================================
+# Staging Docker Compose - Next.js Web App
+# ================================
+
+services:
+  web:
+    build:
+      context: ../..
+      dockerfile: docker/staging/Dockerfile
+      args:
+        - NEXT_PUBLIC_API_URL=https://api-staging.inkgora.com
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_API_URL=https://api-staging.inkgora.com
+    ports:
+      - 3000
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.web-staging.rule=Host(`staging.inkgora.com`)"
+      - "traefik.http.routers.web-staging.entrypoints=websecure"
+      - "traefik.http.routers.web-staging.tls.certResolver=letsencrypt"
+      - "traefik.http.services.web-staging.loadbalancer.server.port=3000"
+    networks:
+      - dokploy-network
+
+networks:
+  dokploy-network:
+    external: true
