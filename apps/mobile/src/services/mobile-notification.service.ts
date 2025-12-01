@@ -80,9 +80,9 @@ class MobileNotificationService {
   private async setupNotificationChannel(): Promise<void> {
     try {
       await createChannel({
-        id: "inkerclub-default",
-        name: "InkerClub",
-        description: "Notifications de l'application InkerClub",
+        id: "Inkgora-default",
+        name: "Inkgora",
+        description: "Notifications de l'application Inkgora",
         importance: Importance.High,
         vibration: true,
         sound: "default",
@@ -164,7 +164,7 @@ class MobileNotificationService {
   }
 
   private handleForegroundMessage(payload: any): void {
-    const title = payload.notification?.title || "InkerClub";
+    const title = payload.notification?.title || "Inkgora";
     const body = payload.notification?.body || "";
 
     this.showLocalNotification({
@@ -182,7 +182,7 @@ class MobileNotificationService {
       await sendNotification({
         title: payload.title,
         body: payload.body,
-        channelId: "inkerclub-default",
+        channelId: "inkgora-default",
       });
     } catch (error) {
       console.error("Failed to show notification:", error);

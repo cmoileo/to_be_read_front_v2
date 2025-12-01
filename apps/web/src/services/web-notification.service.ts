@@ -130,7 +130,7 @@ class WebNotificationService {
   }
 
   private handleForegroundMessage(payload: any): void {
-    const title = payload.notification?.title || "InkerClub";
+    const title = payload.notification?.title || "Inkgora";
     const body = payload.notification?.body || "";
 
     if (this.getPermissionStatus() === "granted") {

@@ -10,7 +10,7 @@ export function VisitorHomeClient() {
       <div className="flex flex-col items-center justify-center py-16 px-4 bg-gradient-to-b from-background to-muted/20">
         <div className="max-w-2xl w-full space-y-8 text-center">
           <div className="space-y-4">
-            <h1 className="text-5xl font-bold tracking-tight">InkerClub</h1>
+            <h1 className="text-5xl font-bold tracking-tight">Inkgora</h1>
             <p className="text-xl text-muted-foreground">
               Partagez vos critiques littéraires et découvrez de nouveaux livres
             </p>

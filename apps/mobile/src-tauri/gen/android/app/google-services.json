@@ -1,15 +1,15 @@
 {
   "project_info": {
     "project_number": "836932540070",
-    "project_id": "inkerclub",
-    "storage_bucket": "inkerclub.firebasestorage.app"
+    "project_id": "inkgora",
+    "storage_bucket": "inkgora.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
         "mobilesdk_app_id": "1:836932540070:android:e27ffec004c4904ddf0667",
         "android_client_info": {
-          "package_name": "com.inkerclub.app"
+          "package_name": "com.inkgora.app"
         }
       },
       "oauth_client": [],

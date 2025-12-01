@@ -68,7 +68,7 @@ export function TopNav({
             <Link href="/" className="flex items-center space-x-2 group">
               <BookOpen className="w-6 h-6 text-primary" />
               <span className="text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent transition-transform duration-200 group-hover:scale-105">
-                InkerClub
+                Inkgora
               </span>
             </Link>
 

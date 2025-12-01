@@ -83,7 +83,7 @@ function Index() {
   return (
     <div className="flex min-h-screen flex-col">
       <header className="sticky top-0 z-40 bg-background/95 backdrop-blur-lg border-b border-border/50 px-4 py-3 flex items-center justify-between">
-        <h1 className="text-xl font-bold">InkerClub</h1>
+        <h1 className="text-xl font-bold">Inkgora</h1>
         <button
           onClick={() => navigate({ to: "/notifications" })}
           className="relative p-2 hover:bg-accent rounded-full transition-colors"
