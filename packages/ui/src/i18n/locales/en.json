@@ -2,7 +2,7 @@
     "auth": {
         "login": {
             "title": "Login",
-            "description": "Sign in to your InkerClub account",
+            "description": "Sign in to your Inkgora account",
             "email": "Email",
             "password": "Password",
             "forgotPassword": "Forgot password?",
@@ -14,7 +14,7 @@
         },
         "register": {
             "title": "Sign up",
-            "description": "Create your InkerClub account",
+            "description": "Create your Inkgora account",
             "username": "Username",
             "email": "Email",
             "password": "Password",
@@ -59,7 +59,7 @@
         "logout": "Logout"
     },
     "visitor": {
-        "title": "Join InkerClub",
+        "title": "Join Inkgora",
         "description": "Create an account to interact with the community",
         "likePrompt": "Sign in to like this content",
         "commentPrompt": "Sign in to leave a comment",
@@ -71,7 +71,7 @@
         "continueAsVisitor": "Continue as visitor"
     },
     "onboarding": {
-        "appTitle": "InkerClub",
+        "appTitle": "Inkgora",
         "subtitle": "Share your literary reviews",
         "welcomeTitle": "Welcome",
         "welcomeDescription": "Join our community of passionate readers",

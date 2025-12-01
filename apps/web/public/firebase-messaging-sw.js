@@ -18,7 +18,7 @@ function initializeFirebase() {
     const messaging = firebase.messaging();
 
     messaging.onBackgroundMessage((payload) => {
-      const notificationTitle = payload.notification?.title || "To Be Read";
+      const notificationTitle = payload.notification?.title || "Inkgora";
       const notificationOptions = {
         body: payload.notification?.body || "",
         icon: "/icon-192.png",

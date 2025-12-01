@@ -1,4 +1,4 @@
-# To Be Read
+# Inkgora
 
 Application de partage de revues littéraires - Réseau social de critiques de livres.
 
