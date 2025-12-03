@@ -8,6 +8,12 @@ import { AuthApi } from "@repo/api-client";
 import type { RegisterFormValues } from "@repo/ui";
 import type { User } from "@repo/types";
 
+function getBrowserLocale(): "en" | "fr" {
+  if (typeof navigator === "undefined") return "en";
+  const lang = navigator.language || (navigator as any).userLanguage || "en";
+  return lang.startsWith("fr") ? "fr" : "en";
+}
+
 export function useRegisterViewModel() {
   const [error, setError] = useState<string>("");
   const navigate = useNavigate();
@@ -36,6 +42,7 @@ export function useRegisterViewModel() {
       userName: values.username,
       email: values.email,
       password: values.password,
+      locale: getBrowserLocale(),
     };
     registerMutation.mutate(credentials);
   };

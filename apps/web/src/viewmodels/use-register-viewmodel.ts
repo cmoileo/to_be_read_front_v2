@@ -5,6 +5,12 @@ import { useRouter } from "next/navigation";
 import { registerAction, checkUsernameAvailability } from "@/app/_auth/actions";
 import type { RegisterFormValues } from "@repo/ui";
 
+function getBrowserLocale(): "en" | "fr" {
+  if (typeof navigator === "undefined") return "en";
+  const lang = navigator.language || (navigator as any).userLanguage || "en";
+  return lang.startsWith("fr") ? "fr" : "en";
+}
+
 export function useRegisterViewModel() {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -17,6 +23,7 @@ export function useRegisterViewModel() {
       userName: rest.username,
       email: rest.email,
       password: rest.password,
+      locale: getBrowserLocale(),
       rememberMe,
     };
     
