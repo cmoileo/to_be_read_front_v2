@@ -2,6 +2,14 @@ import type { User, Review, PaginatedResponse } from "@repo/types";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL!;
 
+// Convert review value from backend (10) to front (5 stars)
+function mapReviewValue<T extends { value: number }>(review: T): T {
+  return {
+    ...review,
+    value: review.value / 2,
+  };
+}
+
 export interface UpdateProfileData {
   userName?: string;
   biography?: string;
@@ -68,11 +76,19 @@ export class WebProfileService {
   }
 
   static async getMyReviews(page: number, accessToken: string): Promise<PaginatedResponse<Review>> {
-    return callApi<PaginatedResponse<Review>>(`/my-reviews/${page}`, {}, accessToken);
+    const response = await callApi<PaginatedResponse<Review>>(`/my-reviews/${page}`, {}, accessToken);
+    return {
+      ...response,
+      data: response.data.map(mapReviewValue),
+    };
   }
 
   static async getUserReviews(userId: number, page: number, accessToken: string): Promise<PaginatedResponse<Review>> {
-    return callApi<PaginatedResponse<Review>>(`/user/${userId}/reviews/${page}`, {}, accessToken);
+    const response = await callApi<PaginatedResponse<Review>>(`/user/${userId}/reviews/${page}`, {}, accessToken);
+    return {
+      ...response,
+      data: response.data.map(mapReviewValue),
+    };
   }
 
   static async deleteReview(reviewId: number, accessToken: string): Promise<void> {

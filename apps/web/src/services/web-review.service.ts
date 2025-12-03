@@ -102,7 +102,7 @@ function mapApiReviewToReview(apiReview: ApiReview): SingleReview {
   return {
     id: apiReview.id,
     content: apiReview.content,
-    value: apiReview.value,
+    value: apiReview.value / 2, // Convert from backend (10) to front (5 stars)
     googleBookId: apiReview.googleBookId,
     authorId: apiReview.authorId,
     likesCount: apiReview.likesCount,

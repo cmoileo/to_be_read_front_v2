@@ -40,9 +40,14 @@ export class WebBooksApi {
 
 export class WebReviewsApi {
   static async createReview(data: CreateReviewData): Promise<{ review: Review }> {
+    // Convert rating from front (5 stars) to backend (10)
+    const backendData = {
+      ...data,
+      value: data.value * 2,
+    };
     return callApi<{ review: Review }>("/api/reviews", {
       method: "POST",
-      body: JSON.stringify(data),
+      body: JSON.stringify(backendData),
     });
   }
 }
