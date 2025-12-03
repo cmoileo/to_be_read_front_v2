@@ -91,7 +91,9 @@
         "title": "Mon fil d'actualité",
         "empty": {
             "title": "Votre fil est vide",
-            "description": "Suivez d'autres lecteurs pour voir leurs critiques apparaître ici."
+            "description": "Suivez d'autres lecteurs pour voir leurs critiques apparaître ici.",
+            "createReviewCta": "Publier ma première critique",
+            "searchCta": "Découvrir des livres et lecteurs"
         },
         "like": "J'aime",
         "unlike": "Je n'aime plus",
@@ -209,7 +211,7 @@
         "noFollowingDescription": "Cet utilisateur ne suit personne pour le moment."
     },
     "toReadList": {
-        "title": "Ma liste de lecture",
+        "title": "Ma liste",
         "empty": "Votre liste est vide",
         "emptyDescription": "Ajoutez des livres à votre liste pour les retrouver facilement plus tard.",
         "noCover": "Pas de couverture",

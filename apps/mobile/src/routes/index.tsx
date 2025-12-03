@@ -80,6 +80,14 @@ function Index() {
     navigate({ to: `/review/${reviewId}` });
   };
 
+  const handleCreateReview = () => {
+    navigate({ to: "/create-review" });
+  };
+
+  const handleSearch = () => {
+    navigate({ to: "/search" });
+  };
+
   return (
     <div className="flex min-h-screen flex-col">
       <header className="sticky top-0 z-40 bg-background/95 backdrop-blur-lg border-b border-border/50 px-4 py-3 flex items-center justify-between">
@@ -108,6 +116,8 @@ function Index() {
           onAuthorClick={handleAuthorClick}
           onReviewClick={handleReviewClick}
           onRefresh={handleRefresh}
+          onCreateReview={handleCreateReview}
+          onSearch={handleSearch}
         />
       </div>
 

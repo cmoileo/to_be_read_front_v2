@@ -91,7 +91,9 @@
         "title": "My Feed",
         "empty": {
             "title": "Your feed is empty",
-            "description": "Follow other readers to see their reviews appear here."
+            "description": "Follow other readers to see their reviews appear here.",
+            "createReviewCta": "Write my first review",
+            "searchCta": "Discover books and readers"
         },
         "like": "Like",
         "unlike": "Unlike",
@@ -209,7 +211,7 @@
         "noFollowingDescription": "This user isn't following anyone yet."
     },
     "toReadList": {
-        "title": "My Reading List",
+        "title": "My list",
         "empty": "Your list is empty",
         "emptyDescription": "Add books to your list to find them easily later.",
         "noCover": "No cover",

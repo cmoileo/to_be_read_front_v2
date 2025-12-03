@@ -34,6 +34,14 @@ export default function FeedClient({ initialFeedResponse }: FeedClientProps) {
     router.push(`/review/${reviewId}`);
   };
 
+  const handleCreateReview = () => {
+    router.push("/review");
+  };
+
+  const handleSearch = () => {
+    router.push("/search");
+  };
+
   return (
     <div className="container py-6 max-w-2xl mx-auto">
       <FeedScreen
@@ -47,6 +55,8 @@ export default function FeedClient({ initialFeedResponse }: FeedClientProps) {
         onAuthorClick={handleAuthorClick}
         onReviewClick={handleReviewClick}
         onRefresh={handleRefresh}
+        onCreateReview={handleCreateReview}
+        onSearch={handleSearch}
       />
     </div>
   );

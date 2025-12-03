@@ -1,7 +1,8 @@
 import { useTranslation } from "react-i18next";
 import { FeedReviewCard } from "../components/feed-review-card";
+import { Button } from "../components/button";
 import { cn } from "../lib/utils";
-import { BookOpen, RefreshCw, PlusCircle, Loader2 } from "lucide-react";
+import { BookOpen, RefreshCw, PlusCircle, Loader2, PenLine, Search } from "lucide-react";
 
 interface FeedReview {
   id: number;
@@ -40,6 +41,8 @@ interface FeedScreenProps {
   onAuthorClick?: (authorId: number) => void;
   onReviewClick?: (reviewId: number) => void;
   onRefresh?: () => void;
+  onCreateReview?: () => void;
+  onSearch?: () => void;
 }
 
 export function FeedScreen({
@@ -53,6 +56,8 @@ export function FeedScreen({
   onAuthorClick,
   onReviewClick,
   onRefresh,
+  onCreateReview,
+  onSearch,
 }: FeedScreenProps) {
   const { t } = useTranslation();
 
@@ -79,9 +84,23 @@ export function FeedScreen({
           <BookOpen className="w-10 h-10 text-primary" />
         </div>
         <h2 className="text-xl font-bold mb-2">{t("feed.empty.title")}</h2>
-        <p className="text-muted-foreground text-center max-w-sm leading-relaxed">
+        <p className="text-muted-foreground text-center max-w-sm leading-relaxed mb-6">
           {t("feed.empty.description")}
         </p>
+        <div className="flex flex-col sm:flex-row gap-3 w-full">
+          {onCreateReview && (
+            <Button onClick={onCreateReview} className="flex-1 gap-2">
+              <PenLine className="w-4 h-4" />
+              {t("feed.empty.createReviewCta")}
+            </Button>
+          )}
+          {onSearch && (
+            <Button onClick={onSearch} variant="outline" className="flex-1 gap-2">
+              <Search className="w-4 h-4" />
+              {t("feed.empty.searchCta")}
+            </Button>
+          )}
+        </div>
       </div>
     );
   }
