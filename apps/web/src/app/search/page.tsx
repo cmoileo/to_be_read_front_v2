@@ -53,10 +53,25 @@ export default function SearchPage() {
   }, []);
 
   useEffect(() => {
-    if (mounted && initialQuery) {
+    if (!mounted) return;
+    
+    const delayDebounceFn = setTimeout(() => {
+      if (query.trim() && query !== currentQuery) {
+        setCurrentQuery(query);
+        router.push(`/search?q=${encodeURIComponent(query)}&tab=${activeTab}`, { scroll: false });
+        executeSearch(query, activeTab);
+      }
+    }, 500);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [query, mounted, activeTab]);
+
+  useEffect(() => {
+    if (mounted && initialQuery && !currentQuery) {
+      setCurrentQuery(initialQuery);
       executeSearch(initialQuery, activeTab);
     }
-  }, [mounted, initialQuery, activeTab]);
+  }, [mounted, initialQuery]);
 
   useEffect(() => {
     if (error) {
@@ -86,13 +101,6 @@ export default function SearchPage() {
         await searchReviews({ q: searchQuery, page: 1 });
         break;
     }
-  };
-
-  const handleSearch = async (searchQuery: string) => {
-    if (!searchQuery.trim()) return;
-    setCurrentQuery(searchQuery);
-    router.push(`/search?q=${encodeURIComponent(searchQuery)}&tab=${activeTab}`, { scroll: false });
-    await executeSearch(searchQuery, activeTab);
   };
 
   const handleTabChange = async (tab: string) => {
@@ -144,11 +152,6 @@ export default function SearchPage() {
           placeholder={t("search.placeholder")}
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              handleSearch(query);
-            }
-          }}
           className="w-full"
         />
       </header>

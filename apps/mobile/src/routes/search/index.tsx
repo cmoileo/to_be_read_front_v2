@@ -24,7 +24,6 @@ import {
   Search as SearchIcon,
   PenSquare,
   User,
-  Button,
   Users,
   BookOpen,
   MessageCircle,
@@ -75,10 +74,23 @@ function SearchPage() {
   } = useSearchViewModel();
 
   useEffect(() => {
-    if (initialQuery) {
+    const delayDebounceFn = setTimeout(() => {
+      if (query.trim() && query !== currentQuery) {
+        setCurrentQuery(query);
+        navigate({ to: "/search", search: { q: query, tab: activeTab }, replace: true });
+        executeSearch(query, activeTab);
+      }
+    }, 500);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [query, activeTab]);
+
+  useEffect(() => {
+    if (initialQuery && !currentQuery) {
+      setCurrentQuery(initialQuery);
       executeSearch(initialQuery, activeTab);
     }
-  }, [initialQuery, activeTab]);
+  }, [initialQuery]);
 
   useEffect(() => {
     if (error) {
@@ -104,13 +116,6 @@ function SearchPage() {
         await searchReviews({ q: searchQuery, page: 1 });
         break;
     }
-  };
-
-  const handleSearch = async (searchQuery: string) => {
-    if (!searchQuery.trim()) return;
-    setCurrentQuery(searchQuery);
-    navigate({ to: "/search", search: { q: searchQuery, tab: activeTab }, replace: true });
-    await executeSearch(searchQuery, activeTab);
   };
 
   const handleTabChange = async (tab: string) => {
@@ -187,29 +192,13 @@ function SearchPage() {
       <div className="flex-1 p-4 pb-20">
         <header className="mb-4">
           <h1 className="text-2xl font-bold mb-4">{t("search.title")}</h1>
-          <div className="flex gap-2">
-            <Input
-              type="search"
-              placeholder={t("search.placeholder")}
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  handleSearch(query);
-                }
-              }}
-              className="flex-1"
-            />
-            <Button
-              type="button"
-              size="icon"
-              onClick={() => handleSearch(query)}
-              disabled={isLoadingUsers || isLoadingBooks || isLoadingReviews || !query.trim()}
-              aria-label={t("search.title")}
-            >
-              <SearchIcon className="w-5 h-5" />
-            </Button>
-          </div>
+          <Input
+            type="search"
+            placeholder={t("search.placeholder")}
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            className="w-full"
+          />
         </header>
 
         <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
