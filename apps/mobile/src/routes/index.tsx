@@ -85,7 +85,7 @@ function Index() {
   };
 
   const handleSearch = () => {
-    navigate({ to: "/search" });
+    navigate({ to: "/search" } as any);
   };
 
   return (

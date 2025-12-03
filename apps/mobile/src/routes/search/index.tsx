@@ -13,7 +13,11 @@ import {
   UserCard,
   BookCard,
   ReviewCard,
-  SearchSection,
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  TabsContent,
+  Skeleton,
   useTranslation,
   useToast,
   Home,
@@ -21,8 +25,13 @@ import {
   PenSquare,
   User,
   Button,
+  Users,
+  BookOpen,
+  MessageCircle,
 } from "@repo/ui";
 import { useSearchViewModel } from "../../viewmodels/use-search-viewmodel";
+
+type SearchTab = "users" | "books" | "reviews";
 
 export const Route = createFileRoute("/search/")({
   beforeLoad: async () => {
@@ -35,6 +44,7 @@ export const Route = createFileRoute("/search/")({
   validateSearch: (search: Record<string, unknown>) => {
     return {
       q: (search.q as string) || "",
+      tab: (search.tab as SearchTab) || "users",
     };
   },
 });
@@ -45,49 +55,85 @@ function SearchPage() {
   const { toast } = useToast();
   const routerState = useRouterState();
   const currentPath = routerState.location.pathname;
-  const { q: initialQuery } = useSearch({ from: "/search/" });
+  const { q: initialQuery, tab: initialTab } = useSearch({ from: "/search/" });
 
   const [query, setQuery] = useState(initialQuery);
   const [currentQuery, setCurrentQuery] = useState(initialQuery);
+  const [activeTab, setActiveTab] = useState<SearchTab>(initialTab);
 
   const {
-    globalResults,
     usersResults,
     booksResults,
     reviewsResults,
-    isSearching,
+    isLoadingUsers,
+    isLoadingBooks,
+    isLoadingReviews,
     error,
-    globalSearch,
+    searchUsers,
+    searchBooks,
+    searchReviews,
   } = useSearchViewModel();
 
   useEffect(() => {
-    if (initialQuery && !globalResults) {
-      globalSearch(initialQuery);
+    if (initialQuery) {
+      executeSearch(initialQuery, activeTab);
     }
-  }, [initialQuery]);
+  }, [initialQuery, activeTab]);
+
+  useEffect(() => {
+    if (error) {
+      toast({
+        title: t("common.error"),
+        description: t(error),
+        variant: "destructive",
+      });
+    }
+  }, [error, t, toast]);
+
+  const executeSearch = async (searchQuery: string, tab: SearchTab) => {
+    if (!searchQuery.trim()) return;
+    
+    switch (tab) {
+      case "users":
+        await searchUsers({ q: searchQuery, page: 1 });
+        break;
+      case "books":
+        await searchBooks({ q: searchQuery, page: 1 });
+        break;
+      case "reviews":
+        await searchReviews({ q: searchQuery, page: 1 });
+        break;
+    }
+  };
 
   const handleSearch = async (searchQuery: string) => {
     if (!searchQuery.trim()) return;
     setCurrentQuery(searchQuery);
-    navigate({ to: "/search", search: { q: searchQuery }, replace: true });
-    await globalSearch(searchQuery);
+    navigate({ to: "/search", search: { q: searchQuery, tab: activeTab }, replace: true });
+    await executeSearch(searchQuery, activeTab);
   };
 
-  const handleShowMoreUsers = () => {
+  const handleTabChange = async (tab: string) => {
+    const newTab = tab as SearchTab;
+    setActiveTab(newTab);
     if (currentQuery) {
-      navigate({ to: "/search/users", search: { q: currentQuery } });
+      navigate({ to: "/search", search: { q: currentQuery, tab: newTab }, replace: true });
+      await executeSearch(currentQuery, newTab);
     }
   };
 
-  const handleShowMoreBooks = () => {
-    if (currentQuery) {
-      navigate({ to: "/search/books", search: { q: currentQuery } });
-    }
-  };
-
-  const handleShowMoreReviews = () => {
-    if (currentQuery) {
-      navigate({ to: "/search/reviews", search: { q: currentQuery } });
+  const handleLoadMore = async (tab: SearchTab, currentPage: number) => {
+    if (!currentQuery) return;
+    switch (tab) {
+      case "users":
+        await searchUsers({ q: currentQuery, page: currentPage + 1 }, true);
+        break;
+      case "books":
+        await searchBooks({ q: currentQuery, page: currentPage + 1 }, true);
+        break;
+      case "reviews":
+        await searchReviews({ q: currentQuery, page: currentPage + 1 }, true);
+        break;
     }
   };
 
@@ -102,7 +148,7 @@ function SearchPage() {
       label: t("navigation.search"),
       icon: <SearchIcon className="w-6 h-6" />,
       href: "/search",
-      isActive: currentPath === "/search",
+      isActive: currentPath === "/search" || currentPath.startsWith("/search/"),
     },
     {
       label: t("navigation.createReview"),
@@ -122,27 +168,24 @@ function SearchPage() {
     navigate({ to: href });
   };
 
-  if (error) {
-    toast({
-      title: t("common.error"),
-      description: t(error),
-      variant: "destructive",
-    });
-  }
-
-  const displayResults =
-    usersResults || booksResults || reviewsResults
-      ? {
-          users: usersResults?.data || [],
-          books: booksResults?.data || [],
-          reviews: reviewsResults?.data || [],
-        }
-      : globalResults;
+  const renderSkeleton = () => (
+    <div className="space-y-4">
+      {[1, 2, 3, 4, 5].map((i) => (
+        <div key={i} className="flex gap-4 items-start p-4 rounded-lg border">
+          <Skeleton className="w-12 h-12 rounded-full flex-shrink-0" />
+          <div className="flex-1 space-y-2">
+            <Skeleton className="h-4 w-1/3" />
+            <Skeleton className="h-3 w-1/2" />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
 
   return (
     <div className="flex min-h-screen flex-col">
-      <div className="flex-1 p-6 pb-20">
-        <header className="mb-6">
+      <div className="flex-1 p-4 pb-20">
+        <header className="mb-4">
           <h1 className="text-2xl font-bold mb-4">{t("search.title")}</h1>
           <div className="flex gap-2">
             <Input
@@ -161,7 +204,7 @@ function SearchPage() {
               type="button"
               size="icon"
               onClick={() => handleSearch(query)}
-              disabled={isSearching || !query.trim()}
+              disabled={isLoadingUsers || isLoadingBooks || isLoadingReviews || !query.trim()}
               aria-label={t("search.title")}
             >
               <SearchIcon className="w-5 h-5" />
@@ -169,55 +212,118 @@ function SearchPage() {
           </div>
         </header>
 
-        {isSearching && (
-          <div className="text-center py-8">
-            <p className="text-muted-foreground">{t("search.searching")}</p>
-          </div>
-        )}
+        <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
+          <TabsList className="w-full grid grid-cols-3 mb-4">
+            <TabsTrigger value="users" className="flex items-center gap-1.5 text-xs sm:text-sm">
+              <Users className="w-4 h-4" />
+              <span>{t("search.users")}</span>
+            </TabsTrigger>
+            <TabsTrigger value="books" className="flex items-center gap-1.5 text-xs sm:text-sm">
+              <BookOpen className="w-4 h-4" />
+              <span>{t("search.books")}</span>
+            </TabsTrigger>
+            <TabsTrigger value="reviews" className="flex items-center gap-1.5 text-xs sm:text-sm">
+              <MessageCircle className="w-4 h-4" />
+              <span>{t("search.reviews")}</span>
+            </TabsTrigger>
+          </TabsList>
 
-        {!isSearching && displayResults && (
-          <div className="space-y-8">
-            <SearchSection
-              title={t("search.users")}
-              items={displayResults.users}
-              renderItem={(user) => (
-                <UserCard user={user} onClick={() => navigate({ to: `/user/${user.id}` })} />
-              )}
-              onShowMore={handleShowMoreUsers}
-              showMoreButton={globalResults !== null && displayResults.users.length > 0}
-              emptyMessage={currentQuery ? t("search.noResults") : undefined}
-            />
+          <TabsContent value="users">
+            {isLoadingUsers && renderSkeleton()}
+            {!isLoadingUsers && usersResults && (
+              <div className="space-y-3">
+                {usersResults.data.length === 0 ? (
+                  <p className="text-center text-muted-foreground py-8">{t("search.noResults")}</p>
+                ) : (
+                  <>
+                    {usersResults.data.map((user) => (
+                      <UserCard
+                        key={user.id}
+                        user={user}
+                        onClick={() => navigate({ to: `/user/${user.id}` })}
+                      />
+                    ))}
+                    {usersResults.meta.currentPage < usersResults.meta.lastPage && (
+                      <button
+                        onClick={() => handleLoadMore("users", usersResults.meta.currentPage)}
+                        className="w-full py-3 text-primary hover:text-primary/80 font-medium"
+                      >
+                        {t("search.showMore")}
+                      </button>
+                    )}
+                  </>
+                )}
+              </div>
+            )}
+            {!isLoadingUsers && !usersResults && currentQuery && (
+              <p className="text-center text-muted-foreground py-8">{t("search.noResults")}</p>
+            )}
+          </TabsContent>
 
-            <SearchSection
-              title={t("search.books")}
-              items={displayResults.books}
-              renderItem={(book) => (
-                <BookCard
-                  book={book}
-                  onClick={() => navigate({ to: "/book/$bookId", params: { bookId: book.id } })}
-                />
-              )}
-              onShowMore={handleShowMoreBooks}
-              showMoreButton={globalResults !== null && displayResults.books.length > 0}
-              emptyMessage={currentQuery ? t("search.noResults") : undefined}
-            />
+          <TabsContent value="books">
+            {isLoadingBooks && renderSkeleton()}
+            {!isLoadingBooks && booksResults && (
+              <div className="space-y-3">
+                {booksResults.data.length === 0 ? (
+                  <p className="text-center text-muted-foreground py-8">{t("search.noResults")}</p>
+                ) : (
+                  <>
+                    {booksResults.data.map((book) => (
+                      <BookCard
+                        key={book.id}
+                        book={book}
+                        onClick={() => navigate({ to: "/book/$bookId", params: { bookId: book.id } })}
+                      />
+                    ))}
+                    {booksResults.meta.currentPage < booksResults.meta.lastPage && (
+                      <button
+                        onClick={() => handleLoadMore("books", booksResults.meta.currentPage)}
+                        className="w-full py-3 text-primary hover:text-primary/80 font-medium"
+                      >
+                        {t("search.showMore")}
+                      </button>
+                    )}
+                  </>
+                )}
+              </div>
+            )}
+            {!isLoadingBooks && !booksResults && currentQuery && (
+              <p className="text-center text-muted-foreground py-8">{t("search.noResults")}</p>
+            )}
+          </TabsContent>
 
-            <SearchSection
-              title={t("search.reviews")}
-              items={displayResults.reviews}
-              renderItem={(review) => <ReviewCard review={review} onClick={() => {}} />}
-              onShowMore={handleShowMoreReviews}
-              showMoreButton={globalResults !== null && displayResults.reviews.length > 0}
-              emptyMessage={currentQuery ? t("search.noResults") : undefined}
-            />
-          </div>
-        )}
-
-        {!isSearching && !displayResults && currentQuery && (
-          <div className="text-center py-8">
-            <p className="text-muted-foreground">{t("search.noResults")}</p>
-          </div>
-        )}
+          <TabsContent value="reviews">
+            {isLoadingReviews && renderSkeleton()}
+            {!isLoadingReviews && reviewsResults && (
+              <div className="space-y-3">
+                {reviewsResults.data.length === 0 ? (
+                  <p className="text-center text-muted-foreground py-8">{t("search.noResults")}</p>
+                ) : (
+                  <>
+                    {reviewsResults.data.map((review) => (
+                      <ReviewCard
+                        key={review.id}
+                        review={review}
+                        onClick={() => navigate({ to: `/review/${review.id}` })}
+                      />
+                    ))}
+                    {reviewsResults.meta.currentPage < reviewsResults.meta.lastPage && (
+                      <button
+                        onClick={() => handleLoadMore("reviews", reviewsResults.meta.currentPage)}
+                        className="w-full py-3 text-primary hover:text-primary/80 font-medium"
+                      >
+                        {t("search.showMore")}
+                      </button>
+                    )}
+                  </>
+                )}
+              </div>
+            )}
+            {!isLoadingReviews && !reviewsResults && currentQuery && (
+              <p className="text-center text-muted-foreground py-8">{t("search.noResults")}</p>
+            )}
+          </TabsContent>
+        </Tabs>
       </div>
 
       <BottomNav items={navItems} onNavigate={handleNavigate} />
