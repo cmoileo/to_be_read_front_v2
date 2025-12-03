@@ -4,9 +4,32 @@ import { useState, useEffect } from "react";
 import { X } from "lucide-react";
 import { Input } from "./input";
 import { Card, CardContent } from "./card";
+import { Skeleton } from "./skeleton";
 import { cn } from "../lib/utils";
 import { useTranslation } from "react-i18next";
 import type { GoogleBook } from "@repo/types";
+
+interface BookSearchSelectProps {
+  value: GoogleBook | null;
+  onChange: (book: GoogleBook | null) => void;
+  onSearch: (query: string) => Promise<GoogleBook[]>;
+  placeholder?: string;
+  disabled?: boolean;
+  error?: string;
+}
+
+function BookSearchSkeleton() {
+  return (
+    <div className="p-3 flex gap-3 items-start">
+      <Skeleton className="w-12 h-16 rounded flex-shrink-0" />
+      <div className="flex-1 space-y-2">
+        <Skeleton className="h-4 w-3/4" />
+        <Skeleton className="h-3 w-1/2" />
+        <Skeleton className="h-3 w-1/4" />
+      </div>
+    </div>
+  );
+}
 
 interface BookSearchSelectProps {
   value: GoogleBook | null;
@@ -34,21 +57,24 @@ export function BookSearchSelect({
   const resolvedPlaceholder = placeholder || t("bookSearch.placeholder");
 
   useEffect(() => {
+    if (query.length >= 2) {
+      setIsOpen(true);
+      setIsLoading(true);
+    } else {
+      setIsOpen(false);
+      setResults([]);
+    }
+
     const delayDebounceFn = setTimeout(async () => {
       if (query.length >= 2) {
-        setIsLoading(true);
         try {
           const books = await onSearch(query);
           setResults(books);
-          setIsOpen(true);
         } catch (err) {
           setResults([]);
         } finally {
           setIsLoading(false);
         }
-      } else {
-        setResults([]);
-        setIsOpen(false);
       }
     }, 500);
 
@@ -122,7 +148,11 @@ export function BookSearchSelect({
       {isOpen && (
         <div className="absolute z-50 w-full mt-1 bg-background border rounded-md shadow-lg max-h-80 overflow-auto">
           {isLoading ? (
-            <div className="p-4 text-center text-sm text-muted-foreground">{t("bookSearch.loading")}</div>
+            <div className="divide-y">
+              <BookSearchSkeleton />
+              <BookSearchSkeleton />
+              <BookSearchSkeleton />
+            </div>
           ) : results.length > 0 ? (
             results.map((book) => (
               <button

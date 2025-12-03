@@ -12,6 +12,7 @@ export * from "./components/dialog";
 export * from "./components/checkbox";
 export * from "./components/textarea";
 export * from "./components/rating";
+export * from "./components/skeleton";
 export * from "./components/bottom-nav";
 export * from "./components/top-nav";
 export * from "./components/book-search-select";
