@@ -97,9 +97,8 @@ export function CreateReviewForm({
 
           <div className="space-y-2">
             <Label>{t("review.create.ratingLabel")}</Label>
-            <div className="flex items-center gap-4">
-              <Rating value={rating} onChange={setRating} max={10} disabled={isLoading} size="lg" />
-              {rating > 0 && <span className="text-2xl font-bold text-primary">{rating}/10</span>}
+            <div className="flex items-start flex-col gap-4">
+              <Rating value={rating} onChange={setRating} max={5} disabled={isLoading} size="lg" />
             </div>
             {errors.rating && <p className="text-sm text-destructive">{errors.rating}</p>}
           </div>

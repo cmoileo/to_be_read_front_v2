@@ -41,6 +41,7 @@ export class ValidationService {
   }
 
   static validateReviewRating(value: number): boolean {
-    return value >= 1 && value <= 10 && Number.isInteger(value);
+    // Rating is now 0.5 to 5 with half-star increments
+    return value >= 0.5 && value <= 5 && (value * 2) % 1 === 0;
   }
 }
