@@ -50,12 +50,6 @@ export function TopNav({
       href: "/review",
       visitorAccess: false,
     },
-    {
-      label: t("navigation.profile"),
-      icon: <User className="w-5 h-5" />,
-      href: "/profile",
-      visitorAccess: false,
-    },
   ];
 
   const navItems = isVisitor ? allNavItems.filter((item) => item.visitorAccess) : allNavItems;
@@ -98,7 +92,6 @@ export function TopNav({
           <div className="flex items-center gap-4">
             {userName ? (
               <div className="hidden md:flex items-center gap-3">
-                {/* Notification Bell */}
                 <Link
                   href="/notifications"
                   className={cn(
@@ -116,12 +109,19 @@ export function TopNav({
                     </span>
                   )}
                 </Link>
-                <div className="flex items-center gap-2 px-3 py-1.5 bg-muted/50 rounded-full">
+                <Link
+                  href="/profile"
+                  className={cn(
+                    "flex items-center gap-2 px-3 py-1.5 rounded-full transition-all duration-200",
+                    "hover:bg-muted",
+                    currentPath === "/profile" ? "bg-primary/10" : "bg-muted/50"
+                  )}
+                >
                   <span className="w-6 h-6 bg-primary/20 rounded-full flex items-center justify-center text-xs">
                     {userName.charAt(0).toUpperCase()}
                   </span>
                   <span className="text-sm font-medium text-foreground">{userName}</span>
-                </div>
+                </Link>
                 {onLogout && (
                   <Button
                     variant="ghost"
@@ -159,9 +159,15 @@ export function TopNav({
             </button>
           </div>
         </div>
+      </nav>
 
-        {mobileMenuOpen && (
-          <div className="border-t border-border/50 md:hidden animate-in slide-in-from-top-2 duration-200">
+      {mobileMenuOpen && (
+        <>
+          <div
+            className="fixed inset-0 z-40 bg-background/80 backdrop-blur-sm md:hidden"
+            onClick={() => setMobileMenuOpen(false)}
+          />
+          <div className="fixed top-16 left-0 right-0 z-50 md:hidden animate-in slide-in-from-top-2 duration-200 bg-background border-b border-border/50 shadow-lg">
             <div className="container space-y-1 px-4 py-4">
               {navItems.map((item) => (
                 <Link
@@ -183,7 +189,6 @@ export function TopNav({
 
               {userName ? (
                 <div className="border-t border-border/50 pt-4 mt-4 space-y-2">
-                  {/* Notifications link for mobile */}
                   <Link
                     href="/notifications"
                     onClick={() => setMobileMenuOpen(false)}
@@ -205,17 +210,30 @@ export function TopNav({
                     </div>
                     <span>{t("navigation.notifications")}</span>
                   </Link>
-                  <div className="flex items-center gap-3 px-4 py-2">
+                  <Link
+                    href="/profile"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={cn(
+                      "flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-all duration-200",
+                      "hover:bg-accent/50 active:scale-[0.98]",
+                      currentPath === "/profile"
+                        ? "bg-primary/10 text-primary"
+                        : "text-muted-foreground hover:text-foreground"
+                    )}
+                  >
                     <span className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center text-sm font-medium">
                       {userName.charAt(0).toUpperCase()}
                     </span>
-                    <span className="text-sm font-medium text-foreground">{userName}</span>
-                  </div>
+                    <span>{userName}</span>
+                  </Link>
                   {onLogout && (
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={onLogout}
+                      onClick={() => {
+                        setMobileMenuOpen(false);
+                        onLogout();
+                      }}
                       className="w-full justify-start text-muted-foreground hover:text-destructive hover:bg-destructive/10"
                     >
                       {t("auth.logout")}
@@ -244,8 +262,8 @@ export function TopNav({
               ) : null}
             </div>
           </div>
-        )}
-      </nav>
+        </>
+      )}
     </>
   );
 }
