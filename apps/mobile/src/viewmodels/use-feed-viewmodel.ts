@@ -1,11 +1,6 @@
 import { useInfiniteQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { MobileFeedService } from "../services/mobile-feed.service";
-import type { Review } from "@repo/types";
-
-export const feedKeys = {
-  all: ["feed"] as const,
-  list: () => [...feedKeys.all, "list"] as const,
-};
+import { feedKeys, toggleLikeInFeed } from "@repo/stores";
 
 export const useFeedViewModel = () => {
   const queryClient = useQueryClient();
@@ -37,24 +32,7 @@ export const useFeedViewModel = () => {
 
       const previousData = queryClient.getQueryData(feedKeys.list());
 
-      queryClient.setQueryData(feedKeys.list(), (old: any) => {
-        if (!old) return old;
-        return {
-          ...old,
-          pages: old.pages.map((page: any) => ({
-            ...page,
-            data: page.data.map((review: Review) =>
-              review.id === reviewId
-                ? {
-                    ...review,
-                    isLiked: !review.isLiked,
-                    likesCount: review.isLiked ? review.likesCount - 1 : review.likesCount + 1,
-                  }
-                : review
-            ),
-          })),
-        };
-      });
+      toggleLikeInFeed(queryClient, reviewId);
 
       return { previousData };
     },

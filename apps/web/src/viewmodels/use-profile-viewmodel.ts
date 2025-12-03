@@ -1,8 +1,8 @@
-import { useState } from "react";
-import { useMutation, useQuery, useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import type { User, Review } from "@repo/types";
 import { getMyReviewsAction, updateProfileAction, deleteReviewAction } from "@/app/_profile/actions";
+import { useConnectedUser } from "@repo/stores";
 
 interface UseProfileViewModelProps {
   initialUser: User | null;
@@ -10,7 +10,7 @@ interface UseProfileViewModelProps {
 }
 
 export function useProfileViewModel({ initialUser, initialReviewsResponse }: UseProfileViewModelProps) {
-  const [user, setUser] = useState<User | null>(initialUser);
+  const { user, setUser, updateUser } = useConnectedUser();
   const router = useRouter();
   const queryClient = useQueryClient();
 
@@ -90,12 +90,8 @@ export function useProfileViewModel({ initialUser, initialReviewsResponse }: Use
         };
       });
 
-      setUser((prevUser) => {
-        if (!prevUser) return prevUser;
-        return {
-          ...prevUser,
-          reviewsCount: Math.max(0, (prevUser.reviewsCount || 0) - 1),
-        };
+      updateUser({
+        reviewsCount: Math.max(0, (Number(user?.reviewsCount) || 0) - 1),
       });
 
       return { previousData, previousUser };

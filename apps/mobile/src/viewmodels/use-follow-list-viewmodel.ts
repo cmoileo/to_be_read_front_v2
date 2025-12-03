@@ -1,6 +1,7 @@
 import { useInfiniteQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { MobileUserService, FollowUser } from "../services/mobile-user.service";
 import { useMemo, useState, useCallback } from "react";
+import { removeUserReviewsFromFeed, invalidateFeed, updateFollowingCount } from "@repo/stores";
 
 export const followListKeys = {
   all: ["followList"] as const,
@@ -43,6 +44,7 @@ export const useFollowListViewModel = (userId: number, type: "followers" | "foll
     mutationFn: (targetUserId: number) => MobileUserService.followUser(targetUserId),
     onMutate: async (targetUserId: number) => {
       setOptimisticUpdates((prev) => new Map(prev).set(targetUserId, true));
+      updateFollowingCount(queryClient, 1);
     },
     onError: (_err, targetUserId) => {
       setOptimisticUpdates((prev) => {
@@ -50,10 +52,13 @@ export const useFollowListViewModel = (userId: number, type: "followers" | "foll
         newMap.delete(targetUserId);
         return newMap;
       });
+      updateFollowingCount(queryClient, -1);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["users"] });
       queryClient.invalidateQueries({ queryKey: ["profile"] });
+      // Invalidate feed to include the new user's reviews
+      invalidateFeed(queryClient);
     },
   });
 
@@ -61,6 +66,9 @@ export const useFollowListViewModel = (userId: number, type: "followers" | "foll
     mutationFn: (targetUserId: number) => MobileUserService.unfollowUser(targetUserId),
     onMutate: async (targetUserId: number) => {
       setOptimisticUpdates((prev) => new Map(prev).set(targetUserId, false));
+      updateFollowingCount(queryClient, -1);
+      // Optimistically remove user's reviews from feed
+      removeUserReviewsFromFeed(queryClient, targetUserId);
     },
     onError: (_err, targetUserId) => {
       setOptimisticUpdates((prev) => {
@@ -68,6 +76,9 @@ export const useFollowListViewModel = (userId: number, type: "followers" | "foll
         newMap.delete(targetUserId);
         return newMap;
       });
+      updateFollowingCount(queryClient, 1);
+      // Refetch feed to restore removed reviews
+      invalidateFeed(queryClient);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["users"] });

@@ -1,9 +1,11 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { SettingsSection } from "@repo/ui";
 import { useSettingsViewModel } from "@/viewmodels/use-settings-viewmodel";
 
 export default function SettingsPage() {
+  const router = useRouter();
   const {
     currentLocale,
     notificationsEnabled,
@@ -26,6 +28,7 @@ export default function SettingsPage() {
         onDeleteAccount={handleDeleteAccount}
         onChangeLanguage={handleChangeLanguage}
         onToggleNotifications={handleToggleNotifications}
+        onBack={() => router.back()}
       />
     </div>
   );

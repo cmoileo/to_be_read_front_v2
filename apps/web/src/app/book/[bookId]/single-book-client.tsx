@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { SingleBookScreen, AuthPromptDialog, type AuthPromptType } from "@repo/ui";
-import { useAuthContext } from "@/models/hooks/use-auth-context";
+import { useConnectedUser } from "@repo/stores";
 import { useSingleBookViewModel } from "./use-single-book-viewmodel";
 import type { GoogleBook, BookReviewsPaginatedResponse } from "@/services/web-book.service";
 
@@ -17,7 +17,7 @@ export default function SingleBookClient({
   initialReviewsResponse,
 }: SingleBookClientProps) {
   const router = useRouter();
-  const { user } = useAuthContext();
+  const { user } = useConnectedUser();
   const [authPromptOpen, setAuthPromptOpen] = useState(false);
   const [authPromptType, setAuthPromptType] = useState<AuthPromptType>("toReadList");
 

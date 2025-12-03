@@ -1,8 +1,8 @@
-import { ReactNode, useState, useEffect } from "react";
+import { ReactNode, useEffect } from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { AuthContext } from "../models/hooks/use-auth-model";
-import { getInitialAuthState, setAuthUser, clearAuthUser } from "../models/auth.model";
-import type { User, UserBasic } from "@repo/types";
+import { useQueryClient } from "@tanstack/react-query";
+import { connectedUserKeys } from "@repo/stores";
+import type { User } from "@repo/types";
 import { MobileStorage } from "../services/mobile-storage.service";
 import { MobileAuthService } from "../services/mobile-auth.service";
 
@@ -11,63 +11,27 @@ interface AuthProviderProps {
 }
 
 export function AuthProvider({ children }: AuthProviderProps) {
-  const [authState, setAuthState] = useState(getInitialAuthState());
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     const hydrateAuth = async () => {
       const hasTokens = await MobileStorage.hasTokens();
       if (!hasTokens) {
-        setAuthState(clearAuthUser());
+        queryClient.setQueryData(connectedUserKeys.profile(), null);
         return;
       }
       try {
         const me = await MobileAuthService.getMe();
-        setAuthState(setAuthUser(me.user));
+        queryClient.setQueryData(connectedUserKeys.profile(), me.user as User);
       } catch (error) {
         await MobileStorage.clearTokens();
-        setAuthState(clearAuthUser());
+        queryClient.setQueryData(connectedUserKeys.profile(), null);
         navigate({ to: "/onboarding" });
       }
     };
     hydrateAuth();
-  }, []);
+  }, [queryClient, navigate]);
 
-  const setUser = (user: User | UserBasic | null) => {
-    if (user) {
-      setAuthState(setAuthUser(user));
-    } else {
-      setAuthState(clearAuthUser());
-    }
-  };
-
-  const clearUser = async () => {
-    try {
-      const rememberMe = await MobileStorage.getRememberMe();
-      if (!rememberMe) {
-        // Only clear tokens if user didn't check "remember me"
-        await MobileStorage.clearTokens();
-      }
-      await MobileAuthService.logout();
-    } catch (error) {
-      const rememberMe = await MobileStorage.getRememberMe();
-      if (!rememberMe) {
-        await MobileStorage.clearTokens();
-      }
-    }
-    setAuthState(clearAuthUser());
-    navigate({ to: "/onboarding" });
-  };
-
-  return (
-    <AuthContext.Provider
-      value={{
-        ...authState,
-        setUser,
-        clearUser,
-      }}
-    >
-      {children}
-    </AuthContext.Provider>
-  );
+  return <>{children}</>;
 }

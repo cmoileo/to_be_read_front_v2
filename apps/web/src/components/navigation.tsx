@@ -2,17 +2,19 @@
 
 import { TopNav } from "@repo/ui";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useAuthContext } from "@/models/hooks/use-auth-context";
+import { usePathname, useRouter } from "next/navigation";
+import { useConnectedUser } from "@repo/stores";
 import { useState, useEffect, useCallback, useRef } from "react";
 import { Transmit } from "@adonisjs/transmit-client";
+import { logoutAction } from "@/app/_auth/actions";
 
 const AUTH_PAGES = ["/login", "/register", "/onboarding", "/reset-password"];
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "";
 
 export function Navigation() {
   const pathname = usePathname();
-  const { user, clearUser } = useAuthContext();
+  const router = useRouter();
+  const { user, clearUser } = useConnectedUser();
   const [unreadCount, setUnreadCount] = useState(0);
   const transmitRef = useRef<Transmit | null>(null);
   const subscriptionRef = useRef<any>(null);
@@ -122,7 +124,10 @@ export function Navigation() {
     if (subscriptionRef.current) {
       await subscriptionRef.current.delete().catch(() => {});
     }
-    await clearUser();
+    await logoutAction();
+    clearUser();
+    router.push("/login");
+    router.refresh();
   };
 
   return (

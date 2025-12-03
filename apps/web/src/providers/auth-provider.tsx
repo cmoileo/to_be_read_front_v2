@@ -1,10 +1,8 @@
 "use client";
 
-import { useState, useEffect, type ReactNode } from "react";
-import { useRouter } from "next/navigation";
-import { AuthContext } from "@/models/hooks/use-auth-context";
-import { getInitialAuthState, setAuthUser, clearAuthUser } from "@/models/auth.model";
-import { logoutAction } from "@/app/_auth/actions";
+import { useRef, type ReactNode } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { connectedUserKeys } from "@repo/stores";
 import type { User } from "@repo/types";
 
 interface AuthProviderProps {
@@ -13,43 +11,14 @@ interface AuthProviderProps {
 }
 
 export function AuthProvider({ children, initialUser }: AuthProviderProps) {
-  const [authState, setAuthState] = useState(() =>
-    initialUser ? setAuthUser(initialUser) : getInitialAuthState()
-  );
-  const router = useRouter();
+  const queryClient = useQueryClient();
+  const isHydrated = useRef(false);
 
-  useEffect(() => {
-    if (initialUser) {
-      setAuthState(setAuthUser(initialUser));
-    } else {
-      setAuthState(clearAuthUser());
-    }
-  }, [initialUser]);
+  // Hydrate the query cache synchronously on first render (not in useEffect)
+  if (!isHydrated.current) {
+    queryClient.setQueryData(connectedUserKeys.profile(), initialUser);
+    isHydrated.current = true;
+  }
 
-  const setUser = (user: User | null) => {
-    if (user) {
-      setAuthState(setAuthUser(user));
-    } else {
-      setAuthState(clearAuthUser());
-    }
-  };
-
-  const clearUser = async () => {
-    await logoutAction();
-    setAuthState(clearAuthUser());
-    router.push("/login");
-    router.refresh();
-  };
-
-  return (
-    <AuthContext.Provider
-      value={{
-        ...authState,
-        setUser,
-        clearUser,
-      }}
-    >
-      {children}
-    </AuthContext.Provider>
-  );
+  return <>{children}</>;
 }

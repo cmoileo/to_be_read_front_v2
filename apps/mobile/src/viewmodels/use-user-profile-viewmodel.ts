@@ -1,6 +1,7 @@
 import { useQuery, useInfiniteQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { MobileUserService } from "../services/mobile-user.service";
 import type { User } from "@repo/types";
+import { removeUserReviewsFromFeed, invalidateFeed, updateFollowingCount } from "@repo/stores";
 
 export const userKeys = {
   all: ["users"] as const,
@@ -50,9 +51,11 @@ export const useUserProfileViewModel = (userId: number) => {
         queryClient.setQueryData<User>(userKeys.detail(userId), {
           ...previousUser,
           isFollowing: true,
-          followersCount: previousUser.followersCount + 1,
+          followersCount: (Number(previousUser.followersCount) || 0) + 1,
         });
       }
+
+      updateFollowingCount(queryClient, 1);
 
       return { previousUser };
     },
@@ -60,6 +63,10 @@ export const useUserProfileViewModel = (userId: number) => {
       if (context?.previousUser) {
         queryClient.setQueryData(userKeys.detail(userId), context.previousUser);
       }
+      updateFollowingCount(queryClient, -1);
+    },
+    onSuccess: () => {
+      invalidateFeed(queryClient);
     },
   });
 
@@ -74,9 +81,12 @@ export const useUserProfileViewModel = (userId: number) => {
         queryClient.setQueryData<User>(userKeys.detail(userId), {
           ...previousUser,
           isFollowing: false,
-          followersCount: previousUser.followersCount - 1,
+          followersCount: Math.max(0, (Number(previousUser.followersCount) || 0) - 1),
         });
       }
+
+      updateFollowingCount(queryClient, -1);
+      removeUserReviewsFromFeed(queryClient, userId);
 
       return { previousUser };
     },
@@ -84,6 +94,8 @@ export const useUserProfileViewModel = (userId: number) => {
       if (context?.previousUser) {
         queryClient.setQueryData(userKeys.detail(userId), context.previousUser);
       }
+      updateFollowingCount(queryClient, 1);
+      invalidateFeed(queryClient);
     },
   });
 

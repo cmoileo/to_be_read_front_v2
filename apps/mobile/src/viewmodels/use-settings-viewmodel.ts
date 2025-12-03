@@ -3,14 +3,14 @@ import { useNavigate } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 import { MobileAuthService } from "../services/mobile-auth.service";
 import { MobileProfileService } from "../services/mobile-profile.service";
-import { useAuthModel } from "../models/hooks/use-auth-model";
+import { useConnectedUser } from "@repo/stores";
 import { MobileStorage } from "../services/mobile-storage.service";
 
 export function useSettingsViewModel() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { i18n } = useTranslation();
-  const { clearUser } = useAuthModel();
+  const { clearUser } = useConnectedUser();
 
   const { data: meData } = useQuery({
     queryKey: ["me-settings"],

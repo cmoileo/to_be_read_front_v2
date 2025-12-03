@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { SingleReviewScreen, AuthPromptDialog, type AuthPromptType } from "@repo/ui";
-import { useAuthContext } from "@/models/hooks/use-auth-context";
+import { useConnectedUser } from "@repo/stores";
 import { useSingleReviewViewModel } from "@/viewmodels/use-single-review-viewmodel";
 import type { SingleReview, CommentsPaginatedResponse } from "@/services/web-review.service";
 
@@ -17,7 +17,7 @@ export default function SingleReviewClient({
   initialCommentsResponse,
 }: SingleReviewClientProps) {
   const router = useRouter();
-  const { user } = useAuthContext();
+  const { user } = useConnectedUser();
   const [authPromptOpen, setAuthPromptOpen] = useState(false);
   const [authPromptType, setAuthPromptType] = useState<AuthPromptType>("like");
 

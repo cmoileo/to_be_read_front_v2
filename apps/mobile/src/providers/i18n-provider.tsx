@@ -1,6 +1,6 @@
 import { ReactNode, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { useAuthModel } from "../models/hooks/use-auth-model";
+import { useConnectedUser } from "@repo/stores";
 import "@repo/ui/src/i18n/config";
 import type { UserDetailed } from "@repo/types";
 
@@ -10,7 +10,7 @@ interface I18nProviderProps {
 
 export function I18nProvider({ children }: I18nProviderProps) {
   const { i18n } = useTranslation();
-  const { user } = useAuthModel();
+  const { user } = useConnectedUser();
 
   useEffect(() => {
     if (user && "locale" in user) {

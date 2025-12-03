@@ -4,10 +4,10 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { CreateReviewForm, useToast, useTranslation } from "@repo/ui";
 import { useCreateReviewViewModel } from "@/viewmodels/use-create-review-viewmodel";
-import { useAuthContext } from "@/models/hooks/use-auth-context";
+import { useConnectedUser } from "@repo/stores";
 
 export default function ReviewPage() {
-  const { user } = useAuthContext();
+  const { user } = useConnectedUser();
   const { toast } = useToast();
   const { t } = useTranslation();
   const viewModel = useCreateReviewViewModel();

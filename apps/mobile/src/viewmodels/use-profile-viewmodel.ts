@@ -1,19 +1,23 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useMutation, useInfiniteQuery, useQuery, useQueryClient } from "@tanstack/react-query";
 import { MobileProfileService, type UpdateProfileData } from "../services/mobile-profile.service";
-import { useAuthModel } from "../models/hooks/use-auth-model";
 import { useNavigate } from "@tanstack/react-router";
+import { 
+  connectedUserKeys, 
+  getConnectedUser, 
+  setConnectedUser,
+  updateReviewsCount 
+} from "@repo/stores";
 
 export const useProfileViewModel = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { user: currentUser } = useAuthModel();
-  const [user, setUser] = useState<any>(null);
+  const user = getConnectedUser(queryClient);
 
   const { data: profileData, isLoading: isLoadingProfile } = useQuery({
-    queryKey: ["profile", currentUser?.id],
+    queryKey: connectedUserKeys.profile(),
     queryFn: () => MobileProfileService.getMyProfile(),
-    enabled: !!currentUser?.id,
+    enabled: true,
   });
 
   const {
@@ -23,7 +27,7 @@ export const useProfileViewModel = () => {
     isFetchingNextPage,
     isLoading: isLoadingReviews,
   } = useInfiniteQuery({
-    queryKey: ["myReviews", currentUser?.id],
+    queryKey: ["myReviews", user?.id],
     queryFn: ({ pageParam = 1 }) => MobileProfileService.getMyReviews(pageParam),
     getNextPageParam: (lastPage) => {
       if (lastPage.meta.currentPage < lastPage.meta.lastPage) {
@@ -32,21 +36,21 @@ export const useProfileViewModel = () => {
       return undefined;
     },
     initialPageParam: 1,
-    enabled: !!currentUser?.id,
+    enabled: !!user?.id,
   });
 
   const updateMutation = useMutation({
     mutationFn: (data: UpdateProfileData) => MobileProfileService.updateProfile(data),
     onSuccess: ({ user: updatedUser }) => {
-      setUser(updatedUser);
+      setConnectedUser(queryClient, updatedUser);
     },
   });
 
   useEffect(() => {
     if (profileData?.user) {
-      setUser(profileData.user);
+      setConnectedUser(queryClient, profileData.user);
     }
-  }, [profileData]);
+  }, [profileData, queryClient]);
 
   const handleUpdateProfile = (data: UpdateProfileData) => {
     updateMutation.mutate(data);
@@ -65,11 +69,12 @@ export const useProfileViewModel = () => {
   const deleteMutation = useMutation({
     mutationFn: (reviewId: number) => MobileProfileService.deleteReview(reviewId),
     onMutate: async (reviewId) => {
-      await queryClient.cancelQueries({ queryKey: ["myReviews", currentUser?.id] });
+      await queryClient.cancelQueries({ queryKey: ["myReviews", user?.id] });
 
-      const previousData = queryClient.getQueryData(["myReviews", currentUser?.id]);
+      const previousData = queryClient.getQueryData(["myReviews", user?.id]);
+      const previousUser = user;
 
-      queryClient.setQueryData(["myReviews", currentUser?.id], (oldData: any) => {
+      queryClient.setQueryData(["myReviews", user?.id], (oldData: any) => {
         if (!oldData) return oldData;
         return {
           ...oldData,
@@ -80,22 +85,16 @@ export const useProfileViewModel = () => {
         };
       });
 
-      setUser((prevUser: any) => {
-        if (!prevUser) return prevUser;
-        return {
-          ...prevUser,
-          reviewsCount: Math.max(0, (prevUser.reviewsCount || 0) - 1),
-        };
-      });
+      updateReviewsCount(queryClient, -1);
 
-      return { previousData, previousUser: user };
+      return { previousData, previousUser };
     },
     onError: (_err, _vars, context) => {
       if (context?.previousData) {
-        queryClient.setQueryData(["myReviews", currentUser?.id], context.previousData);
+        queryClient.setQueryData(["myReviews", user?.id], context.previousData);
       }
       if (context?.previousUser) {
-        setUser(context.previousUser);
+        setConnectedUser(queryClient, context.previousUser);
       }
     },
   });
@@ -108,7 +107,7 @@ export const useProfileViewModel = () => {
 
   return {
     user,
-    userId: currentUser?.id ?? null,
+    userId: user?.id ?? null,
     reviews: allReviews,
     isLoading: isLoadingProfile || isLoadingReviews,
     hasMore: hasNextPage,

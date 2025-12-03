@@ -2,10 +2,12 @@
 
 import { useState, useTransition, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 import { FollowListScreen, ArrowLeft, useTranslation } from "@repo/ui";
 import { FollowUser } from "@/services/web-user.service";
 import { PaginatedResponse } from "@repo/types";
 import { getFollowersAction, followUserAction, unfollowUserAction } from "./actions";
+import { removeUserReviewsFromFeed, invalidateFeed, updateFollowingCount } from "@repo/stores";
 
 interface FollowersClientProps {
   userId: number;
@@ -15,6 +17,7 @@ interface FollowersClientProps {
 
 export default function FollowersClient({ userId, userName, initialData }: FollowersClientProps) {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const { t } = useTranslation();
   const [isPending, startTransition] = useTransition();
 
@@ -52,22 +55,32 @@ export default function FollowersClient({ userId, userName, initialData }: Follo
 
   const handleFollow = (targetUserId: number) => {
     updateUserFollowState(targetUserId, true);
+    updateFollowingCount(queryClient, 1);
     startTransition(async () => {
       try {
         await followUserAction(targetUserId);
+        // Invalidate feed to include the new user's reviews
+        invalidateFeed(queryClient);
       } catch (error) {
         updateUserFollowState(targetUserId, false);
+        updateFollowingCount(queryClient, -1);
       }
     });
   };
 
   const handleUnfollow = (targetUserId: number) => {
     updateUserFollowState(targetUserId, false);
+    updateFollowingCount(queryClient, -1);
+    // Optimistically remove user's reviews from feed
+    removeUserReviewsFromFeed(queryClient, targetUserId);
     startTransition(async () => {
       try {
         await unfollowUserAction(targetUserId);
       } catch (error) {
         updateUserFollowState(targetUserId, true);
+        updateFollowingCount(queryClient, 1);
+        // Refetch feed to restore removed reviews
+        invalidateFeed(queryClient);
       }
     });
   };

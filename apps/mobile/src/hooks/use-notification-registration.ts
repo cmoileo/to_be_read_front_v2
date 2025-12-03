@@ -1,10 +1,10 @@
 import { useEffect, useRef } from "react";
 import { useNotifications } from "../providers/notification-provider";
-import { useAuthModel } from "../models/hooks/use-auth-model";
+import { useConnectedUser } from "@repo/stores";
 
 export function useNotificationRegistration() {
   const { registerForPushNotifications, isInitialized, permissionStatus } = useNotifications();
-  const { user, isAuthenticated } = useAuthModel();
+  const { user, isAuthenticated } = useConnectedUser();
   const hasRegistered = useRef(false);
 
   useEffect(() => {

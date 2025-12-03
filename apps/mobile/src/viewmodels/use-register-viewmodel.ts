@@ -1,17 +1,17 @@
 import { useState, useRef } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
-import { useAuthModel } from "../models/hooks/use-auth-model";
+import { useConnectedUser } from "@repo/stores";
 import { MobileAuthService } from "../services/mobile-auth.service";
 import { MobileStorage } from "../services/mobile-storage.service";
 import { AuthApi } from "@repo/api-client";
 import type { RegisterFormValues } from "@repo/ui";
-import type { UserBasic } from "@repo/types";
+import type { User } from "@repo/types";
 
 export function useRegisterViewModel() {
   const [error, setError] = useState<string>("");
   const navigate = useNavigate();
-  const { setUser } = useAuthModel();
+  const { setUser } = useConnectedUser();
   const rememberMeRef = useRef<boolean>(false);
 
   const registerMutation = useMutation({
@@ -21,7 +21,7 @@ export function useRegisterViewModel() {
       await MobileStorage.setAccessToken(accessToken);
       await MobileStorage.setRefreshToken(data.refreshToken);
       await MobileStorage.setRememberMe(rememberMeRef.current);
-      setUser(data.user as UserBasic);
+      setUser(data.user as User);
       navigate({ to: "/" });
     },
     onError: (err) => {

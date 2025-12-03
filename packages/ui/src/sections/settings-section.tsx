@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { LogOut, Trash2, Globe, Bell, ChevronRight, AlertTriangle } from "lucide-react";
+import { LogOut, Trash2, Globe, Bell, ChevronRight, AlertTriangle, ArrowLeft } from "lucide-react";
+import { Button } from "../components/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/card";
 import {
   AlertDialog,
@@ -33,6 +34,7 @@ interface SettingsSectionProps {
   onDeleteAccount?: () => void;
   onChangeLanguage?: (locale: string) => void;
   onToggleNotifications?: (enabled: boolean) => void;
+  onBack?: () => void;
 }
 
 export const SettingsSection = ({
@@ -44,6 +46,7 @@ export const SettingsSection = ({
   onDeleteAccount,
   onChangeLanguage,
   onToggleNotifications,
+  onBack,
 }: SettingsSectionProps) => {
   const { t } = useTranslation();
   const [showLogoutDialog, setShowLogoutDialog] = useState(false);
@@ -63,7 +66,19 @@ export const SettingsSection = ({
     <>
       <Card className="border-none shadow-none bg-transparent px-4">
         <CardHeader className="px-0">
-          <CardTitle className="text-xl">{t("settings.title")}</CardTitle>
+          <div className="flex items-center gap-3">
+            {onBack && (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={onBack}
+                className="rounded-full h-9 w-9 hover:bg-muted/50 -ml-2"
+              >
+                <ArrowLeft className="h-5 w-5" />
+              </Button>
+            )}
+            <CardTitle className="text-xl">{t("settings.title")}</CardTitle>
+          </div>
         </CardHeader>
         <CardContent className="px-0 space-y-4">
           <div className="flex items-center justify-between py-3">

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ProfileScreen, AuthPromptDialog, type AuthPromptType } from "@repo/ui";
-import { useAuthContext } from "@/models/hooks/use-auth-context";
+import { useConnectedUser } from "@repo/stores";
 import { useUserProfileViewModel } from "@/viewmodels/use-user-profile-viewmodel";
 import type { User, Review, PaginatedResponse } from "@repo/types";
 
@@ -17,7 +17,7 @@ export default function UserProfileClient({
   initialReviewsResponse,
 }: UserProfileClientProps) {
   const router = useRouter();
-  const { user: currentUser } = useAuthContext();
+  const { user: currentUser } = useConnectedUser();
   const [authPromptOpen, setAuthPromptOpen] = useState(false);
   const [authPromptType, setAuthPromptType] = useState<AuthPromptType>("follow");
 

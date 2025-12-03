@@ -1,15 +1,11 @@
 import { useInfiniteQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import type { Review, PaginatedResponse } from "@repo/types";
 import { getFeedAction, likeReviewAction } from "@/app/_feed/actions";
+import { feedKeys, toggleLikeInFeed } from "@repo/stores";
 
 interface UseFeedViewModelProps {
   initialFeedResponse: PaginatedResponse<Review> | null;
 }
-
-export const feedKeys = {
-  all: ["feed"] as const,
-  list: () => [...feedKeys.all, "list"] as const,
-};
 
 export function useFeedViewModel({ initialFeedResponse }: UseFeedViewModelProps) {
   const queryClient = useQueryClient();
@@ -49,24 +45,7 @@ export function useFeedViewModel({ initialFeedResponse }: UseFeedViewModelProps)
 
       const previousData = queryClient.getQueryData(feedKeys.list());
 
-      queryClient.setQueryData(feedKeys.list(), (old: any) => {
-        if (!old) return old;
-        return {
-          ...old,
-          pages: old.pages.map((page: any) => ({
-            ...page,
-            data: page.data.map((review: Review) =>
-              review.id === reviewId
-                ? {
-                    ...review,
-                    isLiked: !review.isLiked,
-                    likesCount: review.isLiked ? review.likesCount - 1 : review.likesCount + 1,
-                  }
-                : review
-            ),
-          })),
-        };
-      });
+      toggleLikeInFeed(queryClient, reviewId);
 
       return { previousData };
     },
