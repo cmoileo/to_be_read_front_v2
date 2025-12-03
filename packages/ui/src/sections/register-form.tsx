@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Button } from "../components/button";
 import { Input } from "../components/input";
 import { Label } from "../components/label";
+import { Checkbox } from "../components/checkbox";
 import {
   Card,
   CardContent,
@@ -41,6 +42,7 @@ export function RegisterForm({
       email: "",
       password: "",
       confirmPassword: "",
+      rememberMe: false,
     },
     onSubmit: async ({ value }) => {
       await onSubmit(value);
@@ -219,6 +221,24 @@ export function RegisterForm({
                     <span>•</span> {field.state.meta.errors[0]}
                   </p>
                 )}
+              </div>
+            )}
+          </form.Field>
+
+          <form.Field
+            name="rememberMe"
+          >
+            {(field) => (
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id={field.name}
+                  checked={field.state.value}
+                  onCheckedChange={(checked) => field.handleChange(checked === true)}
+                  disabled={isLoading}
+                />
+                <Label htmlFor={field.name} className="text-sm font-medium cursor-pointer">
+                  {t("auth.register.rememberMe")}
+                </Label>
               </div>
             )}
           </form.Field>

@@ -2,6 +2,7 @@ import { Store } from "@tauri-apps/plugin-store";
 
 const ACCESS_TOKEN_KEY = "tbr_access_token";
 const REFRESH_TOKEN_KEY = "tbr_refresh_token";
+const REMEMBER_ME_KEY = "tbr_remember_me";
 
 class MobileStorageService {
   private store: Store | null = null;
@@ -72,6 +73,31 @@ class MobileStorageService {
         return window.localStorage.getItem(REFRESH_TOKEN_KEY);
       }
       return null;
+    }
+  }
+
+  async setRememberMe(rememberMe: boolean): Promise<void> {
+    await this.initStore();
+    if (this.store) {
+      await this.store.set(REMEMBER_ME_KEY, rememberMe);
+      await this.store.save();
+    } else {
+      if (typeof window !== "undefined") {
+        window.localStorage.setItem(REMEMBER_ME_KEY, rememberMe ? "true" : "false");
+      }
+    }
+  }
+
+  async getRememberMe(): Promise<boolean> {
+    await this.initStore();
+    if (this.store) {
+      const rememberMe = await this.store.get<boolean>(REMEMBER_ME_KEY);
+      return rememberMe ?? false;
+    } else {
+      if (typeof window !== "undefined") {
+        return window.localStorage.getItem(REMEMBER_ME_KEY) === "true";
+      }
+      return false;
     }
   }
 

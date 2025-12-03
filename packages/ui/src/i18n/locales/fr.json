@@ -10,7 +10,8 @@
             "loading": "Connexion...",
             "noAccount": "Vous n'avez pas de compte ?",
             "register": "S'inscrire",
-            "error": "Une erreur est survenue lors de la connexion"
+            "error": "Une erreur est survenue lors de la connexion",
+            "rememberMe": "Rester connecté"
         },
         "register": {
             "title": "Inscription",
@@ -25,7 +26,8 @@
             "login": "Se connecter",
             "error": "Une erreur est survenue lors de l'inscription",
             "usernameTaken": "Ce nom d'utilisateur est déjà pris",
-            "passwordHint": "Au moins 8 caractères avec majuscule, minuscule, chiffre et caractère spécial"
+            "passwordHint": "Au moins 8 caractères avec majuscule, minuscule, chiffre et caractère spécial",
+            "rememberMe": "Rester connecté"
         },
         "resetPassword": {
             "requestTitle": "Mot de passe oublié",

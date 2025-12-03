@@ -2,6 +2,7 @@ import { useForm } from "@tanstack/react-form";
 import { Button } from "../components/button";
 import { Input } from "../components/input";
 import { Label } from "../components/label";
+import { Checkbox } from "../components/checkbox";
 import {
   Card,
   CardContent,
@@ -34,6 +35,7 @@ export function LoginForm({
     defaultValues: {
       email: "",
       password: "",
+      rememberMe: false,
     },
     onSubmit: async ({ value }) => {
       await onSubmit(value);
@@ -145,6 +147,24 @@ export function LoginForm({
               </Button>
             </div>
           )}
+
+          <form.Field
+            name="rememberMe"
+          >
+            {(field) => (
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id={field.name}
+                  checked={field.state.value}
+                  onCheckedChange={(checked) => field.handleChange(checked === true)}
+                  disabled={isLoading}
+                />
+                <Label htmlFor={field.name} className="text-sm font-medium cursor-pointer">
+                  {t("auth.login.rememberMe")}
+                </Label>
+              </div>
+            )}
+          </form.Field>
         </CardContent>
 
         <CardFooter className="flex flex-col space-y-4 pt-2">

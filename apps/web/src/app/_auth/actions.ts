@@ -4,21 +4,26 @@ import type { LoginCredentials, RegisterCredentials } from "@repo/types";
 import { WebAuthService } from "@/services/web-auth.service";
 import { WebStorageService } from "@/services/web-storage.service";
 
-export async function loginAction(credentials: LoginCredentials) {
+export async function loginAction(credentials: LoginCredentials & { rememberMe?: boolean }) {
   const data = await WebAuthService.login(credentials);
-  await WebStorageService.setAuthCookies(data);
+  await WebStorageService.setAuthCookies(data, credentials.rememberMe ?? false);
   return { user: data.user };
 }
 
-export async function registerAction(credentials: RegisterCredentials) {
+export async function registerAction(credentials: RegisterCredentials & { rememberMe?: boolean }) {
   const data = await WebAuthService.register(credentials);
-  await WebStorageService.setAuthCookies(data);
+  await WebStorageService.setAuthCookies(data, credentials.rememberMe ?? false);
   return { user: data.user };
 }
 
 export async function logoutAction() {
+  const rememberMe = await WebStorageService.getRememberMe();
+  
+  if (!rememberMe) {
+    await WebStorageService.clearAuthCookies();
+  }
+  
   await WebAuthService.logout();
-  await WebStorageService.clearAuthCookies();
 }
 
 export async function refreshAction() {

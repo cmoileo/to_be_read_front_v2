@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { useAuthModel } from "../models/hooks/use-auth-model";
@@ -11,6 +11,7 @@ export function useLoginViewModel() {
   const [error, setError] = useState<string>("");
   const navigate = useNavigate();
   const { setUser } = useAuthModel();
+  const rememberMeRef = useRef<boolean>(false);
 
   const loginMutation = useMutation({
     mutationFn: MobileAuthService.login,
@@ -18,6 +19,7 @@ export function useLoginViewModel() {
       const accessToken = data.token.token;
       await MobileStorage.setAccessToken(accessToken);
       await MobileStorage.setRefreshToken(data.refreshToken);
+      await MobileStorage.setRememberMe(rememberMeRef.current);
       setUser(data.user as UserBasic);
       navigate({ to: "/" });
     },
@@ -28,7 +30,9 @@ export function useLoginViewModel() {
 
   const login = (values: LoginFormValues) => {
     setError("");
-    loginMutation.mutate(values);
+    rememberMeRef.current = values.rememberMe ?? false;
+    const { rememberMe: _, ...credentials } = values;
+    loginMutation.mutate(credentials);
   };
 
   const navigateToRegister = () => {

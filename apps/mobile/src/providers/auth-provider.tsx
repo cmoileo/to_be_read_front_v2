@@ -43,9 +43,17 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const clearUser = async () => {
     try {
+      const rememberMe = await MobileStorage.getRememberMe();
+      if (!rememberMe) {
+        // Only clear tokens if user didn't check "remember me"
+        await MobileStorage.clearTokens();
+      }
       await MobileAuthService.logout();
     } catch (error) {
-      await MobileStorage.clearTokens();
+      const rememberMe = await MobileStorage.getRememberMe();
+      if (!rememberMe) {
+        await MobileStorage.clearTokens();
+      }
     }
     setAuthState(clearAuthUser());
     navigate({ to: "/onboarding" });

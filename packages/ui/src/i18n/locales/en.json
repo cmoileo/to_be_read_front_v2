@@ -10,7 +10,8 @@
             "loading": "Signing in...",
             "noAccount": "Don't have an account?",
             "register": "Sign up",
-            "error": "An error occurred during login"
+            "error": "An error occurred during login",
+            "rememberMe": "Remember me"
         },
         "register": {
             "title": "Sign up",
@@ -25,7 +26,8 @@
             "login": "Sign in",
             "error": "An error occurred during registration",
             "usernameTaken": "This username is already taken",
-            "passwordHint": "At least 8 characters with uppercase, lowercase, number and special character"
+            "passwordHint": "At least 8 characters with uppercase, lowercase, number and special character",
+            "rememberMe": "Remember me"
         },
         "resetPassword": {
             "requestTitle": "Forgot password",

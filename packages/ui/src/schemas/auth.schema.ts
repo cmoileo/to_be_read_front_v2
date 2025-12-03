@@ -30,6 +30,7 @@ export const getLoginSchema = () =>
   z.object({
     email: getEmailSchema(),
     password: z.string().min(8, i18n.t("auth.validation.passwordMin")),
+    rememberMe: z.boolean().default(false),
   });
 
 export const getRegisterSchema = () =>
@@ -39,6 +40,7 @@ export const getRegisterSchema = () =>
       email: getEmailSchema(),
       password: getPasswordSchema(),
       confirmPassword: z.string(),
+      rememberMe: z.boolean().default(false),
     })
     .refine((data) => data.password === data.confirmPassword, {
       message: i18n.t("auth.validation.passwordMismatch"),

@@ -14,7 +14,11 @@ export function useLoginViewModel() {
     setError("");
     startTransition(async () => {
       try {
-        await loginAction(values);
+        const { rememberMe, ...credentials } = values;
+        await loginAction({
+          ...credentials,
+          rememberMe,
+        });
         router.push("/");
         router.refresh();
       } catch (err: any) {

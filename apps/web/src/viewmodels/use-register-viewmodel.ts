@@ -12,10 +12,12 @@ export function useRegisterViewModel() {
 
   const register = async (values: RegisterFormValues) => {
     setError("");
+    const { rememberMe, ...rest } = values;
     const credentials = {
-      userName: values.username,
-      email: values.email,
-      password: values.password,
+      userName: rest.username,
+      email: rest.email,
+      password: rest.password,
+      rememberMe,
     };
     
     startTransition(async () => {
