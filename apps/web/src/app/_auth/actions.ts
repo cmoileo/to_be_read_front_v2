@@ -17,12 +17,7 @@ export async function registerAction(credentials: RegisterCredentials & { rememb
 }
 
 export async function logoutAction() {
-  const rememberMe = await WebStorageService.getRememberMe();
-  
-  if (!rememberMe) {
-    await WebStorageService.clearAuthCookies();
-  }
-  
+  await WebStorageService.clearAuthCookies();
   await WebAuthService.logout();
 }
 
