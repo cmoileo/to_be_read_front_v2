@@ -4,11 +4,13 @@ import { useState } from "react";
 import { WebBooksApi, WebReviewsApi } from "@/services/web-api.service";
 import type { GoogleBook } from "@repo/types";
 import { useRouter } from "next/navigation";
+import { useConnectedUser } from "@repo/stores";
 
 export function useCreateReviewViewModel() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string>("");
   const router = useRouter();
+  const { updateReviewsCount } = useConnectedUser();
 
   const searchBooks = async (query: string): Promise<GoogleBook[]> => {
     try {
@@ -26,6 +28,7 @@ export function useCreateReviewViewModel() {
 
     try {
       await WebReviewsApi.createReview(data);
+      updateReviewsCount(1);
       router.push("/");
       router.refresh();
       return true;

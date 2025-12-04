@@ -133,6 +133,7 @@ export function Navigation() {
   return (
     <TopNav
       userName={user?.userName}
+      userAvatar={user?.avatar}
       onLogout={user ? handleLogout : undefined}
       currentPath={pathname}
       Link={Link as any}

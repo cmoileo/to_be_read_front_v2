@@ -8,6 +8,7 @@ import { Home, Search, PenSquare, User, BookOpen, Menu, X, LogIn, Bell } from "l
 
 interface TopNavProps {
   userName?: string;
+  userAvatar?: string | null;
   onLogout?: () => void;
   currentPath: string;
   Link: React.ComponentType<{
@@ -22,6 +23,7 @@ interface TopNavProps {
 
 export function TopNav({
   userName,
+  userAvatar,
   onLogout,
   currentPath,
   Link,
@@ -117,9 +119,17 @@ export function TopNav({
                     currentPath === "/profile" ? "bg-primary/10" : "bg-muted/50"
                   )}
                 >
-                  <span className="w-6 h-6 bg-primary/20 rounded-full flex items-center justify-center text-xs">
-                    {userName.charAt(0).toUpperCase()}
-                  </span>
+                  {userAvatar ? (
+                    <img
+                      src={userAvatar}
+                      alt={userName}
+                      className="w-6 h-6 rounded-full object-cover"
+                    />
+                  ) : (
+                    <span className="w-6 h-6 bg-primary/20 rounded-full flex items-center justify-center text-xs">
+                      {userName?.charAt(0).toUpperCase()}
+                    </span>
+                  )}
                   <span className="text-sm font-medium text-foreground">{userName}</span>
                 </Link>
                 {onLogout && (
@@ -221,9 +231,17 @@ export function TopNav({
                         : "text-muted-foreground hover:text-foreground"
                     )}
                   >
-                    <span className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center text-sm font-medium">
-                      {userName.charAt(0).toUpperCase()}
-                    </span>
+                    {userAvatar ? (
+                      <img
+                        src={userAvatar}
+                        alt={userName}
+                        className="w-8 h-8 rounded-full object-cover"
+                      />
+                    ) : (
+                      <span className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center text-sm font-medium">
+                        {userName?.charAt(0).toUpperCase()}
+                      </span>
+                    )}
                     <span>{userName}</span>
                   </Link>
                   {onLogout && (
