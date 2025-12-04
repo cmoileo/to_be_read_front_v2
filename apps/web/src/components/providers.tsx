@@ -6,7 +6,8 @@ import { useState, type ReactNode } from "react";
 import { AuthProvider } from "@/providers/auth-provider";
 import { I18nProvider } from "@/providers/i18n-provider";
 import { NotificationProvider } from "@/providers/notification-provider";
-import type { User } from "@repo/types";
+import { ThemeProvider } from "@/providers/theme-provider";
+import type { User, UserDetailed } from "@repo/types";
 
 export function Providers({
   children,
@@ -27,13 +28,17 @@ export function Providers({
       })
   );
 
+  const userTheme = (initialUser as UserDetailed | null)?.theme;
+
   return (
     <QueryClientProvider client={queryClient}>
-      <I18nProvider>
-        <AuthProvider initialUser={initialUser}>
-          <NotificationProvider>{children}</NotificationProvider>
-        </AuthProvider>
-      </I18nProvider>
+      <ThemeProvider defaultTheme={userTheme}>
+        <I18nProvider>
+          <AuthProvider initialUser={initialUser}>
+            <NotificationProvider>{children}</NotificationProvider>
+          </AuthProvider>
+        </I18nProvider>
+      </ThemeProvider>
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   );

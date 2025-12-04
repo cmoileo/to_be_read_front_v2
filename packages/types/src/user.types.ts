@@ -15,6 +15,7 @@ export interface User {
 export interface UserDetailed extends User {
   email: string;
   locale: "fr" | "en";
+  theme: "light" | "dark" | "system";
   pushNotificationsEnabled: boolean;
 }
 

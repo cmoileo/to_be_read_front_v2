@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { registerAction, checkUsernameAvailability } from "@/app/_auth/actions";
 import type { RegisterFormValues } from "@repo/ui";
+import { getSystemTheme } from "@/providers/theme-provider";
 
 function getBrowserLocale(): "en" | "fr" {
   if (typeof navigator === "undefined") return "en";
@@ -24,6 +25,7 @@ export function useRegisterViewModel() {
       email: rest.email,
       password: rest.password,
       locale: getBrowserLocale(),
+      theme: "system" as const,
       rememberMe,
     };
     

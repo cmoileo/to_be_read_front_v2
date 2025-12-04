@@ -27,11 +27,13 @@ export async function updateProfileAction(formData: FormData) {
   const userName = formData.get("userName");
   const biography = formData.get("biography");
   const locale = formData.get("locale");
+  const theme = formData.get("theme");
   const avatar = formData.get("avatar");
 
   if (userName) data.userName = userName.toString();
   if (biography) data.biography = biography.toString();
   if (locale) data.locale = locale.toString() as "en" | "fr";
+  if (theme) data.theme = theme.toString() as "light" | "dark" | "system";
   if (avatar instanceof File && avatar.size > 0) data.avatar = avatar;
 
   return WebProfileService.updateProfile(data, accessToken);

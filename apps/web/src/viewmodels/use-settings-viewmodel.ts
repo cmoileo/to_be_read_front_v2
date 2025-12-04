@@ -9,11 +9,13 @@ import {
   getUserFromCookies,
 } from "@/app/_auth/actions";
 import { updateProfileAction } from "@/app/_profile/actions";
+import { useTheme } from "@/providers/theme-provider";
 
 export function useSettingsViewModel() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const { i18n } = useTranslation();
+  const { theme, setTheme } = useTheme();
   const [currentLocale, setCurrentLocale] = useState(i18n.language || "en");
 
   const { data: user } = useQuery({
@@ -57,6 +59,19 @@ export function useSettingsViewModel() {
     },
   });
 
+  const changeThemeMutation = useMutation({
+    mutationFn: async (newTheme: "light" | "dark" | "system") => {
+      const formData = new FormData();
+      formData.append("theme", newTheme);
+      await updateProfileAction(formData);
+      return newTheme;
+    },
+    onSuccess: (newTheme) => {
+      setTheme(newTheme);
+      queryClient.invalidateQueries({ queryKey: ["current-user"] });
+    },
+  });
+
   const notificationSettingsMutation = useMutation({
     mutationFn: async (enabled: boolean) => {
       return updateNotificationSettingsAction(enabled);
@@ -78,18 +93,24 @@ export function useSettingsViewModel() {
     changeLanguageMutation.mutate(locale);
   };
 
+  const handleChangeTheme = (newTheme: "light" | "dark" | "system") => {
+    changeThemeMutation.mutate(newTheme);
+  };
+
   const handleToggleNotifications = (enabled: boolean) => {
     notificationSettingsMutation.mutate(enabled);
   };
 
   return {
     currentLocale,
+    currentTheme: theme,
     notificationsEnabled,
     isLoggingOut: logoutMutation.isPending,
     isDeletingAccount: deleteAccountMutation.isPending,
     handleLogout,
     handleDeleteAccount,
     handleChangeLanguage,
+    handleChangeTheme,
     handleToggleNotifications,
   };
 }

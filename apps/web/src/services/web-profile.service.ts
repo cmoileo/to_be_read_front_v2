@@ -14,6 +14,7 @@ export interface UpdateProfileData {
   userName?: string;
   biography?: string;
   locale?: "en" | "fr";
+  theme?: "light" | "dark" | "system";
   avatar?: File;
 }
 
@@ -64,6 +65,9 @@ export class WebProfileService {
     }
     if (data.locale !== undefined) {
       formData.append("locale", data.locale);
+    }
+    if (data.theme !== undefined) {
+      formData.append("theme", data.theme);
     }
     if (data.avatar !== undefined) {
       formData.append("avatar", data.avatar);

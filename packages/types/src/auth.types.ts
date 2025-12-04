@@ -15,6 +15,7 @@ export interface RegisterCredentials {
   email: string;
   password: string;
   locale?: "en" | "fr";
+  theme?: "light" | "dark" | "system";
 }
 
 export interface AuthResponse {

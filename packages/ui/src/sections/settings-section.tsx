@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { LogOut, Trash2, Globe, Bell, ChevronRight, AlertTriangle, ArrowLeft } from "lucide-react";
+import { LogOut, Trash2, Globe, Bell, ChevronRight, AlertTriangle, ArrowLeft, Moon, Sun, Monitor } from "lucide-react";
 import { Button } from "../components/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/card";
 import {
@@ -27,24 +27,28 @@ import { useTranslation } from "react-i18next";
 
 interface SettingsSectionProps {
   currentLocale?: string;
+  currentTheme?: "light" | "dark" | "system";
   notificationsEnabled?: boolean;
   isLoggingOut?: boolean;
   isDeletingAccount?: boolean;
   onLogout?: () => void;
   onDeleteAccount?: () => void;
   onChangeLanguage?: (locale: string) => void;
+  onChangeTheme?: (theme: "light" | "dark" | "system") => void;
   onToggleNotifications?: (enabled: boolean) => void;
   onBack?: () => void;
 }
 
 export const SettingsSection = ({
   currentLocale = "en",
+  currentTheme = "system",
   notificationsEnabled = true,
   isLoggingOut = false,
   isDeletingAccount = false,
   onLogout,
   onDeleteAccount,
   onChangeLanguage,
+  onChangeTheme,
   onToggleNotifications,
   onBack,
 }: SettingsSectionProps) => {
@@ -98,6 +102,36 @@ export const SettingsSection = ({
               <SelectContent>
                 <SelectItem value="en">English</SelectItem>
                 <SelectItem value="fr">Français</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <Separator />
+
+          <div className="flex items-center justify-between py-3">
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-full bg-muted">
+                {currentTheme === "dark" ? (
+                  <Moon className="h-5 w-5 text-muted-foreground" />
+                ) : currentTheme === "light" ? (
+                  <Sun className="h-5 w-5 text-muted-foreground" />
+                ) : (
+                  <Monitor className="h-5 w-5 text-muted-foreground" />
+                )}
+              </div>
+              <div>
+                <p className="font-medium">{t("settings.theme")}</p>
+                <p className="text-sm text-muted-foreground">{t("settings.themeDescription")}</p>
+              </div>
+            </div>
+            <Select value={currentTheme} onValueChange={(value) => onChangeTheme?.(value as "light" | "dark" | "system")}>
+              <SelectTrigger className="w-32">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="system">{t("settings.themeSystem")}</SelectItem>
+                <SelectItem value="light">{t("settings.themeLight")}</SelectItem>
+                <SelectItem value="dark">{t("settings.themeDark")}</SelectItem>
               </SelectContent>
             </Select>
           </div>

@@ -8,12 +8,14 @@ export default function SettingsPage() {
   const router = useRouter();
   const {
     currentLocale,
+    currentTheme,
     notificationsEnabled,
     isLoggingOut,
     isDeletingAccount,
     handleLogout,
     handleDeleteAccount,
     handleChangeLanguage,
+    handleChangeTheme,
     handleToggleNotifications,
   } = useSettingsViewModel();
 
@@ -21,12 +23,14 @@ export default function SettingsPage() {
     <div className="container mx-auto px-4 py-6 max-w-4xl">
       <SettingsSection
         currentLocale={currentLocale}
+        currentTheme={currentTheme}
         notificationsEnabled={notificationsEnabled}
         isLoggingOut={isLoggingOut}
         isDeletingAccount={isDeletingAccount}
         onLogout={handleLogout}
         onDeleteAccount={handleDeleteAccount}
         onChangeLanguage={handleChangeLanguage}
+        onChangeTheme={handleChangeTheme}
         onToggleNotifications={handleToggleNotifications}
         onBack={() => router.back()}
       />

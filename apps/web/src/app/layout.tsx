@@ -16,6 +16,22 @@ export const viewport = {
   userScalable: false,
 };
 
+// Script to prevent flash of unstyled content for theme
+const themeScript = `
+  (function() {
+    try {
+      var stored = localStorage.getItem('to_be_read_theme');
+      var theme = stored === 'light' || stored === 'dark' ? stored : 
+        (stored === 'system' || !stored) ? 
+          (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : 
+          'light';
+      if (theme === 'dark') {
+        document.documentElement.classList.add('dark');
+      }
+    } catch (e) {}
+  })();
+`;
+
 export default async function RootLayout({
   children,
 }: Readonly<{
@@ -25,6 +41,9 @@ export default async function RootLayout({
 
   return (
     <html lang="fr" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+      </head>
       <body className="antialiased" suppressHydrationWarning>
         <div className="min-h-screen bg-background font-sans antialiased">
           <Providers initialUser={user}>
