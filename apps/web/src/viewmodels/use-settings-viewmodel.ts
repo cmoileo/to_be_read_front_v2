@@ -1,28 +1,23 @@
-import { useState, useEffect } from "react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import {
   logoutAction,
   deleteAccountAction,
   updateNotificationSettingsAction,
-  getUserFromCookies,
 } from "@/app/_auth/actions";
 import { updateProfileAction } from "@/app/_profile/actions";
 import { useTheme } from "@/providers/theme-provider";
+import { useConnectedUser, connectedUserKeys } from "@repo/stores";
 
 export function useSettingsViewModel() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const { i18n } = useTranslation();
   const { theme, setTheme } = useTheme();
+  const { user, clearUser, updateUser } = useConnectedUser();
   const [currentLocale, setCurrentLocale] = useState(i18n.language || "en");
-
-  const { data: user } = useQuery({
-    queryKey: ["current-user"],
-    queryFn: () => getUserFromCookies(),
-    staleTime: 60000,
-  });
 
   const notificationsEnabled = user?.pushNotificationsEnabled ?? true;
 
@@ -31,6 +26,7 @@ export function useSettingsViewModel() {
       await logoutAction();
     },
     onSuccess: () => {
+      clearUser();
       router.push("/login");
       router.refresh();
     },
@@ -41,6 +37,7 @@ export function useSettingsViewModel() {
       return deleteAccountAction();
     },
     onSuccess: () => {
+      clearUser();
       router.push("/login");
       router.refresh();
     },
@@ -56,6 +53,7 @@ export function useSettingsViewModel() {
     onSuccess: (locale) => {
       setCurrentLocale(locale);
       i18n.changeLanguage(locale);
+      updateUser({ locale: locale as "en" | "fr" });
     },
   });
 
@@ -68,7 +66,7 @@ export function useSettingsViewModel() {
     },
     onSuccess: (newTheme) => {
       setTheme(newTheme);
-      queryClient.invalidateQueries({ queryKey: ["current-user"] });
+      updateUser({ theme: newTheme });
     },
   });
 
@@ -76,8 +74,8 @@ export function useSettingsViewModel() {
     mutationFn: async (enabled: boolean) => {
       return updateNotificationSettingsAction(enabled);
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["current-user"] });
+    onSuccess: (_, enabled) => {
+      updateUser({ pushNotificationsEnabled: enabled });
     },
   });
 

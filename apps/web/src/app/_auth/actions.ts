@@ -25,20 +25,36 @@ export async function refreshAction() {
   const refreshToken = await WebStorageService.getRefreshToken();
   if (!refreshToken) throw new Error("Missing refresh token");
 
+  const rememberMe = await WebStorageService.getRememberMe();
   const data = await WebAuthService.refresh(refreshToken);
-  await WebStorageService.setAccessToken(data.token.token);
-  await WebStorageService.setRefreshToken(data.refreshToken);
+  await WebStorageService.setAccessToken(data.token.token, rememberMe);
+  await WebStorageService.setRefreshToken(data.refreshToken, rememberMe);
   return true;
 }
 
 export async function getUserFromCookies() {
   const access = await WebStorageService.getAccessToken();
   if (!access) return null;
+  
   try {
     const data = await WebAuthService.getMe(access);
     return data.user;
   } catch {
-    return null;
+    const refreshToken = await WebStorageService.getRefreshToken();
+    if (!refreshToken) return null;
+    
+    try {
+      const rememberMe = await WebStorageService.getRememberMe();
+      const refreshData = await WebAuthService.refresh(refreshToken);
+      await WebStorageService.setAccessToken(refreshData.token.token, rememberMe);
+      await WebStorageService.setRefreshToken(refreshData.refreshToken, rememberMe);
+      
+      const userData = await WebAuthService.getMe(refreshData.token.token);
+      return userData.user;
+    } catch {
+      await WebStorageService.clearAuthCookies();
+      return null;
+    }
   }
 }
 

@@ -10,6 +10,10 @@ export interface User {
   isMe: boolean;
   createdAt: string;
   updatedAt: string;
+  email?: string;
+  locale?: "fr" | "en";
+  theme?: "light" | "dark" | "system";
+  pushNotificationsEnabled?: boolean;
 }
 
 export interface UserDetailed extends User {
