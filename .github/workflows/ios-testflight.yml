@@ -195,8 +195,13 @@ jobs:
           </plist>
           EOF
           
-          # Now run tauri ios build - it will use the patched project with manual signing
-          pnpm tauri ios build --ci --export-method app-store-connect
+          # Run tauri ios build with xcodebuild arguments for manual signing
+          # The -- passes arguments directly to xcodebuild
+          pnpm tauri ios build --ci --export-method app-store-connect -- \
+            CODE_SIGN_STYLE=Manual \
+            CODE_SIGN_IDENTITY="Apple Distribution" \
+            DEVELOPMENT_TEAM="${APPLE_TEAM_ID}" \
+            PROVISIONING_PROFILE_SPECIFIER="${PROVISIONING_PROFILE_UUID}"
           
           # Find the generated IPA
           echo "Looking for IPA files..."
