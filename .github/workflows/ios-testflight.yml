@@ -99,10 +99,43 @@ jobs:
       - name: Build iOS App
         working-directory: apps/mobile
         env:
-          PROVISIONING_PROFILE_SPECIFIER: ${{ env.PROVISIONING_PROFILE_UUID }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
         run: |
-          # Build with manual signing
-          pnpm tauri ios build --export-method app-store-connect
+          # First, build the frontend
+          pnpm build
+          
+          # Initialize iOS project if needed
+          pnpm tauri ios init || true
+          
+          # Build Rust code for iOS
+          cd src-tauri
+          cargo build --release --target aarch64-apple-ios
+          cd ..
+          
+          # Build with xcodebuild using manual signing
+          cd src-tauri/gen/apple
+          
+          xcodebuild -workspace app.xcworkspace \
+            -scheme app_iOS \
+            -configuration Release \
+            -destination 'generic/platform=iOS' \
+            -archivePath $RUNNER_TEMP/app.xcarchive \
+            archive \
+            CODE_SIGN_STYLE=Manual \
+            CODE_SIGN_IDENTITY="Apple Distribution" \
+            DEVELOPMENT_TEAM="${APPLE_TEAM_ID}" \
+            PROVISIONING_PROFILE_SPECIFIER="${PROVISIONING_PROFILE_UUID}" \
+            -allowProvisioningUpdates
+          
+          # Export the archive to IPA
+          xcodebuild -exportArchive \
+            -archivePath $RUNNER_TEMP/app.xcarchive \
+            -exportPath $RUNNER_TEMP/export \
+            -exportOptionsPlist ExportOptions.plist
+          
+          # Copy IPA to expected location
+          mkdir -p build
+          cp $RUNNER_TEMP/export/*.ipa build/
 
       - name: Upload to TestFlight
         env:
@@ -115,7 +148,7 @@ jobs:
           echo "$APP_STORE_CONNECT_PRIVATE_KEY" > ~/.private_keys/AuthKey_$APP_STORE_CONNECT_KEY_ID.p8
 
           # Find the IPA file
-          IPA_PATH=$(find apps/mobile/src-tauri/gen/apple/build -name "*.ipa" -type f | head -1)
+          IPA_PATH=$(find $RUNNER_TEMP/export -name "*.ipa" -type f | head -1)
 
           if [ -z "$IPA_PATH" ]; then
             echo "No IPA file found!"
