@@ -65,16 +65,19 @@ jobs:
           CERTIFICATE_PATH=$RUNNER_TEMP/certificate.p12
           KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
 
-          # Decode certificate
-          echo -n "$CERTIFICATE_BASE64" | base64 --decode -o $CERTIFICATE_PATH
+          # Decode certificate (use -D for macOS base64)
+          echo "$CERTIFICATE_BASE64" | base64 -D > $CERTIFICATE_PATH
+          
+          # Verify file was created
+          echo "Certificate file size: $(wc -c < $CERTIFICATE_PATH) bytes"
 
           # Create temporary keychain
           security create-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
           security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
           security unlock-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
 
-          # Import certificate to keychain
-          security import $CERTIFICATE_PATH -P "$CERTIFICATE_PASSWORD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
+          # Import certificate to keychain (with -T to allow codesign)
+          security import $CERTIFICATE_PATH -P "$CERTIFICATE_PASSWORD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH -T /usr/bin/codesign -T /usr/bin/security
           
           # Set as default keychain and add to search list
           security default-keychain -s $KEYCHAIN_PATH
@@ -86,6 +89,7 @@ jobs:
           # Verify certificate was imported
           echo "Listing available signing identities:"
           security find-identity -v -p codesigning $KEYCHAIN_PATH
+          security find-identity -v -p codesigning
 
       - name: Install Provisioning Profile
         env:
@@ -126,6 +130,10 @@ jobs:
           # Build with xcodebuild using manual signing
           cd src-tauri/gen/apple
           
+          # List available identities for debugging
+          echo "Available signing identities:"
+          security find-identity -v -p codesigning
+          
           xcodebuild -project app.xcodeproj \
             -scheme app_iOS \
             -configuration Release \
@@ -133,7 +141,7 @@ jobs:
             -archivePath $RUNNER_TEMP/app.xcarchive \
             archive \
             CODE_SIGN_STYLE=Manual \
-            "CODE_SIGN_IDENTITY=Apple Distribution: Leo Fezard (65VGZ4677Q)" \
+            "CODE_SIGN_IDENTITY=Apple Distribution" \
             DEVELOPMENT_TEAM="${APPLE_TEAM_ID}" \
             "PROVISIONING_PROFILE_SPECIFIER=${PROVISIONING_PROFILE_UUID}" \
             -allowProvisioningUpdates
