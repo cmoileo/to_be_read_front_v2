@@ -1,4 +1,4 @@
-package com.inkerclub.app
+package com.inkgora.app
 
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
