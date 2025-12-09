@@ -75,6 +75,11 @@ jobs:
           pnpm add -D @tanstack/router-cli
           pnpm exec tsr generate
 
+      - name: Initialize iOS project
+        working-directory: apps/mobile
+        run: |
+          pnpm tauri ios init
+
       - name: Build iOS App
         working-directory: apps/mobile
         run: |
