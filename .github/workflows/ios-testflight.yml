@@ -51,10 +51,6 @@ jobs:
           
           # Modify tauri.conf.json to use bundled assets instead of devUrl for staging build
           # This ensures the app is standalone and doesn't try to connect to localhost
-          # We use jq to remove devUrl and ensure frontendDist points to the built assets
-          # If jq is not available, we can use sed or node script
-          
-          # Using a temporary node script to modify the JSON safely
           node -e "
             const fs = require('fs');
             const config = JSON.parse(fs.readFileSync('src-tauri/tauri.conf.json', 'utf8'));
@@ -76,7 +72,7 @@ jobs:
           pnpm add -D @tanstack/router-cli
           pnpm exec tsr generate
 
-      - name: Import Certificate
+      - name: Setup Apple Signing (Keychain)
         env:
           CERTIFICATE_BASE64: ${{ secrets.APPLE_CERTIFICATE_BASE64 }}
           CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
@@ -86,10 +82,8 @@ jobs:
           CERTIFICATE_PATH=$RUNNER_TEMP/certificate.p12
           KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
 
-          # Decode certificate (use -D for macOS base64)
+          # Decode certificate
           echo "$CERTIFICATE_BASE64" | base64 -D > $CERTIFICATE_PATH
-          
-          # Verify file was created
           echo "Certificate file size: $(wc -c < $CERTIFICATE_PATH) bytes"
 
           # Create temporary keychain
@@ -97,19 +91,18 @@ jobs:
           security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
           security unlock-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
 
-          # Import certificate to keychain (with -T to allow codesign)
+          # Import certificate to keychain
           security import $CERTIFICATE_PATH -P "$CERTIFICATE_PASSWORD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH -T /usr/bin/codesign -T /usr/bin/security
           
-          # Set as default keychain and add to search list
+          # Set as default keychain
           security default-keychain -s $KEYCHAIN_PATH
           security list-keychain -d user -s $KEYCHAIN_PATH login.keychain
 
-          # Allow codesign to access the certificate without prompts
+          # Allow codesign to access the certificate
           security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
           
           # Verify certificate was imported
-          echo "Listing available signing identities:"
-          security find-identity -v -p codesigning $KEYCHAIN_PATH
+          echo "Available signing identities:"
           security find-identity -v -p codesigning
 
       - name: Install Provisioning Profile
@@ -132,76 +125,26 @@ jobs:
           
           echo "Installed provisioning profile with UUID: $PROFILE_UUID"
 
-      - name: Build iOS App
+      - name: Build iOS App with Tauri
         working-directory: apps/mobile
         env:
-          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          # Tauri's native manual signing environment variables
+          # See: https://v2.tauri.app/distribute/sign/ios/
+          IOS_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE_BASE64 }}
+          IOS_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+          IOS_MOBILE_PROVISION: ${{ secrets.APPLE_PROVISIONING_PROFILE_BASE64 }}
+          APPLE_DEVELOPMENT_TEAM: ${{ secrets.APPLE_TEAM_ID }}
         run: |
-          # List available identities for debugging
-          echo "Available signing identities:"
-          security find-identity -v -p codesigning
-          
+          echo "Building iOS app with Tauri's native manual signing..."
           echo "Provisioning profile UUID: $PROVISIONING_PROFILE_UUID"
           
-          # Initialize iOS project first
-          pnpm tauri ios init
+          # Build the iOS app - Tauri will use the IOS_* env vars for manual signing
+          pnpm tauri ios build --ci --export-method app-store-connect
           
-          # Update Info.plist with build number before building
-          /usr/libexec/PlistBuddy -c "Set :CFBundleVersion 1.0.0.${{ github.run_number }}" src-tauri/gen/apple/app_iOS/Info.plist
-          echo "Updated build version to 1.0.0.${{ github.run_number }}"
-          
-          # CRITICAL: Patch project.pbxproj to use manual signing BEFORE tauri ios build
-          # This prevents the "No Accounts" error
-          PBXPROJ="src-tauri/gen/apple/app.xcodeproj/project.pbxproj"
-          
-          # Replace automatic signing with manual signing
-          sed -i '' 's/CODE_SIGN_STYLE = Automatic;/CODE_SIGN_STYLE = Manual;/g' "$PBXPROJ"
-          
-          # Add provisioning profile specifier if not present
-          sed -i '' "s/DEVELOPMENT_TEAM = ${APPLE_TEAM_ID};/DEVELOPMENT_TEAM = ${APPLE_TEAM_ID}; PROVISIONING_PROFILE_SPECIFIER = \"${PROVISIONING_PROFILE_UUID}\";/g" "$PBXPROJ"
-          
-          # Set code sign identity
-          sed -i '' 's/"CODE_SIGN_IDENTITY\[sdk=iphoneos\*\]" = "iPhone Developer";/"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "Apple Distribution";/g' "$PBXPROJ"
-          
-          # Add CODE_SIGN_IDENTITY if not present (for release builds)
-          if ! grep -q "CODE_SIGN_IDENTITY = " "$PBXPROJ"; then
-            sed -i '' "s/DEVELOPMENT_TEAM = ${APPLE_TEAM_ID};/DEVELOPMENT_TEAM = ${APPLE_TEAM_ID}; CODE_SIGN_IDENTITY = \"Apple Distribution\";/g" "$PBXPROJ"
+          # Update build number in the generated Info.plist for unique TestFlight uploads
+          if [ -f "src-tauri/gen/apple/app_iOS/Info.plist" ]; then
+            /usr/libexec/PlistBuddy -c "Set :CFBundleVersion 1.0.0.${{ github.run_number }}" src-tauri/gen/apple/app_iOS/Info.plist 2>/dev/null || true
           fi
-          
-          echo "Patched project.pbxproj for manual signing"
-          
-          # Update ExportOptions.plist for App Store distribution
-          cat > src-tauri/gen/apple/ExportOptions.plist << 'EOF'
-          <?xml version="1.0" encoding="UTF-8"?>
-          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-          <plist version="1.0">
-          <dict>
-              <key>method</key>
-              <string>app-store-connect</string>
-              <key>teamID</key>
-              <string>65VGZ4677Q</string>
-              <key>signingStyle</key>
-              <string>manual</string>
-              <key>provisioningProfiles</key>
-              <dict>
-                  <key>com.inkgora.app</key>
-                  <string>0ddae7ec-45d1-4f3a-ad44-ad44b4760150</string>
-              </dict>
-              <key>uploadBitcode</key>
-              <false/>
-              <key>uploadSymbols</key>
-              <true/>
-          </dict>
-          </plist>
-          EOF
-          
-          # Run tauri ios build with xcodebuild arguments for manual signing
-          # The -- passes arguments directly to xcodebuild
-          pnpm tauri ios build --ci --export-method app-store-connect -- \
-            CODE_SIGN_STYLE=Manual \
-            CODE_SIGN_IDENTITY="Apple Distribution" \
-            DEVELOPMENT_TEAM="${APPLE_TEAM_ID}" \
-            PROVISIONING_PROFILE_SPECIFIER="${PROVISIONING_PROFILE_UUID}"
           
           # Find the generated IPA
           echo "Looking for IPA files..."
