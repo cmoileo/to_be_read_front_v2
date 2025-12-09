@@ -115,7 +115,7 @@ jobs:
           # Build with xcodebuild using manual signing
           cd src-tauri/gen/apple
           
-          xcodebuild -workspace app.xcworkspace \
+          xcodebuild -project app.xcodeproj \
             -scheme app_iOS \
             -configuration Release \
             -destination 'generic/platform=iOS' \
