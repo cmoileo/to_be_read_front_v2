@@ -120,7 +120,25 @@ jobs:
           echo "Available signing identities:"
           security find-identity -v -p codesigning
           
-          # Build using Tauri CLI with app-store export method
+          # First build the frontend
+          pnpm build
+          
+          # Initialize iOS project
+          pnpm tauri ios init || true
+          
+          # Patch the Xcode project to use manual signing
+          cd src-tauri/gen/apple
+          
+          # Use sed to modify project.pbxproj for manual signing
+          sed -i '' 's/CODE_SIGN_STYLE = Automatic/CODE_SIGN_STYLE = Manual/g' app.xcodeproj/project.pbxproj
+          sed -i '' 's/ProvisioningStyle = Automatic/ProvisioningStyle = Manual/g' app.xcodeproj/project.pbxproj
+          
+          # Add provisioning profile to build settings
+          sed -i '' "s/DEVELOPMENT_TEAM = 65VGZ4677Q;/DEVELOPMENT_TEAM = ${APPLE_TEAM_ID}; PROVISIONING_PROFILE_SPECIFIER = \"${PROVISIONING_PROFILE_UUID}\";/g" app.xcodeproj/project.pbxproj
+          
+          cd ../../..
+          
+          # Now build with Tauri
           pnpm tauri ios build --export-method app-store-connect
           
           # Find and display the IPA location
