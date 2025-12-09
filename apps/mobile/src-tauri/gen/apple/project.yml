@@ -1,6 +1,6 @@
 name: app
 options:
-  bundleIdPrefix: com.inkgora.app
+  bundleIdPrefix: com.inkgora
   deploymentTarget:
     iOS: 14.0
 fileGroups: [../../src]
