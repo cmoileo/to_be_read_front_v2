@@ -3,7 +3,7 @@ name: iOS TestFlight Deploy
 on:
   push:
     branches:
-      - stagging
+      - staging
     paths:
       - 'apps/mobile/**'
       - '.github/workflows/ios-testflight.yml'
@@ -44,8 +44,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Install Tauri CLI
-        run: pnpm add -g @tauri-apps/cli
+      - name: Generate TanStack Router routes
+        working-directory: apps/mobile
+        run: pnpm exec tsr generate
 
       - name: Import Certificate
         env:
