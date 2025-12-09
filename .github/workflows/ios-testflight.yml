@@ -46,7 +46,28 @@ jobs:
 
       - name: Setup staging environment
         working-directory: apps/mobile
-        run: cp .env.staging .env
+        run: |
+          cp .env.staging .env
+          
+          # Modify tauri.conf.json to use bundled assets instead of devUrl for staging build
+          # This ensures the app is standalone and doesn't try to connect to localhost
+          # We use jq to remove devUrl and ensure frontendDist points to the built assets
+          # If jq is not available, we can use sed or node script
+          
+          # Using a temporary node script to modify the JSON safely
+          node -e "
+            const fs = require('fs');
+            const config = JSON.parse(fs.readFileSync('src-tauri/tauri.conf.json', 'utf8'));
+            
+            // Remove devUrl to force using bundled assets
+            delete config.build.devUrl;
+            
+            // Ensure frontendDist is correct
+            config.build.frontendDist = '../dist';
+            
+            fs.writeFileSync('src-tauri/tauri.conf.json', JSON.stringify(config, null, 2));
+            console.log('Updated tauri.conf.json for production build');
+          "
 
       - name: Generate TanStack Router routes
         working-directory: apps/mobile
