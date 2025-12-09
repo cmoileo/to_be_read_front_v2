@@ -40,9 +40,11 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Souhaitez-vous autoriser l'accès à la galerie ?</string>
-	<key>ITSAppUsesNonExemptEncryption</key>
-	<false/>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>Allow local network access for development server</string>
+	<key>NSBonjourServices</key>
+	<array>
+		<string>_http._tcp</string>
+	</array>
 </dict>
 </plist>
