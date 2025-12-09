@@ -120,31 +120,51 @@ jobs:
           echo "Available signing identities:"
           security find-identity -v -p codesigning
           
+          echo "Provisioning profile UUID: $PROVISIONING_PROFILE_UUID"
+          
           # First build the frontend
           pnpm build
           
           # Initialize iOS project
           pnpm tauri ios init || true
           
-          # Patch the Xcode project to use manual signing
+          # Build Rust library for iOS
+          cd src-tauri
+          cargo build --release --target aarch64-apple-ios
+          
+          # Copy the library to the expected location
+          mkdir -p gen/apple/Externals/arm64/release
+          cp ../target/aarch64-apple-ios/release/libapp.a gen/apple/Externals/arm64/release/ || true
+          cd ..
+          
+          # Build with xcodebuild directly, passing all signing parameters
           cd src-tauri/gen/apple
           
-          # Use sed to modify project.pbxproj for manual signing
-          sed -i '' 's/CODE_SIGN_STYLE = Automatic/CODE_SIGN_STYLE = Manual/g' app.xcodeproj/project.pbxproj
-          sed -i '' 's/ProvisioningStyle = Automatic/ProvisioningStyle = Manual/g' app.xcodeproj/project.pbxproj
+          xcodebuild archive \
+            -project app.xcodeproj \
+            -scheme app_iOS \
+            -configuration Release \
+            -destination 'generic/platform=iOS' \
+            -archivePath $RUNNER_TEMP/app.xcarchive \
+            CODE_SIGN_STYLE=Manual \
+            CODE_SIGN_IDENTITY="Apple Distribution" \
+            DEVELOPMENT_TEAM="${APPLE_TEAM_ID}" \
+            PROVISIONING_PROFILE_SPECIFIER="${PROVISIONING_PROFILE_UUID}" \
+            PRODUCT_BUNDLE_IDENTIFIER="com.inkgora.app"
           
-          # Add provisioning profile to build settings
-          sed -i '' "s/DEVELOPMENT_TEAM = 65VGZ4677Q;/DEVELOPMENT_TEAM = ${APPLE_TEAM_ID}; PROVISIONING_PROFILE_SPECIFIER = \"${PROVISIONING_PROFILE_UUID}\";/g" app.xcodeproj/project.pbxproj
+          echo "Archive completed, exporting IPA..."
+          
+          # Export to IPA
+          xcodebuild -exportArchive \
+            -archivePath $RUNNER_TEMP/app.xcarchive \
+            -exportPath $RUNNER_TEMP/export \
+            -exportOptionsPlist ExportOptions.plist
           
           cd ../../..
           
-          # Now build with Tauri
-          pnpm tauri ios build --export-method app-store-connect
-          
           # Find and display the IPA location
           echo "Looking for IPA files..."
-          find src-tauri/gen/apple -name "*.ipa" -type f 2>/dev/null || echo "No IPA found in gen/apple"
-          find $RUNNER_TEMP -name "*.ipa" -type f 2>/dev/null || echo "No IPA found in RUNNER_TEMP"
+          find $RUNNER_TEMP -name "*.ipa" -type f 2>/dev/null || echo "No IPA found"
 
       - name: Upload to TestFlight
         working-directory: apps/mobile
@@ -157,11 +177,12 @@ jobs:
           mkdir -p ~/.private_keys
           echo "$APP_STORE_CONNECT_PRIVATE_KEY" > ~/.private_keys/AuthKey_$APP_STORE_CONNECT_KEY_ID.p8
 
-          # Find the IPA file (Tauri puts it in src-tauri/gen/apple/build/)
-          IPA_PATH=$(find src-tauri/gen/apple -name "*.ipa" -type f | head -1)
+          # Find the IPA file from export folder
+          IPA_PATH=$(find $RUNNER_TEMP/export -name "*.ipa" -type f 2>/dev/null | head -1)
 
           if [ -z "$IPA_PATH" ]; then
-            echo "No IPA file found! Searching everywhere..."
+            echo "No IPA file found in export folder! Searching everywhere..."
+            find $RUNNER_TEMP -name "*.ipa" -type f
             find . -name "*.ipa" -type f
             exit 1
           fi
