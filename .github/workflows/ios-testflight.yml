@@ -132,11 +132,30 @@ jobs:
           cd src-tauri
           cargo build --release --target aarch64-apple-ios
           
+          # Debug: find where libapp.a was created
+          echo "Looking for libapp.a..."
+          find . -name "libapp.a" -type f 2>/dev/null || echo "Not found in src-tauri"
+          find ../.. -name "libapp.a" -type f 2>/dev/null | head -5 || echo "Not found in workspace"
+          
           # Copy the library to ALL expected locations (debug and release)
+          # The target folder is in src-tauri/target when building from src-tauri
           mkdir -p gen/apple/Externals/arm64/release
           mkdir -p gen/apple/Externals/arm64/debug
-          cp target/aarch64-apple-ios/release/libapp.a gen/apple/Externals/arm64/release/
-          cp target/aarch64-apple-ios/release/libapp.a gen/apple/Externals/arm64/debug/
+          
+          # Try multiple possible locations
+          if [ -f "target/aarch64-apple-ios/release/libapp.a" ]; then
+            echo "Found in src-tauri/target"
+            cp target/aarch64-apple-ios/release/libapp.a gen/apple/Externals/arm64/release/
+            cp target/aarch64-apple-ios/release/libapp.a gen/apple/Externals/arm64/debug/
+          elif [ -f "../target/aarch64-apple-ios/release/libapp.a" ]; then
+            echo "Found in apps/mobile/target"
+            cp ../target/aarch64-apple-ios/release/libapp.a gen/apple/Externals/arm64/release/
+            cp ../target/aarch64-apple-ios/release/libapp.a gen/apple/Externals/arm64/debug/
+          else
+            echo "ERROR: libapp.a not found!"
+            exit 1
+          fi
+          
           cd ..
           
           # Modify the Xcode project to skip the Rust build script (we already built it)
