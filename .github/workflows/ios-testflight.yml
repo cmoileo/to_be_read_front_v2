@@ -116,47 +116,20 @@ jobs:
         env:
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
         run: |
-          # First, build the frontend
-          pnpm build
-          
-          # Initialize iOS project if needed
-          pnpm tauri ios init || true
-          
-          # Build Rust code for iOS
-          cd src-tauri
-          cargo build --release --target aarch64-apple-ios
-          cd ..
-          
-          # Build with xcodebuild using manual signing
-          cd src-tauri/gen/apple
-          
           # List available identities for debugging
           echo "Available signing identities:"
           security find-identity -v -p codesigning
           
-          xcodebuild -project app.xcodeproj \
-            -scheme app_iOS \
-            -configuration Release \
-            -destination 'generic/platform=iOS' \
-            -archivePath $RUNNER_TEMP/app.xcarchive \
-            archive \
-            CODE_SIGN_STYLE=Manual \
-            "CODE_SIGN_IDENTITY=Apple Distribution" \
-            DEVELOPMENT_TEAM="${APPLE_TEAM_ID}" \
-            "PROVISIONING_PROFILE_SPECIFIER=${PROVISIONING_PROFILE_UUID}" \
-            -allowProvisioningUpdates
+          # Build using Tauri CLI with app-store export method
+          pnpm tauri ios build --export-method app-store-connect
           
-          # Export the archive to IPA
-          xcodebuild -exportArchive \
-            -archivePath $RUNNER_TEMP/app.xcarchive \
-            -exportPath $RUNNER_TEMP/export \
-            -exportOptionsPlist ExportOptions.plist
-          
-          # Copy IPA to expected location
-          mkdir -p build
-          cp $RUNNER_TEMP/export/*.ipa build/
+          # Find and display the IPA location
+          echo "Looking for IPA files..."
+          find src-tauri/gen/apple -name "*.ipa" -type f 2>/dev/null || echo "No IPA found in gen/apple"
+          find $RUNNER_TEMP -name "*.ipa" -type f 2>/dev/null || echo "No IPA found in RUNNER_TEMP"
 
       - name: Upload to TestFlight
+        working-directory: apps/mobile
         env:
           APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
           APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
@@ -166,11 +139,12 @@ jobs:
           mkdir -p ~/.private_keys
           echo "$APP_STORE_CONNECT_PRIVATE_KEY" > ~/.private_keys/AuthKey_$APP_STORE_CONNECT_KEY_ID.p8
 
-          # Find the IPA file
-          IPA_PATH=$(find $RUNNER_TEMP/export -name "*.ipa" -type f | head -1)
+          # Find the IPA file (Tauri puts it in src-tauri/gen/apple/build/)
+          IPA_PATH=$(find src-tauri/gen/apple -name "*.ipa" -type f | head -1)
 
           if [ -z "$IPA_PATH" ]; then
-            echo "No IPA file found!"
+            echo "No IPA file found! Searching everywhere..."
+            find . -name "*.ipa" -type f
             exit 1
           fi
 
