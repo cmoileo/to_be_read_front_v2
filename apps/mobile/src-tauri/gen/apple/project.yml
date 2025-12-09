@@ -1,6 +1,6 @@
 name: app
 options:
-  bundleIdPrefix: com.inkerclub.app
+  bundleIdPrefix: com.inkgora
   deploymentTarget:
     iOS: 14.0
 fileGroups: [../../src]
@@ -10,8 +10,8 @@ configs:
 settingGroups:
   app:
     base:
-      PRODUCT_NAME: InkerClub
-      PRODUCT_BUNDLE_IDENTIFIER: com.inkerclub.app
+      PRODUCT_NAME: Inkgora
+      PRODUCT_BUNDLE_IDENTIFIER: com.inkgora.app
       DEVELOPMENT_TEAM: 65VGZ4677Q
 targetTemplates:
   app:
