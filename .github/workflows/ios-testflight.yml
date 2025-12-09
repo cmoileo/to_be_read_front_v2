@@ -163,6 +163,13 @@ jobs:
           # Modify the Xcode project to skip the Rust build script (we already built it)
           cd src-tauri/gen/apple
           
+          # Increment build number based on run number to avoid TestFlight duplicates
+          # We use GITHUB_RUN_NUMBER which increments for each workflow run
+          # CFBundleVersion is the build number (e.g. 1.0.0.42)
+          # CFBundleShortVersionString is the marketing version (e.g. 1.0.0)
+          /usr/libexec/PlistBuddy -c "Set :CFBundleVersion 1.0.0.${{ github.run_number }}" app_iOS/Info.plist
+          echo "Updated build version to 1.0.0.${{ github.run_number }}"
+          
           # Replace the build script with a no-op using a safer sed command that preserves structure
           # The original line is: shellScript = "pnpm tauri ios xcode-script ...";
           # We want: shellScript = "echo 'Rust already built'";
