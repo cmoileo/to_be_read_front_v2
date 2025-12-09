@@ -143,122 +143,60 @@ jobs:
           
           echo "Provisioning profile UUID: $PROVISIONING_PROFILE_UUID"
           
-          # First build the frontend
-          pnpm build
+          # Initialize iOS project first
+          pnpm tauri ios init
           
-          # Initialize iOS project
-          pnpm tauri ios init || true
-          
-          # Build Rust library for iOS
-          cd src-tauri
-          cargo build --release --target aarch64-apple-ios
-          
-          # Debug: find where libapp.a was created
-          echo "Looking for libapp_lib.a..."
-          find . -name "libapp_lib.a" -type f 2>/dev/null || echo "Not found in src-tauri"
-          
-          # Copy the library to ALL expected locations (debug and release)
-          # The target folder is in src-tauri/target when building from src-tauri
-          mkdir -p gen/apple/Externals/arm64/release
-          mkdir -p gen/apple/Externals/arm64/debug
-          
-          # The library is named libapp_lib.a because of [lib] name="app_lib" in Cargo.toml
-          # But Xcode expects libapp.a
-          if [ -f "target/aarch64-apple-ios/release/libapp_lib.a" ]; then
-            echo "Found in src-tauri/target"
-            cp target/aarch64-apple-ios/release/libapp_lib.a gen/apple/Externals/arm64/release/libapp.a
-            cp target/aarch64-apple-ios/release/libapp_lib.a gen/apple/Externals/arm64/debug/libapp.a
-          elif [ -f "../target/aarch64-apple-ios/release/libapp_lib.a" ]; then
-            echo "Found in apps/mobile/target"
-            cp ../target/aarch64-apple-ios/release/libapp_lib.a gen/apple/Externals/arm64/release/libapp.a
-            cp ../target/aarch64-apple-ios/release/libapp_lib.a gen/apple/Externals/arm64/debug/libapp.a
-          else
-            echo "ERROR: libapp_lib.a not found!"
-            # Fallback search
-            find . -name "*.a"
-            exit 1
-          fi
-          
-          cd ..
-          
-          # IMPORTANT: Copy frontend assets to the iOS project
-          # Tauri expects the built frontend to be in gen/apple/assets
-          echo "Copying frontend assets to iOS project..."
-          rm -rf src-tauri/gen/apple/assets/*
-          cp -R dist/* src-tauri/gen/apple/assets/
-          ls -la src-tauri/gen/apple/assets/
-          echo "Frontend assets copied successfully"
-          
-          # Modify the Xcode project to skip the Rust build script (we already built it)
-          cd src-tauri/gen/apple
-          
-          # Increment build number based on run number to avoid TestFlight duplicates
-          # We use GITHUB_RUN_NUMBER which increments for each workflow run
-          # CFBundleVersion is the build number (e.g. 1.0.0.42)
-          # CFBundleShortVersionString is the marketing version (e.g. 1.0.0)
-          /usr/libexec/PlistBuddy -c "Set :CFBundleVersion 1.0.0.${{ github.run_number }}" app_iOS/Info.plist
+          # Update Info.plist with build number before building
+          /usr/libexec/PlistBuddy -c "Set :CFBundleVersion 1.0.0.${{ github.run_number }}" src-tauri/gen/apple/app_iOS/Info.plist
           echo "Updated build version to 1.0.0.${{ github.run_number }}"
           
-          # Replace the build script with a no-op using a safer sed command that preserves structure
-          # The original line is: shellScript = "pnpm tauri ios xcode-script ...";
-          # We want: shellScript = "echo 'Rust already built'";
-          sed -i '' 's|shellScript = "pnpm tauri ios xcode-script.*|shellScript = "echo Rust already built";|g' app.xcodeproj/project.pbxproj
+          # Update ExportOptions.plist for App Store distribution
+          cat > src-tauri/gen/apple/ExportOptions.plist << 'PLIST'
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>method</key>
+    <string>app-store-connect</string>
+    <key>teamID</key>
+    <string>65VGZ4677Q</string>
+    <key>signingStyle</key>
+    <string>manual</string>
+    <key>provisioningProfiles</key>
+    <dict>
+        <key>com.inkgora.app</key>
+        <string>0ddae7ec-45d1-4f3a-ad44-ad44b4760150</string>
+    </dict>
+    <key>uploadBitcode</key>
+    <false/>
+    <key>uploadSymbols</key>
+    <true/>
+</dict>
+</plist>
+PLIST
           
-          # Build with xcodebuild directly, passing all signing parameters
-          xcodebuild archive \
-            -project app.xcodeproj \
-            -scheme app_iOS \
-            -configuration Release \
-            -destination 'generic/platform=iOS' \
-            -archivePath $RUNNER_TEMP/app.xcarchive \
-            CODE_SIGN_STYLE=Manual \
-            CODE_SIGN_IDENTITY="Apple Distribution" \
-            DEVELOPMENT_TEAM="${APPLE_TEAM_ID}" \
-            PROVISIONING_PROFILE_SPECIFIER="${PROVISIONING_PROFILE_UUID}" \
-            PRODUCT_BUNDLE_IDENTIFIER="com.inkgora.app"
+          # Use tauri ios build which handles everything properly
+          # --ci skips prompts, --export-method specifies App Store distribution
+          pnpm tauri ios build --ci --export-method app-store-connect
           
-          echo "Archive completed, exporting IPA..."
-          
-          # Create ExportOptions.plist for IPA export
-          cat > ExportOptions.plist << EOF
-          <?xml version="1.0" encoding="UTF-8"?>
-          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-          <plist version="1.0">
-          <dict>
-              <key>method</key>
-              <string>app-store-connect</string>
-              <key>teamID</key>
-              <string>${APPLE_TEAM_ID}</string>
-              <key>signingStyle</key>
-              <string>manual</string>
-              <key>provisioningProfiles</key>
-              <dict>
-                  <key>com.inkgora.app</key>
-                  <string>${PROVISIONING_PROFILE_UUID}</string>
-              </dict>
-              <key>uploadBitcode</key>
-              <false/>
-              <key>uploadSymbols</key>
-              <true/>
-          </dict>
-          </plist>
-          EOF
-          
-          # Debug: show ExportOptions.plist content
-          cat ExportOptions.plist
-          
-          # Export to IPA
-          xcodebuild -exportArchive \
-            -archivePath $RUNNER_TEMP/app.xcarchive \
-            -exportPath $RUNNER_TEMP/export \
-            -exportOptionsPlist ExportOptions.plist \
-            -allowProvisioningUpdates
-          
-          cd ../../..
-          
-          # Find and display the IPA location
+          # Find the generated IPA
           echo "Looking for IPA files..."
-          find $RUNNER_TEMP -name "*.ipa" -type f 2>/dev/null || echo "No IPA found"
+          find src-tauri -name "*.ipa" -type f 2>/dev/null || echo "No IPA in src-tauri"
+          
+          # If IPA not found, check if we need to export manually from the archive
+          ARCHIVE_PATH=$(find src-tauri/gen/apple -name "*.xcarchive" -type d 2>/dev/null | head -1)
+          if [ -n "$ARCHIVE_PATH" ]; then
+            echo "Found archive at: $ARCHIVE_PATH"
+            
+            # Export IPA from archive
+            xcodebuild -exportArchive \
+              -archivePath "$ARCHIVE_PATH" \
+              -exportPath $RUNNER_TEMP/export \
+              -exportOptionsPlist src-tauri/gen/apple/ExportOptions.plist
+            
+            echo "IPA exported to $RUNNER_TEMP/export"
+            ls -la $RUNNER_TEMP/export/
+          fi
 
       - name: Upload to TestFlight
         working-directory: apps/mobile
