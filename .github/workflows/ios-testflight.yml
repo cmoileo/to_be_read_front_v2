@@ -256,10 +256,14 @@ jobs:
           if ! openssl pkey -in ~/.private_keys/$KEY_FILE_NAME -noout 2>/dev/null; then
             echo "Key file seems invalid or malformed. Attempting to fix formatting..."
             perl -i -pe 's/-----BEGIN PRIVATE KEY-----/-----BEGIN PRIVATE KEY-----\n/g; s/-----END PRIVATE KEY-----/\n-----END PRIVATE KEY-----/g; s/\s+([A-Za-z0-9+\/=]{64})/\n$1/g' ~/.private_keys/$KEY_FILE_NAME
-            # Sync fixed file
-            cp ~/.private_keys/$KEY_FILE_NAME ~/private_keys/$KEY_FILE_NAME
-            cp ~/.private_keys/$KEY_FILE_NAME ~/.appstoreconnect/private_keys/$KEY_FILE_NAME
           fi
+          
+          # Set strict permissions (required by some tools)
+          chmod 600 ~/.private_keys/$KEY_FILE_NAME
+          
+          # Sync fixed file to other locations
+          cp ~/.private_keys/$KEY_FILE_NAME ~/private_keys/$KEY_FILE_NAME
+          cp ~/.private_keys/$KEY_FILE_NAME ~/.appstoreconnect/private_keys/$KEY_FILE_NAME
           
           # Verify key validity
           if openssl pkey -in ~/.private_keys/$KEY_FILE_NAME -noout; then
@@ -271,7 +275,7 @@ jobs:
           
           # Test authentication
           echo "Testing App Store Connect authentication..."
-          xcrun altool --list-providers --apiKey "$KEY_ID" --apiIssuer "$ISSUER_ID" || echo "Authentication check failed"
+          xcrun altool --list-providers --apiKey "$KEY_ID" --apiIssuer "$ISSUER_ID" --verbose || echo "Authentication check failed"
 
           # Find the IPA file
           IPA_PATH=$(find $RUNNER_TEMP/export -name "*.ipa" -type f 2>/dev/null | head -1)
@@ -290,7 +294,8 @@ jobs:
             --type ios \
             --file "$IPA_PATH" \
             --apiKey "$KEY_ID" \
-            --apiIssuer "$ISSUER_ID"
+            --apiIssuer "$ISSUER_ID" \
+            --verbose
 
       - name: Cleanup
         if: always()
