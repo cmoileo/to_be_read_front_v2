@@ -181,6 +181,14 @@ jobs:
           
           cd ..
           
+          # IMPORTANT: Copy frontend assets to the iOS project
+          # Tauri expects the built frontend to be in gen/apple/assets
+          echo "Copying frontend assets to iOS project..."
+          rm -rf src-tauri/gen/apple/assets/*
+          cp -R dist/* src-tauri/gen/apple/assets/
+          ls -la src-tauri/gen/apple/assets/
+          echo "Frontend assets copied successfully"
+          
           # Modify the Xcode project to skip the Rust build script (we already built it)
           cd src-tauri/gen/apple
           
