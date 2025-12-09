@@ -150,6 +150,26 @@ jobs:
           /usr/libexec/PlistBuddy -c "Set :CFBundleVersion 1.0.0.${{ github.run_number }}" src-tauri/gen/apple/app_iOS/Info.plist
           echo "Updated build version to 1.0.0.${{ github.run_number }}"
           
+          # CRITICAL: Patch project.pbxproj to use manual signing BEFORE tauri ios build
+          # This prevents the "No Accounts" error
+          PBXPROJ="src-tauri/gen/apple/app.xcodeproj/project.pbxproj"
+          
+          # Replace automatic signing with manual signing
+          sed -i '' 's/CODE_SIGN_STYLE = Automatic;/CODE_SIGN_STYLE = Manual;/g' "$PBXPROJ"
+          
+          # Add provisioning profile specifier if not present
+          sed -i '' "s/DEVELOPMENT_TEAM = ${APPLE_TEAM_ID};/DEVELOPMENT_TEAM = ${APPLE_TEAM_ID}; PROVISIONING_PROFILE_SPECIFIER = \"${PROVISIONING_PROFILE_UUID}\";/g" "$PBXPROJ"
+          
+          # Set code sign identity
+          sed -i '' 's/"CODE_SIGN_IDENTITY\[sdk=iphoneos\*\]" = "iPhone Developer";/"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "Apple Distribution";/g' "$PBXPROJ"
+          
+          # Add CODE_SIGN_IDENTITY if not present (for release builds)
+          if ! grep -q "CODE_SIGN_IDENTITY = " "$PBXPROJ"; then
+            sed -i '' "s/DEVELOPMENT_TEAM = ${APPLE_TEAM_ID};/DEVELOPMENT_TEAM = ${APPLE_TEAM_ID}; CODE_SIGN_IDENTITY = \"Apple Distribution\";/g" "$PBXPROJ"
+          fi
+          
+          echo "Patched project.pbxproj for manual signing"
+          
           # Update ExportOptions.plist for App Store distribution
           cat > src-tauri/gen/apple/ExportOptions.plist << 'EOF'
           <?xml version="1.0" encoding="UTF-8"?>
@@ -175,26 +195,20 @@ jobs:
           </plist>
           EOF
           
-          # Use tauri ios build which handles everything properly
-          # --ci skips prompts, --export-method specifies App Store distribution
+          # Now run tauri ios build - it will use the patched project with manual signing
           pnpm tauri ios build --ci --export-method app-store-connect
           
           # Find the generated IPA
           echo "Looking for IPA files..."
           find src-tauri -name "*.ipa" -type f 2>/dev/null || echo "No IPA in src-tauri"
+          find . -name "*.ipa" -type f 2>/dev/null | head -5
           
-          # If IPA not found, check if we need to export manually from the archive
-          ARCHIVE_PATH=$(find src-tauri/gen/apple -name "*.xcarchive" -type d 2>/dev/null | head -1)
-          if [ -n "$ARCHIVE_PATH" ]; then
-            echo "Found archive at: $ARCHIVE_PATH"
-            
-            # Export IPA from archive
-            xcodebuild -exportArchive \
-              -archivePath "$ARCHIVE_PATH" \
-              -exportPath $RUNNER_TEMP/export \
-              -exportOptionsPlist src-tauri/gen/apple/ExportOptions.plist
-            
-            echo "IPA exported to $RUNNER_TEMP/export"
+          # Copy IPA to expected location
+          IPA_FILE=$(find src-tauri -name "*.ipa" -type f 2>/dev/null | head -1)
+          if [ -n "$IPA_FILE" ]; then
+            mkdir -p $RUNNER_TEMP/export
+            cp "$IPA_FILE" $RUNNER_TEMP/export/
+            echo "IPA copied to $RUNNER_TEMP/export/"
             ls -la $RUNNER_TEMP/export/
           fi
 
