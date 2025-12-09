@@ -44,6 +44,10 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
+      - name: Setup staging environment
+        working-directory: apps/mobile
+        run: cp .env.staging .env
+
       - name: Generate TanStack Router routes
         working-directory: apps/mobile
         run: |
@@ -71,10 +75,17 @@ jobs:
 
           # Import certificate to keychain
           security import $CERTIFICATE_PATH -P "$CERTIFICATE_PASSWORD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
-          security list-keychain -d user -s $KEYCHAIN_PATH
+          
+          # Set as default keychain and add to search list
+          security default-keychain -s $KEYCHAIN_PATH
+          security list-keychain -d user -s $KEYCHAIN_PATH login.keychain
 
-          # Allow codesign to access the certificate
+          # Allow codesign to access the certificate without prompts
           security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+          
+          # Verify certificate was imported
+          echo "Listing available signing identities:"
+          security find-identity -v -p codesigning $KEYCHAIN_PATH
 
       - name: Install Provisioning Profile
         env:
@@ -122,9 +133,9 @@ jobs:
             -archivePath $RUNNER_TEMP/app.xcarchive \
             archive \
             CODE_SIGN_STYLE=Manual \
-            CODE_SIGN_IDENTITY="Apple Distribution" \
+            "CODE_SIGN_IDENTITY=Apple Distribution: Leo Fezard (65VGZ4677Q)" \
             DEVELOPMENT_TEAM="${APPLE_TEAM_ID}" \
-            PROVISIONING_PROFILE_SPECIFIER="${PROVISIONING_PROFILE_UUID}" \
+            "PROVISIONING_PROFILE_SPECIFIER=${PROVISIONING_PROFILE_UUID}" \
             -allowProvisioningUpdates
           
           # Export the archive to IPA
