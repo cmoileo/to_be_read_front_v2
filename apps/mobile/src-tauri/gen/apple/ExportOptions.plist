@@ -3,12 +3,6 @@
 <plist version="1.0">
 <dict>
     <key>method</key>
-    <string>app-store</string>
-    <key>teamID</key>
-    <string>65VGZ4677Q</string>
-    <key>uploadSymbols</key>
-    <true/>
-    <key>uploadBitcode</key>
-    <false/>
+    <string>debugging</string>
 </dict>
 </plist>

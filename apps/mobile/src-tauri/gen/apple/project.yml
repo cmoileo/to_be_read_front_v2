@@ -1,6 +1,6 @@
 name: app
 options:
-  bundleIdPrefix: com.inkgora
+  bundleIdPrefix: com.inkgora.app
   deploymentTarget:
     iOS: 14.0
 fileGroups: [../../src]
@@ -69,9 +69,6 @@ targets:
         LIBRARY_SEARCH_PATHS[arch=arm64]: $(inherited) $(PROJECT_DIR)/Externals/arm64/$(CONFIGURATION) $(SDKROOT)/usr/lib/swift $(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME) $(TOOLCHAIN_DIR)/usr/lib/swift-5.0/$(PLATFORM_NAME)
         ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES: true
         EXCLUDED_ARCHS[sdk=iphoneos*]: x86_64
-        CODE_SIGN_STYLE: Manual
-        CODE_SIGN_IDENTITY: "Apple Distribution"
-        PROVISIONING_PROFILE_SPECIFIER: ""
       groups: [app]
     dependencies:
       - framework: libapp.a
