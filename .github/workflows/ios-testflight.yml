@@ -163,8 +163,10 @@ jobs:
           # Modify the Xcode project to skip the Rust build script (we already built it)
           cd src-tauri/gen/apple
           
-          # Replace the build script with a no-op
-          sed -i '' 's|pnpm tauri ios xcode-script.*|echo "Rust already built"|g' app.xcodeproj/project.pbxproj
+          # Replace the build script with a no-op using a safer sed command that preserves structure
+          # The original line is: shellScript = "pnpm tauri ios xcode-script ...";
+          # We want: shellScript = "echo 'Rust already built'";
+          sed -i '' 's|shellScript = "pnpm tauri ios xcode-script.*|shellScript = "echo Rust already built";|g' app.xcodeproj/project.pbxproj
           
           # Build with xcodebuild directly, passing all signing parameters
           xcodebuild archive \
