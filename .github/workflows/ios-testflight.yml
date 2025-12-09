@@ -84,16 +84,24 @@ jobs:
           mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
 
           # Decode and install provisioning profile
-          PROFILE_PATH=~/Library/MobileDevice/Provisioning\ Profiles/profile.mobileprovision
+          PROFILE_PATH=$RUNNER_TEMP/profile.mobileprovision
           echo -n "$PROVISIONING_PROFILE_BASE64" | base64 --decode -o "$PROFILE_PATH"
 
-          # Extract UUID from provisioning profile and rename
+          # Extract UUID from provisioning profile
           PROFILE_UUID=$(/usr/libexec/PlistBuddy -c "Print UUID" /dev/stdin <<< $(/usr/bin/security cms -D -i "$PROFILE_PATH"))
-          mv "$PROFILE_PATH" ~/Library/MobileDevice/Provisioning\ Profiles/$PROFILE_UUID.mobileprovision
+          echo "PROVISIONING_PROFILE_UUID=$PROFILE_UUID" >> $GITHUB_ENV
+          
+          # Copy to the correct location with UUID as filename
+          cp "$PROFILE_PATH" ~/Library/MobileDevice/Provisioning\ Profiles/$PROFILE_UUID.mobileprovision
+          
+          echo "Installed provisioning profile with UUID: $PROFILE_UUID"
 
       - name: Build iOS App
         working-directory: apps/mobile
+        env:
+          PROVISIONING_PROFILE_SPECIFIER: ${{ env.PROVISIONING_PROFILE_UUID }}
         run: |
+          # Build with manual signing
           pnpm tauri ios build --export-method app-store-connect
 
       - name: Upload to TestFlight
