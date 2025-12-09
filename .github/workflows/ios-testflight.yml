@@ -231,9 +231,25 @@ jobs:
           APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
           APP_STORE_CONNECT_PRIVATE_KEY: ${{ secrets.APP_STORE_CONNECT_PRIVATE_KEY }}
         run: |
+          # Debug secrets (lengths only)
+          echo "Debug: Checking credentials format..."
+          echo "Key ID length: ${#APP_STORE_CONNECT_KEY_ID}"
+          echo "Issuer ID length: ${#APP_STORE_CONNECT_ISSUER_ID}"
+          echo "Private Key length: ${#APP_STORE_CONNECT_PRIVATE_KEY}"
+          
           # Create API key file
           mkdir -p ~/.private_keys
           echo "$APP_STORE_CONNECT_PRIVATE_KEY" > ~/.private_keys/AuthKey_$APP_STORE_CONNECT_KEY_ID.p8
+          
+          # Verify key file format (safe check)
+          echo "Key file first line:"
+          head -n 1 ~/.private_keys/AuthKey_$APP_STORE_CONNECT_KEY_ID.p8
+          echo "Key file last line:"
+          tail -n 1 ~/.private_keys/AuthKey_$APP_STORE_CONNECT_KEY_ID.p8
+          
+          # Test authentication before upload
+          echo "Testing App Store Connect authentication..."
+          xcrun altool --list-providers --apiKey "$APP_STORE_CONNECT_KEY_ID" --apiIssuer "$APP_STORE_CONNECT_ISSUER_ID" || echo "Authentication check failed, but trying upload anyway..."
 
           # Find the IPA file from export folder
           IPA_PATH=$(find $RUNNER_TEMP/export -name "*.ipa" -type f 2>/dev/null | head -1)
