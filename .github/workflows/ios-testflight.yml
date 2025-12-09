@@ -241,11 +241,22 @@ jobs:
           mkdir -p ~/.private_keys
           echo "$APP_STORE_CONNECT_PRIVATE_KEY" > ~/.private_keys/AuthKey_$APP_STORE_CONNECT_KEY_ID.p8
           
-          # Verify key file format (safe check)
-          echo "Key file first line:"
-          head -n 1 ~/.private_keys/AuthKey_$APP_STORE_CONNECT_KEY_ID.p8
-          echo "Key file last line:"
-          tail -n 1 ~/.private_keys/AuthKey_$APP_STORE_CONNECT_KEY_ID.p8
+          # Validate and fix key format if needed
+          if ! openssl pkey -in ~/.private_keys/AuthKey_$APP_STORE_CONNECT_KEY_ID.p8 -noout 2>/dev/null; then
+            echo "Key file seems invalid or malformed. Attempting to fix formatting..."
+            # Try to fix single line key by restoring newlines around headers
+            # We use perl for reliable regex replacement including newlines
+            perl -i -pe 's/-----BEGIN PRIVATE KEY-----/-----BEGIN PRIVATE KEY-----\n/g; s/-----END PRIVATE KEY-----/\n-----END PRIVATE KEY-----/g; s/\s+([A-Za-z0-9+\/=]{64})/\n$1/g' ~/.private_keys/AuthKey_$APP_STORE_CONNECT_KEY_ID.p8
+          fi
+          
+          # Verify key validity
+          if openssl pkey -in ~/.private_keys/AuthKey_$APP_STORE_CONNECT_KEY_ID.p8 -noout; then
+            echo "Private key is valid."
+          else
+            echo "ERROR: Private key is invalid. Please check your APP_STORE_CONNECT_PRIVATE_KEY secret."
+            echo "It should contain the full content of the .p8 file including headers."
+            exit 1
+          fi
           
           # Test authentication before upload
           echo "Testing App Store Connect authentication..."
