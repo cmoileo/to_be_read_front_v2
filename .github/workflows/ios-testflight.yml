@@ -151,29 +151,29 @@ jobs:
           echo "Updated build version to 1.0.0.${{ github.run_number }}"
           
           # Update ExportOptions.plist for App Store distribution
-          cat > src-tauri/gen/apple/ExportOptions.plist << 'PLIST'
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
-<dict>
-    <key>method</key>
-    <string>app-store-connect</string>
-    <key>teamID</key>
-    <string>65VGZ4677Q</string>
-    <key>signingStyle</key>
-    <string>manual</string>
-    <key>provisioningProfiles</key>
-    <dict>
-        <key>com.inkgora.app</key>
-        <string>0ddae7ec-45d1-4f3a-ad44-ad44b4760150</string>
-    </dict>
-    <key>uploadBitcode</key>
-    <false/>
-    <key>uploadSymbols</key>
-    <true/>
-</dict>
-</plist>
-PLIST
+          cat > src-tauri/gen/apple/ExportOptions.plist << 'EOF'
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+              <key>method</key>
+              <string>app-store-connect</string>
+              <key>teamID</key>
+              <string>65VGZ4677Q</string>
+              <key>signingStyle</key>
+              <string>manual</string>
+              <key>provisioningProfiles</key>
+              <dict>
+                  <key>com.inkgora.app</key>
+                  <string>0ddae7ec-45d1-4f3a-ad44-ad44b4760150</string>
+              </dict>
+              <key>uploadBitcode</key>
+              <false/>
+              <key>uploadSymbols</key>
+              <true/>
+          </dict>
+          </plist>
+          EOF
           
           # Use tauri ios build which handles everything properly
           # --ci skips prompts, --export-method specifies App Store distribution
