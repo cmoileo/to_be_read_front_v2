@@ -46,7 +46,10 @@ jobs:
 
       - name: Generate TanStack Router routes
         working-directory: apps/mobile
-        run: pnpm exec tsr generate
+        run: |
+          # Install TanStack Router CLI and generate routes
+          pnpm add -D @tanstack/router-cli
+          pnpm exec tsr generate
 
       - name: Import Certificate
         env:
