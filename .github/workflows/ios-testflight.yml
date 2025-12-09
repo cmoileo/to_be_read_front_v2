@@ -132,14 +132,20 @@ jobs:
           cd src-tauri
           cargo build --release --target aarch64-apple-ios
           
-          # Copy the library to the expected location
+          # Copy the library to ALL expected locations (debug and release)
           mkdir -p gen/apple/Externals/arm64/release
-          cp ../target/aarch64-apple-ios/release/libapp.a gen/apple/Externals/arm64/release/ || true
+          mkdir -p gen/apple/Externals/arm64/debug
+          cp target/aarch64-apple-ios/release/libapp.a gen/apple/Externals/arm64/release/
+          cp target/aarch64-apple-ios/release/libapp.a gen/apple/Externals/arm64/debug/
           cd ..
           
-          # Build with xcodebuild directly, passing all signing parameters
+          # Modify the Xcode project to skip the Rust build script (we already built it)
           cd src-tauri/gen/apple
           
+          # Replace the build script with a no-op
+          sed -i '' 's|pnpm tauri ios xcode-script.*|echo "Rust already built"|g' app.xcodeproj/project.pbxproj
+          
+          # Build with xcodebuild directly, passing all signing parameters
           xcodebuild archive \
             -project app.xcodeproj \
             -scheme app_iOS \
