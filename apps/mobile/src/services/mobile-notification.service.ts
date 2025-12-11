@@ -1,10 +1,4 @@
-import {
-  isPermissionGranted,
-  requestPermission,
-  sendNotification,
-  createChannel,
-  Importance,
-} from "@tauri-apps/plugin-notification";
+// Service de notifications pour Capacitor utilisant Firebase Cloud Messaging
 import { initializeApp, type FirebaseApp } from "firebase/app";
 import { getMessaging, getToken, onMessage, type Messaging } from "firebase/messaging";
 import { AuthApi } from "@repo/api-client";
@@ -46,9 +40,7 @@ class MobileNotificationService {
     if (this.initialized) return true;
 
     try {
-      await this.setupNotificationChannel();
-
-      if (this.isFirebaseConfigured() && !this.isTauriDevMode()) {
+      if (this.isFirebaseConfigured()) {
         this.firebaseApp = initializeApp(FIREBASE_CONFIG);
         this.messaging = getMessaging(this.firebaseApp);
 
@@ -65,10 +57,6 @@ class MobileNotificationService {
     }
   }
 
-  private isTauriDevMode(): boolean {
-    return window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
-  }
-
   private isFirebaseConfigured(): boolean {
     return !!(
       FIREBASE_CONFIG.apiKey &&
@@ -77,27 +65,17 @@ class MobileNotificationService {
     );
   }
 
-  private async setupNotificationChannel(): Promise<void> {
-    try {
-      await createChannel({
-        id: "Inkgora-default",
-        name: "Inkgora",
-        description: "Notifications de l'application Inkgora",
-        importance: Importance.High,
-        vibration: true,
-        sound: "default",
-      });
-    } catch (error) {
-      console.warn("Failed to create notification channel:", error);
-    }
-  }
-
   async requestPermission(): Promise<NotificationPermissionStatus> {
     try {
-      const granted = await isPermissionGranted();
-      if (granted) return "granted";
+      if (!("Notification" in window)) {
+        return "denied";
+      }
 
-      const permission = await requestPermission();
+      if (Notification.permission === "granted") {
+        return "granted";
+      }
+
+      const permission = await Notification.requestPermission();
       return permission === "granted" ? "granted" : "denied";
     } catch (error) {
       console.error("Failed to request notification permission:", error);
@@ -107,18 +85,16 @@ class MobileNotificationService {
 
   async getPermissionStatus(): Promise<NotificationPermissionStatus> {
     try {
-      const granted = await isPermissionGranted();
-      return granted ? "granted" : "default";
+      if (!("Notification" in window)) {
+        return "denied";
+      }
+      return Notification.permission === "granted" ? "granted" : Notification.permission === "denied" ? "denied" : "default";
     } catch {
       return "denied";
     }
   }
 
   async getToken(): Promise<string | null> {
-    if (this.isTauriDevMode()) {
-      console.info("FCM token not available in Tauri dev mode");
-      return null;
-    }
 
     if (!this.messaging || !this.isFirebaseConfigured()) {
       console.warn("Firebase messaging not configured");
@@ -179,11 +155,13 @@ class MobileNotificationService {
       const permission = await this.getPermissionStatus();
       if (permission !== "granted") return;
 
-      await sendNotification({
-        title: payload.title,
-        body: payload.body,
-        channelId: "inkgora-default",
-      });
+      if ("Notification" in window) {
+        new Notification(payload.title, {
+          body: payload.body,
+          icon: "/icon.png",
+          data: payload.data,
+        });
+      }
     } catch (error) {
       console.error("Failed to show notification:", error);
     }
