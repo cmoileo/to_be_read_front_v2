@@ -13,8 +13,9 @@ echo "📱 Étape 1/4: Incrémentation du build number..."
 ./increment-build.sh
 echo ""
 
-# 2. Build du frontend
-echo "🏗️  Étape 2/4: Build du frontend Vite..."
+# 2. Copier .env.staging vers .env et build
+echo "🏗️  Étape 2/4: Configuration staging et build du frontend..."
+cp .env.staging .env
 pnpm run build
 echo ""
 
