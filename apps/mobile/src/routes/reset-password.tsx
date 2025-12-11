@@ -3,6 +3,7 @@ import { ResetPasswordRequestForm } from "@repo/ui";
 import { useState } from "react";
 import { useResetPassword } from "@repo/api-client";
 import type { ResetPasswordRequestFormValues } from "@repo/ui";
+import { PageTransition } from "../components/page-transition";
 
 export const Route = createFileRoute("/reset-password")({
   component: ResetPasswordPage,
@@ -34,7 +35,7 @@ function ResetPasswordPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center p-6">
+    <PageTransition className="flex min-h-screen items-center justify-center p-6 safe-area-inset-top safe-area-inset-bottom">
       <ResetPasswordRequestForm
         onSubmit={handleSubmit}
         isLoading={resetPasswordMutation.isPending}
@@ -42,6 +43,6 @@ function ResetPasswordPage() {
         success={success}
         onBackToLoginClick={goBackToLogin}
       />
-    </div>
+    </PageTransition>
   );
 }

@@ -7,6 +7,8 @@ import { useNotificationRegistration } from "../hooks/use-notification-registrat
 import { useUnreadNotificationCount } from "../viewmodels/use-notifications-viewmodel";
 import { useSSENotifications } from "../hooks/use-sse-notifications";
 import { useConnectedUser } from "@repo/stores";
+import { usePlatform } from "../hooks/use-platform";
+import { PageTransition } from "../components/page-transition";
 
 export const Route = createFileRoute("/")({
   beforeLoad: async () => {
@@ -25,6 +27,7 @@ function Index() {
   const currentPath = routerState.location.pathname;
   const { user } = useConnectedUser();
   const unreadCount = useUnreadNotificationCount();
+  const { isMobile } = usePlatform();
 
   useSSENotifications(user?.id);
 
@@ -90,11 +93,13 @@ function Index() {
 
   return (
     <div className="flex min-h-screen flex-col">
-      <header className="sticky top-0 z-40 bg-background/95 backdrop-blur-lg border-b border-border/50 px-4 py-3 flex items-center justify-between">
+      <header 
+        className={`sticky top-0 z-40 bg-background/95 backdrop-blur-lg border-b border-border/50 px-4 py-3 flex items-center justify-between ${isMobile ? 'pt-[calc(env(safe-area-inset-top)+0.75rem)]' : ''}`}
+      >
         <h1 className="text-xl font-bold">Inkgora</h1>
         <button
           onClick={() => navigate({ to: "/notifications" })}
-          className="relative p-2 hover:bg-accent rounded-full transition-colors"
+          className="relative p-2 hover:bg-accent active:scale-95 rounded-full transition-all duration-150"
         >
           <Bell className="w-6 h-6" />
           {unreadCount > 0 && (
@@ -104,7 +109,7 @@ function Index() {
           )}
         </button>
       </header>
-      <div className="flex-1 p-4 pb-20">
+      <PageTransition className="flex-1 p-4 pb-20">
         <FeedScreen
           reviews={reviews}
           isLoading={isLoading}
@@ -119,7 +124,7 @@ function Index() {
           onCreateReview={handleCreateReview}
           onSearch={handleSearch}
         />
-      </div>
+      </PageTransition>
 
       <BottomNav items={navItems} onNavigate={handleNavigate} />
     </div>

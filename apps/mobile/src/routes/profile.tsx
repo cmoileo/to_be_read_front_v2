@@ -3,6 +3,8 @@ import { createFileRoute, redirect, useNavigate, useRouterState } from "@tanstac
 import { MobileStorage } from "../services/mobile-storage.service";
 import { BottomNav, useTranslation, ProfileScreen, Home, Search, PenSquare, User } from "@repo/ui";
 import { useProfileViewModel } from "../viewmodels/use-profile-viewmodel";
+import { usePlatform } from "../hooks/use-platform";
+import { PageTransition } from "../components/page-transition";
 
 export const Route = createFileRoute("/profile")({
   beforeLoad: async () => {
@@ -20,6 +22,7 @@ function ProfilePage() {
   const routerState = useRouterState();
   const currentPath = routerState.location.pathname;
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const { isMobile } = usePlatform();
 
   const {
     user,
@@ -93,7 +96,9 @@ function ProfilePage() {
 
   return (
     <div className="flex min-h-screen flex-col">
-      <div className="flex-1 p-6 pb-20">
+      {/* Safe area padding en haut pour iOS */}
+      <div className={isMobile ? "pt-[env(safe-area-inset-top)]" : ""} />
+      <PageTransition className="flex-1 p-6 pb-20">
         <ProfileScreen
           user={user}
           reviews={reviews}
@@ -113,7 +118,7 @@ function ProfilePage() {
           onReadingListClick={handleReadingListClick}
           onSettingsClick={handleSettingsClick}
         />
-      </div>
+      </PageTransition>
 
       <BottomNav items={navItems} onNavigate={handleNavigate} />
     </div>

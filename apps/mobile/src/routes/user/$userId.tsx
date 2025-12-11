@@ -18,6 +18,8 @@ import {
   ArrowLeft,
 } from "@repo/ui";
 import { useUserProfileViewModel } from "../../viewmodels/use-user-profile-viewmodel";
+import { usePlatform } from "../../hooks/use-platform";
+import { PageTransition } from "../../components/page-transition";
 
 export const Route = createFileRoute("/user/$userId")({
   beforeLoad: async () => {
@@ -50,6 +52,7 @@ function UserProfilePage() {
   const { t } = useTranslation();
   const routerState = useRouterState();
   const currentPath = routerState.location.pathname;
+  const { isMobile } = usePlatform();
 
   const userIdNumber = parseInt(userId, 10);
 
@@ -119,11 +122,11 @@ function UserProfilePage() {
 
   return (
     <div className="flex min-h-screen flex-col">
-      <div className="flex-1 pb-20">
-        <div className="p-4 border-b">
+      <PageTransition className="flex-1 pb-20">
+        <div className={`p-4 border-b ${isMobile ? 'pt-[calc(env(safe-area-inset-top)+1rem)]' : ''}`}>
           <button
             onClick={handleBack}
-            className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
+            className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors haptic-tap"
           >
             <ArrowLeft className="w-5 h-5" />
             <span>{t("common.back")}</span>
@@ -146,7 +149,7 @@ function UserProfilePage() {
             onFollowingClick={handleFollowingClick}
           />
         </div>
-      </div>
+      </PageTransition>
 
       <BottomNav items={navItems} onNavigate={handleNavigate} />
     </div>

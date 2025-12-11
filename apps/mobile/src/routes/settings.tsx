@@ -2,6 +2,8 @@ import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
 import { MobileStorage } from "../services/mobile-storage.service";
 import { SettingsSection } from "@repo/ui";
 import { useSettingsViewModel } from "../viewmodels/use-settings-viewmodel";
+import { usePlatform } from "../hooks/use-platform";
+import { PageTransition } from "../components/page-transition";
 
 export const Route = createFileRoute("/settings")({
   beforeLoad: async () => {
@@ -15,6 +17,7 @@ export const Route = createFileRoute("/settings")({
 
 function SettingsPage() {
   const navigate = useNavigate();
+  const { isMobile } = usePlatform();
 
   const {
     currentLocale,
@@ -29,7 +32,7 @@ function SettingsPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="p-4">
+      <PageTransition className={`p-4 ${isMobile ? 'pt-[calc(env(safe-area-inset-top)+1rem)] pb-[calc(env(safe-area-inset-bottom)+1rem)]' : ''}`}>
         <SettingsSection
           currentLocale={currentLocale}
           notificationsEnabled={notificationsEnabled}
@@ -41,7 +44,7 @@ function SettingsPage() {
           onToggleNotifications={handleToggleNotifications}
           onBack={() => navigate({ to: "/profile" })}
         />
-      </div>
+      </PageTransition>
     </div>
   );
 }

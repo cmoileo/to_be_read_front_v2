@@ -11,6 +11,8 @@ import {
   User,
 } from "@repo/ui";
 import { useCreateReviewViewModel } from "../viewmodels/use-create-review-viewmodel";
+import { usePlatform } from "../hooks/use-platform";
+import { PageTransition } from "../components/page-transition";
 
 export const Route = createFileRoute("/create-review")({
   beforeLoad: async () => {
@@ -29,6 +31,7 @@ function CreateReviewPage() {
   const currentPath = routerState.location.pathname;
   const { toast } = useToast();
   const viewModel = useCreateReviewViewModel();
+  const { isMobile } = usePlatform();
 
   const navItems = [
     {
@@ -74,14 +77,14 @@ function CreateReviewPage() {
 
   return (
     <div className="flex min-h-screen flex-col">
-      <div className="flex-1 p-6 pb-20 overflow-y-auto">
+      <PageTransition className={`flex-1 p-6 pb-20 overflow-y-auto ${isMobile ? 'pt-[calc(env(safe-area-inset-top)+1.5rem)]' : ''}`}>
         <CreateReviewForm
           onSubmit={handleSubmit}
           onSearchBooks={viewModel.searchBooks}
           isLoading={viewModel.isLoading}
           error={viewModel.error}
         />
-      </div>
+      </PageTransition>
 
       <BottomNav items={navItems} onNavigate={handleNavigate} />
     </div>

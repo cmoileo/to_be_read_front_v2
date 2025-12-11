@@ -2,6 +2,8 @@ import { createFileRoute, redirect, useNavigate, useRouter } from "@tanstack/rea
 import { MobileStorage } from "../../services/mobile-storage.service";
 import { SingleReviewScreen } from "@repo/ui";
 import { useSingleReviewViewModel } from "../../viewmodels/use-single-review-viewmodel";
+import { usePlatform } from "../../hooks/use-platform";
+import { PageTransition } from "../../components/page-transition";
 
 export const Route = createFileRoute("/review/$reviewId")({
   beforeLoad: async () => {
@@ -18,6 +20,7 @@ function SingleReviewPage() {
   const router = useRouter();
   const { reviewId } = Route.useParams();
   const reviewIdNum = parseInt(reviewId, 10);
+  const { isMobile } = usePlatform();
 
   const {
     review,
@@ -46,21 +49,23 @@ function SingleReviewPage() {
   };
 
   return (
-    <SingleReviewScreen
-      review={review}
-      comments={comments}
-      isLoading={isLoading}
-      hasMoreComments={hasMoreComments}
-      isFetchingMoreComments={isFetchingMoreComments}
-      isCreatingComment={isCreatingComment}
-      onBack={handleBack}
-      onLikeReview={handleLikeReview}
-      onLikeComment={handleLikeComment}
-      onDeleteComment={handleDeleteComment}
-      onCreateComment={handleCreateComment}
-      onLoadMoreComments={handleLoadMoreComments}
-      onAuthorClick={handleAuthorClick}
-      onBookClick={handleBookClick}
-    />
+    <PageTransition className={isMobile ? 'pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]' : ''}>
+      <SingleReviewScreen
+        review={review}
+        comments={comments}
+        isLoading={isLoading}
+        hasMoreComments={hasMoreComments}
+        isFetchingMoreComments={isFetchingMoreComments}
+        isCreatingComment={isCreatingComment}
+        onBack={handleBack}
+        onLikeReview={handleLikeReview}
+        onLikeComment={handleLikeComment}
+        onDeleteComment={handleDeleteComment}
+        onCreateComment={handleCreateComment}
+        onLoadMoreComments={handleLoadMoreComments}
+        onAuthorClick={handleAuthorClick}
+        onBookClick={handleBookClick}
+      />
+    </PageTransition>
   );
 }

@@ -79,6 +79,38 @@
     text-wrap: balance;
   }
 
+  /* Safe area utilities pour iOS */
+  .safe-area-inset-top {
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+
+  .safe-area-inset-bottom {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  .safe-area-inset-left {
+    padding-left: env(safe-area-inset-left, 0px);
+  }
+
+  .safe-area-inset-right {
+    padding-right: env(safe-area-inset-right, 0px);
+  }
+
+  /* Touch-friendly utilities */
+  .touch-manipulation {
+    touch-action: manipulation;
+  }
+
+  .tap-highlight-none {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Smooth momentum scrolling pour iOS */
+  .scroll-momentum {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: contain;
+  }
+
   .animate-fade-in {
     animation: fade-in 0.3s ease-out;
   }
@@ -89,6 +121,14 @@
 
   .animate-scale-in {
     animation: scale-in 0.2s ease-out;
+  }
+
+  .animate-slide-in-right {
+    animation: slide-in-right 0.3s ease-out;
+  }
+
+  .animate-slide-out-left {
+    animation: slide-out-left 0.3s ease-out;
   }
 }
 
@@ -120,5 +160,27 @@
   to {
     opacity: 1;
     transform: scale(1);
+  }
+}
+
+@keyframes slide-in-right {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slide-out-left {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-20px);
   }
 }

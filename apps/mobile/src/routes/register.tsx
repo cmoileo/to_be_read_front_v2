@@ -2,6 +2,7 @@ import { createFileRoute, redirect } from "@tanstack/react-router";
 import { RegisterForm } from "@repo/ui";
 import { MobileStorage } from "../services/mobile-storage.service";
 import { useRegisterViewModel } from "../viewmodels/use-register-viewmodel";
+import { PageTransition } from "../components/page-transition";
 
 export const Route = createFileRoute("/register")({
   beforeLoad: async () => {
@@ -17,7 +18,7 @@ function RegisterPage() {
   const viewModel = useRegisterViewModel();
 
   return (
-    <div className="flex min-h-screen items-center justify-center p-6">
+    <PageTransition className="flex min-h-screen items-center justify-center p-6 safe-area-inset-top safe-area-inset-bottom">
       <RegisterForm
         onSubmit={viewModel.register}
         isLoading={viewModel.isLoading}
@@ -25,6 +26,6 @@ function RegisterPage() {
         isUsernameAvailable={viewModel.checkUsernameAvailability}
         onLoginClick={viewModel.navigateToLogin}
       />
-    </div>
+    </PageTransition>
   );
 }

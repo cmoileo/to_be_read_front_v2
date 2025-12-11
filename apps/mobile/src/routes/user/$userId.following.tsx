@@ -17,6 +17,8 @@ import {
   ArrowLeft,
 } from "@repo/ui";
 import { useFollowListViewModel } from "../../viewmodels/use-follow-list-viewmodel";
+import { usePlatform } from "../../hooks/use-platform";
+import { PageTransition } from "../../components/page-transition";
 
 interface FollowingSearchParams {
   userName?: string;
@@ -45,6 +47,7 @@ function FollowingPage() {
   const { t } = useTranslation();
   const routerState = useRouterState();
   const currentPath = routerState.location.pathname;
+  const { isMobile } = usePlatform();
 
   const userIdNumber = parseInt(userId, 10);
 
@@ -99,11 +102,11 @@ function FollowingPage() {
 
   return (
     <div className="flex min-h-screen flex-col">
-      <div className="flex-1 pb-20">
-        <div className="p-4 border-b flex items-center gap-3">
+      <PageTransition className="flex-1 pb-20">
+        <div className={`p-4 border-b flex items-center gap-3 ${isMobile ? 'pt-[calc(env(safe-area-inset-top)+1rem)]' : ''}`}>
           <button
             onClick={handleBack}
-            className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
+            className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors haptic-tap"
           >
             <ArrowLeft className="w-5 h-5" />
           </button>
@@ -123,7 +126,7 @@ function FollowingPage() {
           onFollow={handleFollow}
           onUnfollow={handleUnfollow}
         />
-      </div>
+      </PageTransition>
 
       <BottomNav items={navItems} onNavigate={handleNavigate} />
     </div>

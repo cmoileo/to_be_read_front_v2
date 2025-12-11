@@ -19,6 +19,8 @@ interface TopNavProps {
   }>;
   isVisitor?: boolean;
   unreadNotificationsCount?: number;
+  /** Activer le padding safe area pour iOS (Capacitor) */
+  useSafeArea?: boolean;
 }
 
 export function TopNav({
@@ -29,6 +31,7 @@ export function TopNav({
   Link,
   isVisitor = false,
   unreadNotificationsCount = 0,
+  useSafeArea = false,
 }: TopNavProps) {
   const { t } = useTranslation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -58,7 +61,10 @@ export function TopNav({
 
   return (
     <>
-      <nav className="sticky top-0 z-50 w-full border-b border-border/50 bg-background/95 backdrop-blur-lg supports-[backdrop-filter]:bg-background/80 shadow-soft">
+      <nav className={cn(
+        "sticky top-0 z-50 w-full border-b border-border/50 bg-background/95 backdrop-blur-lg supports-[backdrop-filter]:bg-background/80 shadow-soft",
+        useSafeArea && "safe-area-inset-top"
+      )}>
         <div className="container flex h-16 items-center justify-between px-4">
           <div className="flex items-center gap-6 md:gap-10">
             <Link href="/" className="flex items-center space-x-2 group">

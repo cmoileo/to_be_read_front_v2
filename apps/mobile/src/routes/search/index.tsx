@@ -29,6 +29,8 @@ import {
   MessageCircle,
 } from "@repo/ui";
 import { useSearchViewModel } from "../../viewmodels/use-search-viewmodel";
+import { usePlatform } from "../../hooks/use-platform";
+import { PageTransition } from "../../components/page-transition";
 
 type SearchTab = "users" | "books" | "reviews";
 
@@ -55,6 +57,7 @@ function SearchPage() {
   const routerState = useRouterState();
   const currentPath = routerState.location.pathname;
   const { q: initialQuery, tab: initialTab } = useSearch({ from: "/search/" });
+  const { isMobile } = usePlatform();
 
   const [query, setQuery] = useState(initialQuery);
   const [currentQuery, setCurrentQuery] = useState(initialQuery);
@@ -189,7 +192,7 @@ function SearchPage() {
 
   return (
     <div className="flex min-h-screen flex-col">
-      <div className="flex-1 p-4 pb-20">
+      <PageTransition className={`flex-1 p-4 pb-20 ${isMobile ? 'pt-[calc(env(safe-area-inset-top)+1rem)]' : ''}`}>
         <header className="mb-4">
           <h1 className="text-2xl font-bold mb-4">{t("search.title")}</h1>
           <Input
@@ -313,7 +316,7 @@ function SearchPage() {
             )}
           </TabsContent>
         </Tabs>
-      </div>
+      </PageTransition>
 
       <BottomNav items={navItems} onNavigate={handleNavigate} />
     </div>

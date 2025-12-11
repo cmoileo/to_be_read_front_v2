@@ -1,6 +1,8 @@
 import { createFileRoute, useNavigate, useRouter } from "@tanstack/react-router";
 import { SingleBookScreen } from "@repo/ui";
 import { useSingleBookViewModel } from "../../viewmodels/use-single-book-viewmodel";
+import { usePlatform } from "../../hooks/use-platform";
+import { PageTransition } from "../../components/page-transition";
 
 export const Route = createFileRoute("/book/$bookId")({
   component: SingleBookPage,
@@ -10,6 +12,7 @@ function SingleBookPage() {
   const { bookId } = Route.useParams();
   const navigate = useNavigate();
   const router = useRouter();
+  const { isMobile } = usePlatform();
 
   const {
     book,
@@ -37,20 +40,22 @@ function SingleBookPage() {
   };
 
   return (
-    <SingleBookScreen
-      book={book}
-      reviews={reviews}
-      totalReviews={totalReviews}
-      isLoading={isLoading}
-      hasMoreReviews={hasMoreReviews}
-      isFetchingMoreReviews={isFetchingMoreReviews}
-      isInReadList={isInReadList}
-      isAddingToList={isAddingToList}
-      onBack={handleBack}
-      onLoadMoreReviews={handleLoadMoreReviews}
-      onReviewClick={handleReviewClick}
-      onAuthorClick={handleAuthorClick}
-      onToggleReadList={handleToggleReadList}
-    />
+    <PageTransition className={isMobile ? 'pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]' : ''}>
+      <SingleBookScreen
+        book={book}
+        reviews={reviews}
+        totalReviews={totalReviews}
+        isLoading={isLoading}
+        hasMoreReviews={hasMoreReviews}
+        isFetchingMoreReviews={isFetchingMoreReviews}
+        isInReadList={isInReadList}
+        isAddingToList={isAddingToList}
+        onBack={handleBack}
+        onLoadMoreReviews={handleLoadMoreReviews}
+        onReviewClick={handleReviewClick}
+        onAuthorClick={handleAuthorClick}
+        onToggleReadList={handleToggleReadList}
+      />
+    </PageTransition>
   );
 }
