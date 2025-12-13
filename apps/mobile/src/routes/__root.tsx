@@ -5,18 +5,33 @@ import { I18nProvider } from "../providers/i18n-provider";
 import { NotificationProvider } from "../providers/notification-provider";
 import { Toaster } from "@repo/ui";
 import { useSwipeBack } from "../hooks/use-swipe-back";
+import { useSplashScreen } from "../hooks/use-splash-screen";
+import { OfflineBanner } from "../components/offline-banner";
+import { BottomSheetProvider } from "../components/bottom-sheet";
+import { useEffect } from "react";
 
 function RootComponent() {
-  // Activer le swipe back gesture sur mobile
   useSwipeBack();
+  const { setReady } = useSplashScreen();
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setReady();
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [setReady]);
 
   return (
     <AuthProvider>
       <I18nProvider>
         <NotificationProvider>
-          <Outlet />
-          <Toaster />
-          {import.meta.env.DEV && <TanStackRouterDevtools />}
+          <BottomSheetProvider>
+            <OfflineBanner />
+            <Outlet />
+            <Toaster />
+            {import.meta.env.DEV && <TanStackRouterDevtools />}
+          </BottomSheetProvider>
         </NotificationProvider>
       </I18nProvider>
     </AuthProvider>

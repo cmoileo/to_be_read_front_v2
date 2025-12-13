@@ -313,5 +313,15 @@
         "reviewPublishedDescription": "Votre critique a été publiée avec succès",
         "error": "Erreur",
         "success": "Succès"
+    },
+    "network": {
+        "offline": "Vous êtes hors ligne",
+        "errorTitle": "Erreur de connexion",
+        "errorDescription": "Impossible de se connecter au serveur. Veuillez vérifier votre connexion internet et réessayer.",
+        "retry": "Réessayer"
+    },
+    "pullToRefresh": {
+        "release": "Relâchez pour actualiser",
+        "pull": "Tirez pour actualiser"
     }
 }

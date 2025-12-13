@@ -313,5 +313,15 @@
         "reviewPublishedDescription": "Your review has been published successfully",
         "error": "Error",
         "success": "Success"
+    },
+    "network": {
+        "offline": "You are offline",
+        "errorTitle": "Connection error",
+        "errorDescription": "Unable to connect to the server. Please check your internet connection and try again.",
+        "retry": "Try again"
+    },
+    "pullToRefresh": {
+        "release": "Release to refresh",
+        "pull": "Pull to refresh"
     }
 }
