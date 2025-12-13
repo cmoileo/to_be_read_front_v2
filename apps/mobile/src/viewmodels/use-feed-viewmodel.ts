@@ -1,6 +1,7 @@
 import { useInfiniteQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { MobileFeedService } from "../services/mobile-feed.service";
 import { queryKeys, toggleReviewLike, rollbackLikeState } from "@repo/stores";
+import { HapticsService } from "../services/native";
 
 export const useFeedViewModel = () => {
   const queryClient = useQueryClient();
@@ -29,10 +30,15 @@ export const useFeedViewModel = () => {
     mutationFn: (reviewId: number) => MobileFeedService.likeReview(reviewId),
     onMutate: async (reviewId: number) => {
       await queryClient.cancelQueries({ queryKey: queryKeys.feed.list() });
+      HapticsService.lightImpact();
       toggleReviewLike(queryClient, reviewId);
       return { reviewId };
     },
+    onSuccess: () => {
+      HapticsService.success();
+    },
     onError: (_err, _reviewId, context) => {
+      HapticsService.error();
       if (context?.reviewId) {
         rollbackLikeState(queryClient, context.reviewId);
       }

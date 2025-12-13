@@ -8,6 +8,7 @@ import {
   rollbackFollowState,
   initializeFollowState,
 } from "@repo/stores";
+import { HapticsService } from "../services/native";
 
 export const useUserProfileViewModel = (userId: number) => {
   const queryClient = useQueryClient();
@@ -54,11 +55,16 @@ export const useUserProfileViewModel = (userId: number) => {
     mutationFn: () => MobileUserService.followUser(userId),
     onMutate: async () => {
       await queryClient.cancelQueries({ queryKey: queryKeys.users.detail(userId) });
+      HapticsService.lightImpact();
       const isPrivate = user?.isPrivate ?? false;
       const { previousState } = followUserInCache(queryClient, userId, isPrivate);
       return { previousState };
     },
+    onSuccess: () => {
+      HapticsService.success();
+    },
     onError: (_err, _vars, context) => {
+      HapticsService.error();
       if (context?.previousState) {
         rollbackFollowState(queryClient, userId, context.previousState);
       }
@@ -69,10 +75,15 @@ export const useUserProfileViewModel = (userId: number) => {
     mutationFn: () => MobileUserService.unfollowUser(userId),
     onMutate: async () => {
       await queryClient.cancelQueries({ queryKey: queryKeys.users.detail(userId) });
+      HapticsService.mediumImpact();
       const { previousState } = unfollowUserInCache(queryClient, userId);
       return { previousState };
     },
+    onSuccess: () => {
+      HapticsService.success();
+    },
     onError: (_err, _vars, context) => {
+      HapticsService.error();
       if (context?.previousState) {
         rollbackFollowState(queryClient, userId, context.previousState);
       }

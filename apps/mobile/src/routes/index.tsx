@@ -9,6 +9,10 @@ import { useSSENotifications } from "../hooks/use-sse-notifications";
 import { useConnectedUser } from "@repo/stores";
 import { usePlatform } from "../hooks/use-platform";
 import { PageTransition } from "../components/page-transition";
+import { PullToRefresh } from "../components/pull-to-refresh";
+import { FeedSkeleton } from "../components/skeletons";
+import { useNetworkStatus } from "../hooks/use-network-status";
+import { NetworkErrorFallback } from "../components/network-error-fallback";
 
 export const Route = createFileRoute("/")({
   beforeLoad: async () => {
@@ -91,6 +95,26 @@ function Index() {
     navigate({ to: "/search" } as any);
   };
 
+  const { isOnline } = useNetworkStatus();
+
+  const handleRefreshAsync = async () => {
+    await handleRefresh();
+  };
+
+  if (!isOnline && reviews.length === 0) {
+    return (
+      <div className="flex min-h-screen flex-col">
+        <header 
+          className={`sticky top-0 z-40 bg-background/95 backdrop-blur-lg border-b border-border/50 px-4 py-3 flex items-center justify-between ${isMobile ? 'pt-[calc(env(safe-area-inset-top)+0.75rem)]' : ''}`}
+        >
+          <h1 className="text-xl font-bold">Inkgora</h1>
+        </header>
+        <NetworkErrorFallback onRetry={handleRefresh} />
+        <BottomNav items={navItems} onNavigate={handleNavigate} />
+      </div>
+    );
+  }
+
   return (
     <div className="flex min-h-screen flex-col">
       <header 
@@ -109,22 +133,29 @@ function Index() {
           )}
         </button>
       </header>
-      <PageTransition className="flex-1 p-4 pb-20">
-        <FeedScreen
-          reviews={reviews}
-          isLoading={isLoading}
-          hasMore={hasMore}
-          isFetchingMore={isFetchingMore}
-          isRefreshing={isRefreshing}
-          onLoadMore={handleLoadMore}
-          onLike={handleLike}
-          onAuthorClick={handleAuthorClick}
-          onReviewClick={handleReviewClick}
-          onRefresh={handleRefresh}
-          onCreateReview={handleCreateReview}
-          onSearch={handleSearch}
-        />
-      </PageTransition>
+
+      {isLoading && reviews.length === 0 ? (
+        <FeedSkeleton />
+      ) : (
+        <PullToRefresh onRefresh={handleRefreshAsync} className="flex-1 pb-20">
+          <PageTransition className="p-4">
+            <FeedScreen
+              reviews={reviews}
+              isLoading={false}
+              hasMore={hasMore}
+              isFetchingMore={isFetchingMore}
+              isRefreshing={isRefreshing}
+              onLoadMore={handleLoadMore}
+              onLike={handleLike}
+              onAuthorClick={handleAuthorClick}
+              onReviewClick={handleReviewClick}
+              onRefresh={handleRefresh}
+              onCreateReview={handleCreateReview}
+              onSearch={handleSearch}
+            />
+          </PageTransition>
+        </PullToRefresh>
+      )}
 
       <BottomNav items={navItems} onNavigate={handleNavigate} />
     </div>

@@ -5,6 +5,7 @@ import { BottomNav, useTranslation, ProfileScreen, Home, Search, PenSquare, User
 import { useProfileViewModel } from "../viewmodels/use-profile-viewmodel";
 import { usePlatform } from "../hooks/use-platform";
 import { PageTransition } from "../components/page-transition";
+import { ProfileHeaderSkeleton } from "../components/skeletons";
 
 export const Route = createFileRoute("/profile")({
   beforeLoad: async () => {
@@ -97,27 +98,31 @@ function ProfilePage() {
   return (
     <div className="flex min-h-screen flex-col">
       <div className={isMobile ? "pt-[env(safe-area-inset-top)]" : ""} />
-      <PageTransition className="flex-1 pb-20">
-        <ProfileScreen
-          user={user}
-          reviews={reviews}
-          isOwnProfile={true}
-          isLoading={isLoading}
-          hasMore={hasMore}
-          isEditDialogOpen={isEditDialogOpen}
-          isUpdating={isUpdating}
-          onEdit={() => setIsEditDialogOpen(true)}
-          onCloseEditDialog={() => setIsEditDialogOpen(false)}
-          onUpdateProfile={handleUpdateProfile}
-          onLoadMore={handleLoadMore}
-          onReviewClick={handleReviewClick}
-          onDeleteReview={handleDeleteReview}
-          onFollowersClick={handleFollowersClick}
-          onFollowingClick={handleFollowingClick}
-          onReadingListClick={handleReadingListClick}
-          onSettingsClick={handleSettingsClick}
-        />
-      </PageTransition>
+      {isLoading && !user ? (
+        <ProfileHeaderSkeleton />
+      ) : (
+        <PageTransition className="flex-1 pb-20">
+          <ProfileScreen
+            user={user}
+            reviews={reviews}
+            isOwnProfile={true}
+            isLoading={false}
+            hasMore={hasMore}
+            isEditDialogOpen={isEditDialogOpen}
+            isUpdating={isUpdating}
+            onEdit={() => setIsEditDialogOpen(true)}
+            onCloseEditDialog={() => setIsEditDialogOpen(false)}
+            onUpdateProfile={handleUpdateProfile}
+            onLoadMore={handleLoadMore}
+            onReviewClick={handleReviewClick}
+            onDeleteReview={handleDeleteReview}
+            onFollowersClick={handleFollowersClick}
+            onFollowingClick={handleFollowingClick}
+            onReadingListClick={handleReadingListClick}
+            onSettingsClick={handleSettingsClick}
+          />
+        </PageTransition>
+      )}
 
       <BottomNav items={navItems} onNavigate={handleNavigate} />
     </div>

@@ -1,6 +1,7 @@
 import { useQuery, useInfiniteQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { MobileReviewService, SingleReview, SingleComment } from "../services/mobile-review.service";
+import { MobileReviewService, type SingleComment } from "../services/mobile-review.service";
 import { queryKeys, toggleReviewLike, rollbackLikeState, initializeLikeState } from "@repo/stores";
+import { HapticsService } from "../services/native";
 
 export const useSingleReviewViewModel = (reviewId: number) => {
   const queryClient = useQueryClient();
@@ -42,10 +43,15 @@ export const useSingleReviewViewModel = (reviewId: number) => {
     mutationFn: () => MobileReviewService.likeReview(reviewId),
     onMutate: async () => {
       await queryClient.cancelQueries({ queryKey: queryKeys.reviews.detail(reviewId) });
+      HapticsService.lightImpact();
       toggleReviewLike(queryClient, reviewId);
       return { reviewId };
     },
+    onSuccess: () => {
+      HapticsService.success();
+    },
     onError: (_err, _vars, context) => {
+      HapticsService.error();
       if (context?.reviewId) {
         rollbackLikeState(queryClient, context.reviewId);
       }
