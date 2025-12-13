@@ -10,6 +10,8 @@ import {
   updateFollowersCount,
 } from "@repo/stores";
 
+export const notificationKeys = queryKeys.notifications;
+
 const API_URL = import.meta.env.VITE_API_URL;
 
 const getAuthHeaders = async (): Promise<Record<string, string>> => {
