@@ -2,10 +2,12 @@ import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
+import { useToast } from "@repo/ui";
 import {
   logoutAction,
   deleteAccountAction,
   updateNotificationSettingsAction,
+  updatePrivacySettingsAction,
 } from "@/app/_auth/actions";
 import { updateProfileAction } from "@/app/_profile/actions";
 import { useTheme } from "@/providers/theme-provider";
@@ -14,12 +16,15 @@ import { useConnectedUser, connectedUserKeys } from "@repo/stores";
 export function useSettingsViewModel() {
   const router = useRouter();
   const queryClient = useQueryClient();
-  const { i18n } = useTranslation();
+  const { i18n, t } = useTranslation();
   const { theme, setTheme } = useTheme();
   const { user, clearUser, updateUser } = useConnectedUser();
+  const { toast } = useToast();
   const [currentLocale, setCurrentLocale] = useState(i18n.language || "en");
+  const [showPrivacyDialog, setShowPrivacyDialog] = useState(false);
 
   const notificationsEnabled = user?.pushNotificationsEnabled ?? true;
+  const isPrivate = user?.isPrivate ?? false;
 
   const logoutMutation = useMutation({
     mutationFn: async () => {
@@ -79,6 +84,28 @@ export function useSettingsViewModel() {
     },
   });
 
+  const privacySettingsMutation = useMutation({
+    mutationFn: async (isPrivate: boolean) => {
+      return updatePrivacySettingsAction(isPrivate);
+    },
+    onSuccess: (data) => {
+      updateUser({ isPrivate: data.isPrivate });
+      queryClient.invalidateQueries({ queryKey: connectedUserKeys.all });
+      setShowPrivacyDialog(false);
+      toast({
+        title: t("common.save"),
+        description: data.message || t("settings.privacy.updated"),
+      });
+    },
+    onError: () => {
+      toast({
+        title: t("common.error"),
+        description: t("common.error"),
+        variant: "destructive",
+      });
+    },
+  });
+
   const handleLogout = () => {
     logoutMutation.mutate();
   };
@@ -99,16 +126,30 @@ export function useSettingsViewModel() {
     notificationSettingsMutation.mutate(enabled);
   };
 
+  const handleOpenPrivacySettings = () => {
+    setShowPrivacyDialog(true);
+  };
+
+  const handleSavePrivacySettings = (isPrivate: boolean) => {
+    privacySettingsMutation.mutate(isPrivate);
+  };
+
   return {
     currentLocale,
     currentTheme: theme,
     notificationsEnabled,
+    isPrivate,
+    showPrivacyDialog,
     isLoggingOut: logoutMutation.isPending,
     isDeletingAccount: deleteAccountMutation.isPending,
+    isUpdatingPrivacy: privacySettingsMutation.isPending,
     handleLogout,
     handleDeleteAccount,
     handleChangeLanguage,
     handleChangeTheme,
     handleToggleNotifications,
+    handleOpenPrivacySettings,
+    handleSavePrivacySettings,
+    setShowPrivacyDialog,
   };
 }

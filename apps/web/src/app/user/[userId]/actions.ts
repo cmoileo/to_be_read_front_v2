@@ -35,3 +35,14 @@ export async function getUserReviewsAction(userId: number, page: number) {
 
   return WebUserService.getUserReviews(userId, page, accessToken);
 }
+
+export async function cancelFollowRequestAction(userId: number) {
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get("tbr_access_token")?.value;
+
+  if (!accessToken) {
+    throw new Error("Non authentifié");
+  }
+
+  return WebUserService.cancelFollowRequest(userId, accessToken);
+}

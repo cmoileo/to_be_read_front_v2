@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { LogOut, Trash2, Globe, Bell, ChevronRight, AlertTriangle, ArrowLeft, Moon, Sun, Monitor } from "lucide-react";
+import { LogOut, Trash2, Globe, Bell, ChevronRight, AlertTriangle, ArrowLeft, Moon, Sun, Monitor, Lock } from "lucide-react";
 import { Button } from "../components/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/card";
 import {
@@ -29,6 +29,7 @@ interface SettingsSectionProps {
   currentLocale?: string;
   currentTheme?: "light" | "dark" | "system";
   notificationsEnabled?: boolean;
+  isPrivate?: boolean;
   isLoggingOut?: boolean;
   isDeletingAccount?: boolean;
   onLogout?: () => void;
@@ -36,6 +37,7 @@ interface SettingsSectionProps {
   onChangeLanguage?: (locale: string) => void;
   onChangeTheme?: (theme: "light" | "dark" | "system") => void;
   onToggleNotifications?: (enabled: boolean) => void;
+  onOpenPrivacySettings?: () => void;
   onBack?: () => void;
 }
 
@@ -43,6 +45,7 @@ export const SettingsSection = ({
   currentLocale = "en",
   currentTheme = "system",
   notificationsEnabled = true,
+  isPrivate = false,
   isLoggingOut = false,
   isDeletingAccount = false,
   onLogout,
@@ -50,6 +53,7 @@ export const SettingsSection = ({
   onChangeLanguage,
   onChangeTheme,
   onToggleNotifications,
+  onOpenPrivacySettings,
   onBack,
 }: SettingsSectionProps) => {
   const { t } = useTranslation();
@@ -155,6 +159,26 @@ export const SettingsSection = ({
               onCheckedChange={(checked) => onToggleNotifications?.(checked)}
             />
           </div>
+
+          <Separator />
+
+          <button
+            onClick={onOpenPrivacySettings}
+            className="w-full flex items-center justify-between py-3 hover:bg-muted/50 rounded-lg transition-colors px-2 -mx-2"
+          >
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-full bg-muted">
+                <Lock className="h-5 w-5 text-muted-foreground" />
+              </div>
+              <div className="text-left">
+                <p className="font-medium">{t("settings.privacy.title")}</p>
+                <p className="text-sm text-muted-foreground">
+                  {isPrivate ? t("settings.privacy.privateAccount") : t("settings.privacy.description")}
+                </p>
+              </div>
+            </div>
+            <ChevronRight className="h-5 w-5 text-muted-foreground" />
+          </button>
 
           <Separator />
 

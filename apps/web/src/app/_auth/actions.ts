@@ -81,3 +81,9 @@ export async function updateNotificationSettingsAction(pushNotificationsEnabled:
   if (!accessToken) throw new Error("Not authenticated");
   return WebAuthService.updateNotificationSettings(accessToken, pushNotificationsEnabled);
 }
+
+export async function updatePrivacySettingsAction(isPrivate: boolean) {
+  const accessToken = await WebStorageService.getAccessToken();
+  if (!accessToken) throw new Error("Not authenticated");
+  return WebAuthService.updatePrivacySettings(accessToken, isPrivate);
+}

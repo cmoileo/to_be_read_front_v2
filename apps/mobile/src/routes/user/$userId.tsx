@@ -64,6 +64,7 @@ function UserProfilePage() {
     isFetchingMore,
     handleFollow,
     handleUnfollow,
+    handleCancelRequest,
     handleLoadMore,
   } = useUserProfileViewModel(userIdNumber);
 
@@ -143,6 +144,7 @@ function UserProfilePage() {
             isFetchingMore={isFetchingMore}
             onFollow={handleFollow}
             onUnfollow={handleUnfollow}
+            onCancelRequest={handleCancelRequest}
             onLoadMore={handleLoadMore}
             onReviewClick={handleReviewClick}
             onFollowersClick={handleFollowersClick}

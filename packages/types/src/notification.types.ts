@@ -1,5 +1,6 @@
 export type NotificationType =
   | "new_follower"
+  | "follow_request"
   | "review_like"
   | "comment_like"
   | "new_comment"

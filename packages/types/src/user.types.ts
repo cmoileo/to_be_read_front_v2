@@ -8,6 +8,8 @@ export interface User {
   reviewsCount: number;
   isFollowing: boolean;
   isMe: boolean;
+  isPrivate?: boolean;
+  followRequestStatus?: "none" | "pending" | "accepted" | "rejected";
   createdAt: string;
   updatedAt: string;
   email?: string;
@@ -21,6 +23,7 @@ export interface UserDetailed extends User {
   locale: "fr" | "en";
   theme: "light" | "dark" | "system";
   pushNotificationsEnabled: boolean;
+  isPrivate: boolean;
 }
 
 export interface UserAuthor {

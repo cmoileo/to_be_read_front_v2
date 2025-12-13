@@ -32,6 +32,8 @@ function NotificationsPage() {
     handleMarkAsRead,
     handleMarkAllAsRead,
     handleDelete,
+    handleAcceptFollowRequest,
+    handleRejectFollowRequest,
   } = useNotificationsViewModel();
 
   const handleBack = () => {
@@ -70,6 +72,8 @@ function NotificationsPage() {
             onMarkAllAsRead={handleMarkAllAsRead}
             onDelete={handleDelete}
             onNotificationClick={handleNotificationClick}
+            onAcceptFollowRequest={handleAcceptFollowRequest}
+            onRejectFollowRequest={handleRejectFollowRequest}
           />
         </div>
       </PageTransition>

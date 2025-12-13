@@ -1,5 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { Button } from "../components/button";
+import { Avatar, AvatarImage, AvatarFallback } from "../components/avatar";
 import {
   Loader2,
   Bell,
@@ -10,6 +11,8 @@ import {
   Trash2,
   Check,
   CheckCheck,
+  X,
+  UserCheck,
 } from "lucide-react";
 import type { NotificationItem, NotificationType } from "@repo/types";
 import { cn } from "../lib/utils";
@@ -25,12 +28,16 @@ interface NotificationsScreenProps {
   onMarkAllAsRead: () => void;
   onDelete: (id: number) => void;
   onNotificationClick?: (notification: NotificationItem) => void;
+  onAcceptFollowRequest?: (requestId: number) => void;
+  onRejectFollowRequest?: (requestId: number) => void;
 }
 
 function getNotificationIcon(type: NotificationType) {
   switch (type) {
     case "new_follower":
       return <UserPlus className="w-5 h-5 text-blue-500" />;
+    case "follow_request":
+      return <UserCheck className="w-5 h-5 text-purple-500" />;
     case "review_like":
     case "comment_like":
       return <Heart className="w-5 h-5 text-red-500" />;
@@ -66,12 +73,16 @@ function NotificationItemCard({
   onMarkAsRead,
   onDelete,
   onClick,
+  onAcceptFollowRequest,
+  onRejectFollowRequest,
   t,
 }: {
   notification: NotificationItem;
   onMarkAsRead: (id: number) => void;
   onDelete: (id: number) => void;
   onClick?: (notification: NotificationItem) => void;
+  onAcceptFollowRequest?: (requestId: number) => void;
+  onRejectFollowRequest?: (requestId: number) => void;
   t: (key: string, options?: Record<string, unknown>) => string;
 }) {
   const handleClick = () => {
@@ -81,25 +92,31 @@ function NotificationItemCard({
     onClick?.(notification);
   };
 
+  const getInitials = (name?: string) => {
+    if (!name) return "?";
+    return name.substring(0, 2).toUpperCase();
+  };
+
+  const isFollowRequest = notification.type === "follow_request";
+  const requestId = notification.data?.requestId ? Number(notification.data.requestId) : undefined;
+
   return (
     <div
       className={cn(
-        "flex items-start gap-3 p-4 rounded-xl border transition-colors cursor-pointer",
+        "flex items-start gap-3 p-4 rounded-xl border transition-colors",
+        !isFollowRequest && "cursor-pointer",
         notification.isRead ? "bg-background border-border" : "bg-primary/5 border-primary/20"
       )}
-      onClick={handleClick}
+      onClick={!isFollowRequest ? handleClick : undefined}
     >
-      <div className="flex-shrink-0 w-10 h-10 rounded-full bg-muted flex items-center justify-center">
-        {notification.actor?.avatarUrl ? (
-          <img
-            src={notification.actor.avatarUrl}
-            alt={notification.actor.userName}
-            className="w-10 h-10 rounded-full object-cover"
-          />
-        ) : (
-          getNotificationIcon(notification.type)
+      <Avatar className="h-10 w-10 flex-shrink-0">
+        {notification.actor?.avatarUrl && (
+          <AvatarImage src={notification.actor.avatarUrl} alt={notification.actor.userName} />
         )}
-      </div>
+        <AvatarFallback className="from-primary/30 to-accent/30">
+          {notification.actor?.userName ? getInitials(notification.actor.userName) : getNotificationIcon(notification.type)}
+        </AvatarFallback>
+      </Avatar>
 
       <div className="flex-1 min-w-0">
         <p
@@ -113,6 +130,34 @@ function NotificationItemCard({
         <p className="text-xs text-muted-foreground mt-1">
           {formatTimeAgo(notification.createdAt, t)}
         </p>
+
+        {isFollowRequest && requestId && onAcceptFollowRequest && onRejectFollowRequest && (
+          <div className="flex gap-2 mt-3">
+            <Button
+              size="sm"
+              className="rounded-full"
+              onClick={(e) => {
+                e.stopPropagation();
+                onAcceptFollowRequest(requestId);
+              }}
+            >
+              <Check className="w-4 h-4 mr-1" />
+              {t("notifications.accept")}
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              className="rounded-full"
+              onClick={(e) => {
+                e.stopPropagation();
+                onRejectFollowRequest(requestId);
+              }}
+            >
+              <X className="w-4 h-4 mr-1" />
+              {t("notifications.reject")}
+            </Button>
+          </div>
+        )}
       </div>
 
       <div className="flex items-center gap-1">
@@ -156,6 +201,8 @@ export function NotificationsScreen({
   onMarkAllAsRead,
   onDelete,
   onNotificationClick,
+  onAcceptFollowRequest,
+  onRejectFollowRequest,
 }: NotificationsScreenProps) {
   const { t } = useTranslation();
 
@@ -203,6 +250,8 @@ export function NotificationsScreen({
             onMarkAsRead={onMarkAsRead}
             onDelete={onDelete}
             onClick={onNotificationClick}
+            onAcceptFollowRequest={onAcceptFollowRequest}
+            onRejectFollowRequest={onRejectFollowRequest}
             t={t}
           />
         ))}

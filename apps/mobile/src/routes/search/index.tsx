@@ -45,7 +45,7 @@ export const Route = createFileRoute("/search/")({
   validateSearch: (search: Record<string, unknown>) => {
     return {
       q: (search.q as string) || "",
-      tab: (search.tab as SearchTab) || "users",
+      tab: (search.tab as SearchTab) || "books",
     };
   },
 });
@@ -206,13 +206,13 @@ function SearchPage() {
 
         <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
           <TabsList className="w-full grid grid-cols-3 mb-4">
-            <TabsTrigger value="users" className="flex items-center gap-1.5 text-xs sm:text-sm">
-              <Users className="w-4 h-4" />
-              <span>{t("search.users")}</span>
-            </TabsTrigger>
             <TabsTrigger value="books" className="flex items-center gap-1.5 text-xs sm:text-sm">
               <BookOpen className="w-4 h-4" />
               <span>{t("search.books")}</span>
+            </TabsTrigger>
+            <TabsTrigger value="users" className="flex items-center gap-1.5 text-xs sm:text-sm">
+              <Users className="w-4 h-4" />
+              <span>{t("search.users")}</span>
             </TabsTrigger>
             <TabsTrigger value="reviews" className="flex items-center gap-1.5 text-xs sm:text-sm">
               <MessageCircle className="w-4 h-4" />

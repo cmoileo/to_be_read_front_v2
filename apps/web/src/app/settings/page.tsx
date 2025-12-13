@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { SettingsSection } from "@repo/ui";
+import { SettingsSection, PrivacySettingsDialog } from "@repo/ui";
 import { useSettingsViewModel } from "@/viewmodels/use-settings-viewmodel";
 
 export default function SettingsPage() {
@@ -10,13 +10,19 @@ export default function SettingsPage() {
     currentLocale,
     currentTheme,
     notificationsEnabled,
+    isPrivate,
+    showPrivacyDialog,
     isLoggingOut,
     isDeletingAccount,
+    isUpdatingPrivacy,
     handleLogout,
     handleDeleteAccount,
     handleChangeLanguage,
     handleChangeTheme,
     handleToggleNotifications,
+    handleOpenPrivacySettings,
+    handleSavePrivacySettings,
+    setShowPrivacyDialog,
   } = useSettingsViewModel();
 
   return (
@@ -25,6 +31,7 @@ export default function SettingsPage() {
         currentLocale={currentLocale}
         currentTheme={currentTheme}
         notificationsEnabled={notificationsEnabled}
+        isPrivate={isPrivate}
         isLoggingOut={isLoggingOut}
         isDeletingAccount={isDeletingAccount}
         onLogout={handleLogout}
@@ -32,7 +39,16 @@ export default function SettingsPage() {
         onChangeLanguage={handleChangeLanguage}
         onChangeTheme={handleChangeTheme}
         onToggleNotifications={handleToggleNotifications}
+        onOpenPrivacySettings={handleOpenPrivacySettings}
         onBack={() => router.back()}
+      />
+
+      <PrivacySettingsDialog
+        open={showPrivacyDialog}
+        onOpenChange={setShowPrivacyDialog}
+        currentIsPrivate={isPrivate}
+        onSave={handleSavePrivacySettings}
+        isLoading={isUpdatingPrivacy}
       />
     </div>
   );

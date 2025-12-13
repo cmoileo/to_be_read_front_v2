@@ -26,6 +26,8 @@ interface User {
   followersCount: number;
   followingCount: number;
   isFollowing: boolean;
+  isPrivate?: boolean;
+  followRequestStatus?: "none" | "pending" | "accepted" | "rejected";
 }
 
 interface Review {
@@ -64,6 +66,7 @@ interface ProfileScreenProps {
   onDeleteReview?: (reviewId: number) => void;
   onFollow?: () => void;
   onUnfollow?: () => void;
+  onCancelRequest?: () => void;
   onBack?: () => void;
   onFollowersClick?: () => void;
   onFollowingClick?: () => void;
@@ -90,6 +93,7 @@ export const ProfileScreen = ({
   onDeleteReview,
   onFollow,
   onUnfollow,
+  onCancelRequest,
   onBack,
   onFollowersClick,
   onFollowingClick,
@@ -124,7 +128,7 @@ export const ProfileScreen = ({
 
   return (
     <>
-      <div className="container mx-auto px-4 py-6 space-y-6 max-w-4xl">
+      <div className="container mx-auto py-6 space-y-6 max-w-4xl">
         {showBackButton && onBack && (
           <Button variant="ghost" size="sm" onClick={onBack} className="-ml-2 mb-2">
             <ArrowLeft className="h-4 w-4 mr-2" />
@@ -139,6 +143,7 @@ export const ProfileScreen = ({
           onEdit={onEdit}
           onFollow={onFollow}
           onUnfollow={onUnfollow}
+          onCancelRequest={onCancelRequest}
           onFollowersClick={onFollowersClick}
           onFollowingClick={onFollowingClick}
           onReadingListClick={onReadingListClick}

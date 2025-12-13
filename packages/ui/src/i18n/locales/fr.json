@@ -118,6 +118,8 @@
         "editProfile": "Modifier le profil",
         "follow": "Suivre",
         "unfollow": "Ne plus suivre",
+        "followRequest": "Demander à suivre",
+        "requestPending": "Demande envoyée",
         "reviews": "Critiques",
         "followers": "Abonnés",
         "following": "Abonnements",
@@ -242,7 +244,9 @@
         "justNow": "À l'instant",
         "minutesAgo": "Il y a {{count}} min",
         "hoursAgo": "Il y a {{count}}h",
-        "daysAgo": "Il y a {{count}}j"
+        "daysAgo": "Il y a {{count}}j",
+        "accept": "Accepter",
+        "reject": "Refuser"
     },
     "settings": {
         "title": "Paramètres",
@@ -255,6 +259,17 @@
         "themeDark": "Sombre",
         "notifications": "Notifications push",
         "notificationsDescription": "Recevoir les notifications push",
+        "privacy": {
+            "title": "Paramètres de confidentialité",
+            "description": "Gérez la visibilité de votre profil et de vos critiques",
+            "privateAccount": "Compte privé",
+            "privateAccountDescription": "Seuls vos abonnés peuvent voir vos critiques et votre profil complet",
+            "whatIsPrivate": "Qu'est-ce qu'un compte privé ?",
+            "privateExplanation1": "Votre profil complet n'est visible que par vos abonnés",
+            "privateExplanation2": "Vos critiques sont accessibles uniquement à vos abonnés",
+            "privateExplanation3": "Les autres utilisateurs verront un profil limité avec votre nom et avatar",
+            "updated": "Paramètres de confidentialité mis à jour"
+        },
         "logout": "Déconnexion",
         "logoutDescription": "Se déconnecter de votre compte",
         "logoutConfirmTitle": "Déconnexion",

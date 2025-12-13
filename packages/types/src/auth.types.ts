@@ -52,6 +52,16 @@ export interface UpdateProfileData {
   avatar?: File;
 }
 
+export interface UpdatePrivacySettingsData {
+  isPrivate: boolean;
+}
+
+export interface UpdatePrivacySettingsResponse {
+  status: string;
+  message: string;
+  isPrivate: boolean;
+}
+
 export interface ResetPasswordRequest {
   email: string;
 }

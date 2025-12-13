@@ -4,6 +4,8 @@ import type {
   RegisterCredentials,
   UserDetailed,
   UpdateProfileData,
+  UpdatePrivacySettingsData,
+  UpdatePrivacySettingsResponse,
   ResetPasswordRequest,
   ResetPasswordConfirm,
   DeviceToken,
@@ -63,6 +65,12 @@ export class AuthApi {
 
   static async deleteMe(): Promise<{ message: string }> {
     return HttpClient.delete<{ message: string }>("/me");
+  }
+
+  static async updatePrivacySettings(
+    data: UpdatePrivacySettingsData
+  ): Promise<UpdatePrivacySettingsResponse> {
+    return HttpClient.put<UpdatePrivacySettingsResponse>("/me/privacy-settings", data);
   }
 
   static async isUsernameAvailable(username: string): Promise<{ available: boolean }> {

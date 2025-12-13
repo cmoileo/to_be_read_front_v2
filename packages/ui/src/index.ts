@@ -45,10 +45,12 @@ export * from "./sections/follow-list-screen";
 export * from "./sections/to-read-list-screen";
 export * from "./sections/notifications-screen";
 export * from "./sections/settings-section";
+export * from "./sections/privacy-settings-dialog";
 export * from "./components/user-list-item";
 export * from "./components/to-read-list-item-card";
 export * from "./schemas/auth.schema";
 export * from "./schemas/profile.schema";
+export * from "./schemas/privacy.schema";
 export * from "./i18n/config";
 export { useTranslation } from "react-i18next";
 

@@ -30,6 +30,7 @@ export default function UserProfileClient({
     isFollowLoading,
     handleFollow,
     handleUnfollow,
+    handleCancelRequest,
     handleLoadMore,
   } = useUserProfileViewModel({ initialUser, initialReviewsResponse });
 
@@ -70,6 +71,14 @@ export default function UserProfileClient({
     handleUnfollow();
   };
 
+  const handleCancelRequestWithAuth = () => {
+    if (!currentUser) {
+      showAuthPrompt("follow");
+      return;
+    }
+    handleCancelRequest();
+  };
+
   return (
     <>
       <ProfileScreen
@@ -84,6 +93,7 @@ export default function UserProfileClient({
         onBack={handleBack}
         onFollow={handleFollowWithAuth}
         onUnfollow={handleUnfollowWithAuth}
+        onCancelRequest={handleCancelRequestWithAuth}
         onLoadMore={handleLoadMore}
         onReviewClick={handleReviewClick}
         onFollowersClick={handleFollowersClick}

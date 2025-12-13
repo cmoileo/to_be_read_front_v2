@@ -1,4 +1,4 @@
-import type { User, Review, PaginatedResponse } from "@repo/types";
+import type { User, Review, PaginatedResponse, FollowResponse } from "@repo/types";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL!;
 
@@ -13,6 +13,8 @@ interface ApiUser {
   reviewsCount: number;
   isFollowing: boolean;
   isMe: boolean;
+  isPrivate?: boolean;
+  followRequestStatus?: "none" | "pending" | "accepted" | "rejected";
   createdAt: string;
 }
 
@@ -46,6 +48,8 @@ function mapApiUserToUser(apiUser: ApiUser): User {
     reviewsCount: apiUser.reviewsCount,
     isFollowing: apiUser.isFollowing,
     isMe: apiUser.isMe,
+    isPrivate: apiUser.isPrivate,
+    followRequestStatus: apiUser.followRequestStatus,
     createdAt: apiUser.createdAt,
     updatedAt: apiUser.createdAt,
   };
@@ -103,12 +107,20 @@ export class WebUserService {
     return callApi<PaginatedResponse<Review>>(`/user/${userId}/reviews/${page}`, {}, accessToken);
   }
 
-  static async followUser(userId: number, accessToken: string): Promise<{ message: string }> {
-    return callApi<{ message: string }>(`/user/${userId}/follow`, {}, accessToken);
+  static async followUser(userId: number, accessToken: string): Promise<FollowResponse> {
+    return callApi<FollowResponse>(`/user/${userId}/follow`, {}, accessToken);
   }
 
   static async unfollowUser(userId: number, accessToken: string): Promise<{ message: string }> {
     return callApi<{ message: string }>(`/user/${userId}/unfollow`, {}, accessToken);
+  }
+
+  static async cancelFollowRequest(userId: number, accessToken: string): Promise<{ message: string }> {
+    return callApi<{ message: string }>(
+      `/user/${userId}/cancel-follow-request`,
+      { method: "DELETE" },
+      accessToken
+    );
   }
 
   static async getFollowers(

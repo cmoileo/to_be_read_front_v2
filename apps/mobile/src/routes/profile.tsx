@@ -96,9 +96,8 @@ function ProfilePage() {
 
   return (
     <div className="flex min-h-screen flex-col">
-      {/* Safe area padding en haut pour iOS */}
       <div className={isMobile ? "pt-[env(safe-area-inset-top)]" : ""} />
-      <PageTransition className="flex-1 p-6 pb-20">
+      <PageTransition className="flex-1 pb-20">
         <ProfileScreen
           user={user}
           reviews={reviews}

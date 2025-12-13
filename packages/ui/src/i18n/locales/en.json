@@ -118,6 +118,8 @@
         "editProfile": "Edit profile",
         "follow": "Follow",
         "unfollow": "Unfollow",
+        "followRequest": "Request to follow",
+        "requestPending": "Request sent",
         "reviews": "Reviews",
         "followers": "Followers",
         "following": "Following",
@@ -242,7 +244,9 @@
         "justNow": "Just now",
         "minutesAgo": "{{count}}m ago",
         "hoursAgo": "{{count}}h ago",
-        "daysAgo": "{{count}}d ago"
+        "daysAgo": "{{count}}d ago",
+        "accept": "Accept",
+        "reject": "Reject"
     },
     "settings": {
         "title": "Settings",
@@ -255,6 +259,17 @@
         "themeDark": "Dark",
         "notifications": "Push Notifications",
         "notificationsDescription": "Receive push notifications",
+        "privacy": {
+            "title": "Privacy Settings",
+            "description": "Manage the visibility of your profile and reviews",
+            "privateAccount": "Private Account",
+            "privateAccountDescription": "Only your followers can see your reviews and full profile",
+            "whatIsPrivate": "What is a private account?",
+            "privateExplanation1": "Your full profile is only visible to your followers",
+            "privateExplanation2": "Your reviews are accessible only to your followers",
+            "privateExplanation3": "Other users will see a limited profile with your name and avatar",
+            "updated": "Privacy settings updated"
+        },
         "logout": "Logout",
         "logoutDescription": "Sign out of your account",
         "logoutConfirmTitle": "Logout",

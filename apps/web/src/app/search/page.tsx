@@ -29,7 +29,7 @@ export default function SearchPage() {
   const { toast } = useToast();
 
   const initialQuery = searchParams.get("q") || "";
-  const initialTab = (searchParams.get("tab") as SearchTab) || "users";
+  const initialTab = (searchParams.get("tab") as SearchTab) || "books";
   const [mounted, setMounted] = useState(false);
   const [query, setQuery] = useState(initialQuery);
   const [currentQuery, setCurrentQuery] = useState(initialQuery);
@@ -158,13 +158,13 @@ export default function SearchPage() {
 
       <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
         <TabsList className="w-full grid grid-cols-3 mb-6">
-          <TabsTrigger value="users" className="flex items-center gap-2">
-            <Users className="w-4 h-4" />
-            <span className="hidden sm:inline">{t("search.users")}</span>
-          </TabsTrigger>
           <TabsTrigger value="books" className="flex items-center gap-2">
             <BookOpen className="w-4 h-4" />
             <span className="hidden sm:inline">{t("search.books")}</span>
+          </TabsTrigger>
+          <TabsTrigger value="users" className="flex items-center gap-2">
+            <Users className="w-4 h-4" />
+            <span className="hidden sm:inline">{t("search.users")}</span>
           </TabsTrigger>
           <TabsTrigger value="reviews" className="flex items-center gap-2">
             <MessageCircle className="w-4 h-4" />

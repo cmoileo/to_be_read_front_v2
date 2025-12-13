@@ -1,6 +1,6 @@
 import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
 import { MobileStorage } from "../services/mobile-storage.service";
-import { SettingsSection } from "@repo/ui";
+import { SettingsSection, PrivacySettingsDialog } from "@repo/ui";
 import { useSettingsViewModel } from "../viewmodels/use-settings-viewmodel";
 import { usePlatform } from "../hooks/use-platform";
 import { PageTransition } from "../components/page-transition";
@@ -22,12 +22,18 @@ function SettingsPage() {
   const {
     currentLocale,
     notificationsEnabled,
+    isPrivate,
+    showPrivacyDialog,
     isLoggingOut,
     isDeletingAccount,
+    isUpdatingPrivacy,
     handleLogout,
     handleDeleteAccount,
     handleChangeLanguage,
     handleToggleNotifications,
+    handleOpenPrivacySettings,
+    handleSavePrivacySettings,
+    setShowPrivacyDialog,
   } = useSettingsViewModel();
 
   return (
@@ -36,15 +42,25 @@ function SettingsPage() {
         <SettingsSection
           currentLocale={currentLocale}
           notificationsEnabled={notificationsEnabled}
+          isPrivate={isPrivate}
           isLoggingOut={isLoggingOut}
           isDeletingAccount={isDeletingAccount}
           onLogout={handleLogout}
           onDeleteAccount={handleDeleteAccount}
           onChangeLanguage={handleChangeLanguage}
           onToggleNotifications={handleToggleNotifications}
+          onOpenPrivacySettings={handleOpenPrivacySettings}
           onBack={() => navigate({ to: "/profile" })}
         />
       </PageTransition>
+
+      <PrivacySettingsDialog
+        open={showPrivacyDialog}
+        onOpenChange={setShowPrivacyDialog}
+        currentIsPrivate={isPrivate}
+        onSave={handleSavePrivacySettings}
+        isLoading={isUpdatingPrivacy}
+      />
     </div>
   );
 }

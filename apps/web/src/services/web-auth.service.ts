@@ -95,4 +95,21 @@ export class WebAuthService {
     if (!res.ok) throw new Error("Failed to update notification settings");
     return res.json();
   }
+
+  static async updatePrivacySettings(
+    accessToken: string,
+    isPrivate: boolean
+  ): Promise<{ status: string; message: string; isPrivate: boolean }> {
+    const res = await fetch(`${API_URL}/me/privacy-settings`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify({ isPrivate }),
+      cache: "no-store",
+    });
+    if (!res.ok) throw new Error("Failed to update privacy settings");
+    return res.json();
+  }
 }

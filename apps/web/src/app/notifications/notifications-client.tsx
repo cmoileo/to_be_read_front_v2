@@ -19,6 +19,8 @@ export default function NotificationsClient() {
     handleMarkAsRead,
     handleMarkAllAsRead,
     handleDelete,
+    handleAcceptFollowRequest,
+    handleRejectFollowRequest,
   } = useNotificationsViewModel();
 
   const handleBack = () => {
@@ -55,6 +57,8 @@ export default function NotificationsClient() {
         onMarkAllAsRead={handleMarkAllAsRead}
         onDelete={handleDelete}
         onNotificationClick={handleNotificationClick}
+        onAcceptFollowRequest={handleAcceptFollowRequest}
+        onRejectFollowRequest={handleRejectFollowRequest}
       />
     </div>
   );

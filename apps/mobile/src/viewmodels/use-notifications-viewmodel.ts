@@ -62,6 +62,26 @@ async function deleteNotification(notificationId: number) {
   return response.ok;
 }
 
+async function acceptFollowRequest(requestId: number) {
+  const headers = await getAuthHeaders();
+  const response = await fetch(`${API_URL}/follow-request/${requestId}/accept`, {
+    method: "POST",
+    headers,
+  });
+  if (!response.ok) throw new Error("Failed to accept follow request");
+  return response.json();
+}
+
+async function rejectFollowRequest(requestId: number) {
+  const headers = await getAuthHeaders();
+  const response = await fetch(`${API_URL}/follow-request/${requestId}/reject`, {
+    method: "POST",
+    headers,
+  });
+  if (!response.ok) throw new Error("Failed to reject follow request");
+  return response.json();
+}
+
 export const useNotificationsViewModel = () => {
   const queryClient = useQueryClient();
 
@@ -191,6 +211,34 @@ export const useNotificationsViewModel = () => {
     [deleteMutation]
   );
 
+  const acceptFollowRequestMutation = useMutation({
+    mutationFn: acceptFollowRequest,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: notificationKeys.all });
+    },
+  });
+
+  const rejectFollowRequestMutation = useMutation({
+    mutationFn: rejectFollowRequest,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: notificationKeys.all });
+    },
+  });
+
+  const handleAcceptFollowRequest = useCallback(
+    (requestId: number) => {
+      acceptFollowRequestMutation.mutate(requestId);
+    },
+    [acceptFollowRequestMutation]
+  );
+
+  const handleRejectFollowRequest = useCallback(
+    (requestId: number) => {
+      rejectFollowRequestMutation.mutate(requestId);
+    },
+    [rejectFollowRequestMutation]
+  );
+
   return {
     notifications,
     unreadCount,
@@ -201,6 +249,8 @@ export const useNotificationsViewModel = () => {
     handleMarkAsRead,
     handleMarkAllAsRead,
     handleDelete,
+    handleAcceptFollowRequest,
+    handleRejectFollowRequest,
     refetch,
   };
 };

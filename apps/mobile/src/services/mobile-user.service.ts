@@ -1,4 +1,4 @@
-import type { User, Review, PaginatedResponse } from "@repo/types";
+import type { User, Review, PaginatedResponse, FollowResponse } from "@repo/types";
 import { HttpInterceptor } from "./http-interceptor.service";
 
 interface ApiUser {
@@ -11,6 +11,8 @@ interface ApiUser {
   reviewsCount: number;
   isFollowing: boolean;
   isMe: boolean;
+  isPrivate?: boolean;
+  followRequestStatus?: "none" | "pending" | "accepted" | "rejected";
   createdAt: string;
 }
 
@@ -44,6 +46,8 @@ function mapApiUserToUser(apiUser: ApiUser): User {
     reviewsCount: apiUser.reviewsCount,
     isFollowing: apiUser.isFollowing,
     isMe: apiUser.isMe,
+    isPrivate: apiUser.isPrivate,
+    followRequestStatus: apiUser.followRequestStatus,
     createdAt: apiUser.createdAt,
     updatedAt: apiUser.createdAt,
   };
@@ -73,12 +77,16 @@ export class MobileUserService {
     return HttpInterceptor.get<PaginatedResponse<Review>>(`/user/${userId}/reviews/${page}`);
   }
 
-  static async followUser(userId: number): Promise<{ message: string }> {
-    return HttpInterceptor.get<{ message: string }>(`/user/${userId}/follow`);
+  static async followUser(userId: number): Promise<FollowResponse> {
+    return HttpInterceptor.get<FollowResponse>(`/user/${userId}/follow`);
   }
 
   static async unfollowUser(userId: number): Promise<{ message: string }> {
     return HttpInterceptor.get<{ message: string }>(`/user/${userId}/unfollow`);
+  }
+
+  static async cancelFollowRequest(userId: number): Promise<{ message: string }> {
+    return HttpInterceptor.delete<{ message: string }>(`/user/${userId}/cancel-follow-request`);
   }
 
   static async getFollowers(

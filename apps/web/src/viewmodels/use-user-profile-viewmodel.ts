@@ -32,27 +32,37 @@ export const useUserProfileViewModel = ({
   const handleFollow = useCallback(() => {
     startFollowTransition(async () => {
       try {
+        const isPrivateAccount = user.isPrivate;
         setUser((prev) => ({
           ...prev,
-          isFollowing: true,
-          followersCount: (Number(prev.followersCount) || 0) + 1,
+          isFollowing: !isPrivateAccount,
+          followersCount: !isPrivateAccount ? (Number(prev.followersCount) || 0) + 1 : Number(prev.followersCount) || 0,
+          followRequestStatus: isPrivateAccount ? "pending" : prev.followRequestStatus,
         }));
-        updateFollowingCount(queryClient, 1);
+        
+        if (!isPrivateAccount) {
+          updateFollowingCount(queryClient, 1);
+        }
 
-        await followUserAction(user.id);
-        // Invalidate feed to include the new user's reviews
-        invalidateFeed(queryClient);
+        const result = await followUserAction(user.id);
+        
+        if (result.followed) {
+          invalidateFeed(queryClient);
+        }
       } catch (error) {
         setUser((prev) => ({
           ...prev,
           isFollowing: false,
-          followersCount: Math.max(0, (Number(prev.followersCount) || 0) - 1),
+          followersCount: Math.max(0, (Number(prev.followersCount) || 0) - (user.isPrivate ? 0 : 1)),
+          followRequestStatus: "none",
         }));
-        updateFollowingCount(queryClient, -1);
+        if (!user.isPrivate) {
+          updateFollowingCount(queryClient, -1);
+        }
         console.error("Failed to follow user:", error);
       }
     });
-  }, [user.id, queryClient]);
+  }, [user.id, user.isPrivate, queryClient]);
 
   const handleUnfollow = useCallback(() => {
     startFollowTransition(async () => {
@@ -99,6 +109,26 @@ export const useUserProfileViewModel = ({
     }
   }, [currentPage, hasMore, isFetchingMore, user.id]);
 
+  const handleCancelRequest = useCallback(() => {
+    startFollowTransition(async () => {
+      try {
+        setUser((prev) => ({
+          ...prev,
+          followRequestStatus: "none",
+        }));
+
+        const { cancelFollowRequestAction } = await import("@/app/user/[userId]/actions");
+        await cancelFollowRequestAction(user.id);
+      } catch (error) {
+        setUser((prev) => ({
+          ...prev,
+          followRequestStatus: "pending",
+        }));
+        console.error("Failed to cancel follow request:", error);
+      }
+    });
+  }, [user.id]);
+
   return {
     user,
     reviews,
@@ -108,6 +138,7 @@ export const useUserProfileViewModel = ({
     isFollowLoading,
     handleFollow,
     handleUnfollow,
+    handleCancelRequest,
     handleLoadMore,
   };
 };

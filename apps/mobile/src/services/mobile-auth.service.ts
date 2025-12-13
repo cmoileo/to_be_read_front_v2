@@ -46,4 +46,13 @@ export class MobileAuthService {
       pushNotificationsEnabled,
     });
   }
+
+  static async updatePrivacySettings(data: {
+    isPrivate: boolean;
+  }): Promise<{ status: string; message: string; isPrivate: boolean }> {
+    return HttpInterceptor.put<{ status: string; message: string; isPrivate: boolean }>(
+      "/me/privacy-settings",
+      data
+    );
+  }
 }

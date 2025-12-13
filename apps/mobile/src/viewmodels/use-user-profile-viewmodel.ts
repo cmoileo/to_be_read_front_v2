@@ -48,14 +48,18 @@ export const useUserProfileViewModel = (userId: number) => {
       const previousUser = queryClient.getQueryData<User>(userKeys.detail(userId));
 
       if (previousUser) {
+        const isPrivateAccount = previousUser.isPrivate;
         queryClient.setQueryData<User>(userKeys.detail(userId), {
           ...previousUser,
-          isFollowing: true,
-          followersCount: (Number(previousUser.followersCount) || 0) + 1,
+          isFollowing: !isPrivateAccount,
+          followersCount: !isPrivateAccount ? (Number(previousUser.followersCount) || 0) + 1 : Number(previousUser.followersCount) || 0,
+          followRequestStatus: isPrivateAccount ? "pending" : previousUser.followRequestStatus,
         });
       }
 
-      updateFollowingCount(queryClient, 1);
+      if (!previousUser?.isPrivate) {
+        updateFollowingCount(queryClient, 1);
+      }
 
       return { previousUser };
     },
@@ -63,10 +67,14 @@ export const useUserProfileViewModel = (userId: number) => {
       if (context?.previousUser) {
         queryClient.setQueryData(userKeys.detail(userId), context.previousUser);
       }
-      updateFollowingCount(queryClient, -1);
+      if (!context?.previousUser?.isPrivate) {
+        updateFollowingCount(queryClient, -1);
+      }
     },
-    onSuccess: () => {
-      invalidateFeed(queryClient);
+    onSuccess: (data) => {
+      if (data.followed) {
+        invalidateFeed(queryClient);
+      }
     },
   });
 
@@ -107,11 +115,38 @@ export const useUserProfileViewModel = (userId: number) => {
     unfollowMutation.mutate();
   };
 
+  const handleCancelRequest = () => {
+    cancelRequestMutation.mutate();
+  };
+
   const handleLoadMore = () => {
     if (hasNextPage && !isFetchingNextPage) {
       fetchNextPage();
     }
   };
+
+  const cancelRequestMutation = useMutation({
+    mutationFn: () => MobileUserService.cancelFollowRequest(userId),
+    onMutate: async () => {
+      await queryClient.cancelQueries({ queryKey: userKeys.detail(userId) });
+
+      const previousUser = queryClient.getQueryData<User>(userKeys.detail(userId));
+
+      if (previousUser) {
+        queryClient.setQueryData<User>(userKeys.detail(userId), {
+          ...previousUser,
+          followRequestStatus: "none",
+        });
+      }
+
+      return { previousUser };
+    },
+    onError: (_err, _vars, context) => {
+      if (context?.previousUser) {
+        queryClient.setQueryData(userKeys.detail(userId), context.previousUser);
+      }
+    },
+  });
 
   const allReviews = reviewsData?.pages.flatMap((page) => page.data) ?? [];
 
@@ -121,9 +156,10 @@ export const useUserProfileViewModel = (userId: number) => {
     isLoading: isLoadingUser || isLoadingReviews,
     hasMore: hasNextPage ?? false,
     isFetchingMore: isFetchingNextPage,
-    isFollowLoading: followMutation.isPending || unfollowMutation.isPending,
+    isFollowLoading: followMutation.isPending || unfollowMutation.isPending || cancelRequestMutation.isPending,
     handleFollow,
     handleUnfollow,
+    handleCancelRequest,
     handleLoadMore,
   };
 };

@@ -2,7 +2,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "../components/avatar";
 import { Button } from "../components/button";
 import { useTranslation } from "react-i18next";
 import { cn } from "../lib/utils";
-import { Pencil, Loader2, FileText, Users, UserPlus, BookMarked, Settings } from "lucide-react";
+import { Pencil, Loader2, FileText, Users, UserPlus, BookMarked, Settings, Lock, UserX, Clock } from "lucide-react";
 
 interface User {
   id: number;
@@ -13,6 +13,8 @@ interface User {
   followersCount: number;
   followingCount: number;
   isFollowing: boolean;
+  isPrivate?: boolean;
+  followRequestStatus?: "none" | "pending" | "accepted" | "rejected";
 }
 
 interface ProfileHeaderProps {
@@ -22,6 +24,7 @@ interface ProfileHeaderProps {
   onEdit?: () => void;
   onFollow?: () => void;
   onUnfollow?: () => void;
+  onCancelRequest?: () => void;
   onFollowersClick?: () => void;
   onFollowingClick?: () => void;
   onReadingListClick?: () => void;
@@ -35,6 +38,7 @@ export const ProfileHeader = ({
   onEdit,
   onFollow,
   onUnfollow,
+  onCancelRequest,
   onFollowersClick,
   onFollowingClick,
   onReadingListClick,
@@ -43,7 +47,7 @@ export const ProfileHeader = ({
   const { t } = useTranslation();
 
   const getInitials = () => {
-    return user.userName.substring(0, 2).toUpperCase();
+    return user?.userName?.substring(0, 2).toUpperCase() || "??";
   };
 
   const handleFollowToggle = () => {
@@ -52,6 +56,53 @@ export const ProfileHeader = ({
     } else if (!user.isFollowing && onFollow) {
       onFollow();
     }
+  };
+
+  const handleCancelRequest = () => {
+    if (onCancelRequest) {
+      onCancelRequest();
+    }
+  };
+
+  const getFollowButtonContent = () => {
+    if (isFollowLoading) {
+      return <Loader2 className="w-4 h-4 animate-spin" />;
+    }
+
+    if (user.followRequestStatus === "pending") {
+      return (
+        <>
+          <Clock className="w-4 h-4" />
+          {t("profile.requestPending")}
+        </>
+      );
+    }
+
+    if (user.isFollowing) {
+      return t("profile.unfollow");
+    }
+
+    if (user.isPrivate) {
+      return (
+        <>
+          <Lock className="w-4 h-4" />
+          {t("profile.followRequest")}
+        </>
+      );
+    }
+
+    return t("profile.follow");
+  };
+
+  const getFollowButtonVariant = () => {
+    if (user.followRequestStatus === "pending") {
+      return "secondary";
+    }
+    return user.isFollowing ? "outline" : "default";
+  };
+
+  const isFollowButtonDisabled = () => {
+    return isFollowLoading || user.followRequestStatus === "pending";
   };
 
   return (
@@ -116,26 +167,34 @@ export const ProfileHeader = ({
                 )}
               </div>
             ) : (
-              <Button
-                variant={user.isFollowing ? "outline" : "default"}
-                onClick={handleFollowToggle}
-                size="sm"
-                disabled={isFollowLoading}
-                className={cn(
-                  "w-full sm:w-auto rounded-full min-w-[100px] transition-all duration-200",
-                  user.isFollowing
-                    ? "border-2 hover:border-destructive hover:text-destructive hover:bg-destructive/10"
-                    : "shadow-soft hover:shadow-glow"
+              <div className="flex gap-2 w-full sm:w-auto">
+                <Button
+                  variant={getFollowButtonVariant()}
+                  onClick={handleFollowToggle}
+                  size="sm"
+                  disabled={isFollowButtonDisabled()}
+                  className={cn(
+                    "flex-1 sm:flex-none rounded-full min-w-[120px] transition-all duration-200 gap-2",
+                    user.isFollowing
+                      ? "border-2 hover:border-destructive hover:text-destructive hover:bg-destructive/10"
+                      : "shadow-soft hover:shadow-glow",
+                    user.followRequestStatus === "pending" && "border-2"
+                  )}
+                >
+                  {getFollowButtonContent()}
+                </Button>
+                {user.followRequestStatus === "pending" && onCancelRequest && (
+                  <Button
+                    variant="ghost"
+                    onClick={handleCancelRequest}
+                    size="icon"
+                    disabled={isFollowLoading}
+                    className="rounded-full h-9 w-9 hover:bg-destructive/10 hover:text-destructive"
+                  >
+                    <UserX className="h-5 w-5" />
+                  </Button>
                 )}
-              >
-                {isFollowLoading ? (
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                ) : user.isFollowing ? (
-                  t("profile.unfollow")
-                ) : (
-                  t("profile.follow")
-                )}
-              </Button>
+              </div>
             )}
           </div>
         </div>
