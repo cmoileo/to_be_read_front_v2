@@ -1,6 +1,6 @@
 import { useInfiniteQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { MobileFeedService } from "../services/mobile-feed.service";
-import { feedKeys, toggleLikeInFeed } from "@repo/stores";
+import { queryKeys, toggleReviewLike, rollbackLikeState } from "@repo/stores";
 
 export const useFeedViewModel = () => {
   const queryClient = useQueryClient();
@@ -14,7 +14,7 @@ export const useFeedViewModel = () => {
     refetch,
     isRefetching,
   } = useInfiniteQuery({
-    queryKey: feedKeys.list(),
+    queryKey: queryKeys.feed.list(),
     queryFn: ({ pageParam = 1 }) => MobileFeedService.getFeed(pageParam),
     getNextPageParam: (lastPage) => {
       if (lastPage.meta.currentPage < lastPage.meta.lastPage) {
@@ -28,17 +28,13 @@ export const useFeedViewModel = () => {
   const likeMutation = useMutation({
     mutationFn: (reviewId: number) => MobileFeedService.likeReview(reviewId),
     onMutate: async (reviewId: number) => {
-      await queryClient.cancelQueries({ queryKey: feedKeys.list() });
-
-      const previousData = queryClient.getQueryData(feedKeys.list());
-
-      toggleLikeInFeed(queryClient, reviewId);
-
-      return { previousData };
+      await queryClient.cancelQueries({ queryKey: queryKeys.feed.list() });
+      toggleReviewLike(queryClient, reviewId);
+      return { reviewId };
     },
     onError: (_err, _reviewId, context) => {
-      if (context?.previousData) {
-        queryClient.setQueryData(feedKeys.list(), context.previousData);
+      if (context?.reviewId) {
+        rollbackLikeState(queryClient, context.reviewId);
       }
     },
   });

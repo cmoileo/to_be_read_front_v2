@@ -4,19 +4,14 @@ import { useInfiniteQuery, useMutation, useQueryClient } from "@tanstack/react-q
 import { WebToReadListService } from "../services/web-to-read-list.service";
 import { useMemo, useCallback } from "react";
 import type { ToReadListItem } from "@repo/types";
-
-export const toReadListKeys = {
-  all: ["toReadList"] as const,
-  list: () => [...toReadListKeys.all, "list"] as const,
-  check: (googleBookId: string) => [...toReadListKeys.all, "check", googleBookId] as const,
-};
+import { queryKeys, addBookToListCache, removeBookFromListCache } from "@repo/stores";
 
 export const useToReadListViewModel = () => {
   const queryClient = useQueryClient();
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, refetch } =
     useInfiniteQuery({
-      queryKey: toReadListKeys.list(),
+      queryKey: queryKeys.toReadList.list(),
       queryFn: ({ pageParam = 1 }) => WebToReadListService.getToReadList(pageParam),
       getNextPageParam: (lastPage) => {
         if (lastPage.meta.currentPage < lastPage.meta.lastPage) {
@@ -38,38 +33,22 @@ export const useToReadListViewModel = () => {
 
   const addMutation = useMutation({
     mutationFn: (googleBookId: string) => WebToReadListService.addToReadList(googleBookId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: toReadListKeys.all });
+    onMutate: async (googleBookId: string) => {
+      addBookToListCache(queryClient, googleBookId);
+    },
+    onError: (_err, googleBookId) => {
+      removeBookFromListCache(queryClient, googleBookId);
     },
   });
 
   const removeMutation = useMutation({
     mutationFn: (googleBookId: string) => WebToReadListService.removeFromReadList(googleBookId),
     onMutate: async (googleBookId: string) => {
-      await queryClient.cancelQueries({ queryKey: toReadListKeys.list() });
-
-      const previousData = queryClient.getQueryData(toReadListKeys.list());
-
-      queryClient.setQueryData(toReadListKeys.list(), (old: any) => {
-        if (!old) return old;
-        return {
-          ...old,
-          pages: old.pages.map((page: any) => ({
-            ...page,
-            data: page.data.filter((item: ToReadListItem) => item.googleBookId !== googleBookId),
-          })),
-        };
-      });
-
-      return { previousData };
+      removeBookFromListCache(queryClient, googleBookId);
+      return { googleBookId };
     },
-    onError: (_err, _googleBookId, context) => {
-      if (context?.previousData) {
-        queryClient.setQueryData(toReadListKeys.list(), context.previousData);
-      }
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: toReadListKeys.all });
+    onError: (_err, googleBookId) => {
+      addBookToListCache(queryClient, googleBookId);
     },
   });
 

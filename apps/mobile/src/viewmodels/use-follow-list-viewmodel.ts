@@ -1,13 +1,12 @@
 import { useInfiniteQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { MobileUserService, FollowUser } from "../services/mobile-user.service";
 import { useMemo, useState, useCallback } from "react";
-import { removeUserReviewsFromFeed, invalidateFeed, updateFollowingCount } from "@repo/stores";
-
-export const followListKeys = {
-  all: ["followList"] as const,
-  followers: (userId: number) => [...followListKeys.all, "followers", userId] as const,
-  followings: (userId: number) => [...followListKeys.all, "followings", userId] as const,
-};
+import {
+  queryKeys,
+  removeUserReviewsFromFeed,
+  invalidateFeed,
+  updateFollowingCount,
+} from "@repo/stores";
 
 export const useFollowListViewModel = (userId: number, type: "followers" | "following") => {
   const queryClient = useQueryClient();
@@ -15,7 +14,9 @@ export const useFollowListViewModel = (userId: number, type: "followers" | "foll
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } = useInfiniteQuery({
     queryKey:
-      type === "followers" ? followListKeys.followers(userId) : followListKeys.followings(userId),
+      type === "followers"
+        ? queryKeys.followList.followers(userId)
+        : queryKeys.followList.followings(userId),
     queryFn: ({ pageParam = 1 }) =>
       type === "followers"
         ? MobileUserService.getFollowers(userId, pageParam)

@@ -1,11 +1,6 @@
 import { useQuery, useInfiniteQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { MobileReviewService, SingleReview, SingleComment } from "../services/mobile-review.service";
-
-export const reviewKeys = {
-  all: ["reviews"] as const,
-  detail: (reviewId: number) => [...reviewKeys.all, "detail", reviewId] as const,
-  comments: (reviewId: number) => [...reviewKeys.all, "comments", reviewId] as const,
-};
+import { queryKeys, toggleReviewLike, rollbackLikeState, initializeLikeState } from "@repo/stores";
 
 export const useSingleReviewViewModel = (reviewId: number) => {
   const queryClient = useQueryClient();
@@ -15,8 +10,12 @@ export const useSingleReviewViewModel = (reviewId: number) => {
     isLoading: isLoadingReview,
     error: reviewError,
   } = useQuery({
-    queryKey: reviewKeys.detail(reviewId),
-    queryFn: () => MobileReviewService.getReview(reviewId),
+    queryKey: queryKeys.reviews.detail(reviewId),
+    queryFn: async () => {
+      const reviewData = await MobileReviewService.getReview(reviewId);
+      initializeLikeState(queryClient, reviewId, reviewData.isLiked, reviewData.likesCount);
+      return reviewData;
+    },
     enabled: !!reviewId,
   });
 
@@ -27,7 +26,7 @@ export const useSingleReviewViewModel = (reviewId: number) => {
     isFetchingNextPage,
     isLoading: isLoadingComments,
   } = useInfiniteQuery({
-    queryKey: reviewKeys.comments(reviewId),
+    queryKey: queryKeys.reviews.comments(reviewId),
     queryFn: ({ pageParam = 1 }) => MobileReviewService.getComments(reviewId, pageParam),
     getNextPageParam: (lastPage) => {
       if (lastPage.meta.currentPage < lastPage.meta.lastPage) {
@@ -42,23 +41,13 @@ export const useSingleReviewViewModel = (reviewId: number) => {
   const likeReviewMutation = useMutation({
     mutationFn: () => MobileReviewService.likeReview(reviewId),
     onMutate: async () => {
-      await queryClient.cancelQueries({ queryKey: reviewKeys.detail(reviewId) });
-      const previousReview = queryClient.getQueryData<SingleReview>(reviewKeys.detail(reviewId));
-
-      if (previousReview) {
-        const isCurrentlyLiked = previousReview.isLiked;
-        queryClient.setQueryData<SingleReview>(reviewKeys.detail(reviewId), {
-          ...previousReview,
-          isLiked: !isCurrentlyLiked,
-          likesCount: isCurrentlyLiked ? previousReview.likesCount - 1 : previousReview.likesCount + 1,
-        });
-      }
-
-      return { previousReview };
+      await queryClient.cancelQueries({ queryKey: queryKeys.reviews.detail(reviewId) });
+      toggleReviewLike(queryClient, reviewId);
+      return { reviewId };
     },
     onError: (_err, _vars, context) => {
-      if (context?.previousReview) {
-        queryClient.setQueryData(reviewKeys.detail(reviewId), context.previousReview);
+      if (context?.reviewId) {
+        rollbackLikeState(queryClient, context.reviewId);
       }
     },
   });
@@ -66,10 +55,10 @@ export const useSingleReviewViewModel = (reviewId: number) => {
   const likeCommentMutation = useMutation({
     mutationFn: (commentId: number) => MobileReviewService.likeComment(commentId),
     onMutate: async (commentId) => {
-      await queryClient.cancelQueries({ queryKey: reviewKeys.comments(reviewId) });
-      const previousComments = queryClient.getQueryData(reviewKeys.comments(reviewId));
+      await queryClient.cancelQueries({ queryKey: queryKeys.reviews.comments(reviewId) });
+      const previousComments = queryClient.getQueryData(queryKeys.reviews.comments(reviewId));
 
-      queryClient.setQueryData(reviewKeys.comments(reviewId), (oldData: any) => {
+      queryClient.setQueryData(queryKeys.reviews.comments(reviewId), (oldData: any) => {
         if (!oldData) return oldData;
         return {
           ...oldData,
@@ -95,7 +84,7 @@ export const useSingleReviewViewModel = (reviewId: number) => {
     },
     onError: (_err, _vars, context) => {
       if (context?.previousComments) {
-        queryClient.setQueryData(reviewKeys.comments(reviewId), context.previousComments);
+        queryClient.setQueryData(queryKeys.reviews.comments(reviewId), context.previousComments);
       }
     },
   });
@@ -103,7 +92,7 @@ export const useSingleReviewViewModel = (reviewId: number) => {
   const createCommentMutation = useMutation({
     mutationFn: (content: string) => MobileReviewService.createComment(reviewId, content),
     onSuccess: (newComment) => {
-      queryClient.setQueryData(reviewKeys.comments(reviewId), (oldData: any) => {
+      queryClient.setQueryData(queryKeys.reviews.comments(reviewId), (oldData: any) => {
         if (!oldData) return oldData;
         const firstPage = oldData.pages[0];
         return {
@@ -127,10 +116,10 @@ export const useSingleReviewViewModel = (reviewId: number) => {
   const deleteCommentMutation = useMutation({
     mutationFn: (commentId: number) => MobileReviewService.deleteComment(commentId),
     onMutate: async (commentId) => {
-      await queryClient.cancelQueries({ queryKey: reviewKeys.comments(reviewId) });
-      const previousComments = queryClient.getQueryData(reviewKeys.comments(reviewId));
+      await queryClient.cancelQueries({ queryKey: queryKeys.reviews.comments(reviewId) });
+      const previousComments = queryClient.getQueryData(queryKeys.reviews.comments(reviewId));
 
-      queryClient.setQueryData(reviewKeys.comments(reviewId), (oldData: any) => {
+      queryClient.setQueryData(queryKeys.reviews.comments(reviewId), (oldData: any) => {
         if (!oldData) return oldData;
         return {
           ...oldData,
@@ -149,7 +138,7 @@ export const useSingleReviewViewModel = (reviewId: number) => {
     },
     onError: (_err, _vars, context) => {
       if (context?.previousComments) {
-        queryClient.setQueryData(reviewKeys.comments(reviewId), context.previousComments);
+        queryClient.setQueryData(queryKeys.reviews.comments(reviewId), context.previousComments);
       }
     },
   });

@@ -2,11 +2,11 @@ import { useEffect } from "react";
 import { useMutation, useInfiniteQuery, useQuery, useQueryClient } from "@tanstack/react-query";
 import { MobileProfileService, type UpdateProfileData } from "../services/mobile-profile.service";
 import { useNavigate } from "@tanstack/react-router";
-import { 
-  connectedUserKeys, 
-  getConnectedUser, 
+import {
+  queryKeys,
+  getConnectedUser,
   setConnectedUser,
-  updateReviewsCount 
+  updateReviewsCount,
 } from "@repo/stores";
 
 export const useProfileViewModel = () => {
@@ -15,7 +15,7 @@ export const useProfileViewModel = () => {
   const user = getConnectedUser(queryClient);
 
   const { data: profileData, isLoading: isLoadingProfile } = useQuery({
-    queryKey: connectedUserKeys.profile(),
+    queryKey: queryKeys.connectedUser.profile(),
     queryFn: () => MobileProfileService.getMyProfile(),
     enabled: true,
   });
@@ -27,7 +27,7 @@ export const useProfileViewModel = () => {
     isFetchingNextPage,
     isLoading: isLoadingReviews,
   } = useInfiniteQuery({
-    queryKey: ["myReviews", user?.id],
+    queryKey: queryKeys.myReviews(user?.id),
     queryFn: ({ pageParam = 1 }) => MobileProfileService.getMyReviews(pageParam),
     getNextPageParam: (lastPage) => {
       if (lastPage.meta.currentPage < lastPage.meta.lastPage) {
@@ -69,12 +69,12 @@ export const useProfileViewModel = () => {
   const deleteMutation = useMutation({
     mutationFn: (reviewId: number) => MobileProfileService.deleteReview(reviewId),
     onMutate: async (reviewId) => {
-      await queryClient.cancelQueries({ queryKey: ["myReviews", user?.id] });
+      await queryClient.cancelQueries({ queryKey: queryKeys.myReviews(user?.id) });
 
-      const previousData = queryClient.getQueryData(["myReviews", user?.id]);
+      const previousData = queryClient.getQueryData(queryKeys.myReviews(user?.id));
       const previousUser = user;
 
-      queryClient.setQueryData(["myReviews", user?.id], (oldData: any) => {
+      queryClient.setQueryData(queryKeys.myReviews(user?.id), (oldData: any) => {
         if (!oldData) return oldData;
         return {
           ...oldData,
@@ -91,7 +91,7 @@ export const useProfileViewModel = () => {
     },
     onError: (_err, _vars, context) => {
       if (context?.previousData) {
-        queryClient.setQueryData(["myReviews", user?.id], context.previousData);
+        queryClient.setQueryData(queryKeys.myReviews(user?.id), context.previousData);
       }
       if (context?.previousUser) {
         setConnectedUser(queryClient, context.previousUser);

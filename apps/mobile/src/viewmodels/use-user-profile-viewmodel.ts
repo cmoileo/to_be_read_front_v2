@@ -1,13 +1,13 @@
 import { useQuery, useInfiniteQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { MobileUserService } from "../services/mobile-user.service";
-import type { User } from "@repo/types";
-import { removeUserReviewsFromFeed, invalidateFeed, updateFollowingCount } from "@repo/stores";
-
-export const userKeys = {
-  all: ["users"] as const,
-  detail: (userId: number) => [...userKeys.all, "detail", userId] as const,
-  reviews: (userId: number) => [...userKeys.all, "reviews", userId] as const,
-};
+import {
+  queryKeys,
+  followUserInCache,
+  unfollowUserInCache,
+  cancelFollowRequestInCache,
+  rollbackFollowState,
+  initializeFollowState,
+} from "@repo/stores";
 
 export const useUserProfileViewModel = (userId: number) => {
   const queryClient = useQueryClient();
@@ -16,8 +16,18 @@ export const useUserProfileViewModel = (userId: number) => {
     data: user,
     isLoading: isLoadingUser,
   } = useQuery({
-    queryKey: userKeys.detail(userId),
-    queryFn: () => MobileUserService.getUser(userId),
+    queryKey: queryKeys.users.detail(userId),
+    queryFn: async () => {
+      const userData = await MobileUserService.getUser(userId);
+      initializeFollowState(
+        queryClient,
+        userId,
+        userData.isFollowing,
+        userData.followersCount,
+        userData.followRequestStatus
+      );
+      return userData;
+    },
     enabled: !!userId,
   });
 
@@ -28,7 +38,7 @@ export const useUserProfileViewModel = (userId: number) => {
     isFetchingNextPage,
     isLoading: isLoadingReviews,
   } = useInfiniteQuery({
-    queryKey: userKeys.reviews(userId),
+    queryKey: queryKeys.users.reviews(userId),
     queryFn: ({ pageParam = 1 }) => MobileUserService.getUserReviews(userId, pageParam),
     getNextPageParam: (lastPage) => {
       if (lastPage.meta.currentPage < lastPage.meta.lastPage) {
@@ -43,37 +53,14 @@ export const useUserProfileViewModel = (userId: number) => {
   const followMutation = useMutation({
     mutationFn: () => MobileUserService.followUser(userId),
     onMutate: async () => {
-      await queryClient.cancelQueries({ queryKey: userKeys.detail(userId) });
-
-      const previousUser = queryClient.getQueryData<User>(userKeys.detail(userId));
-
-      if (previousUser) {
-        const isPrivateAccount = previousUser.isPrivate;
-        queryClient.setQueryData<User>(userKeys.detail(userId), {
-          ...previousUser,
-          isFollowing: !isPrivateAccount,
-          followersCount: !isPrivateAccount ? (Number(previousUser.followersCount) || 0) + 1 : Number(previousUser.followersCount) || 0,
-          followRequestStatus: isPrivateAccount ? "pending" : previousUser.followRequestStatus,
-        });
-      }
-
-      if (!previousUser?.isPrivate) {
-        updateFollowingCount(queryClient, 1);
-      }
-
-      return { previousUser };
+      await queryClient.cancelQueries({ queryKey: queryKeys.users.detail(userId) });
+      const isPrivate = user?.isPrivate ?? false;
+      const { previousState } = followUserInCache(queryClient, userId, isPrivate);
+      return { previousState };
     },
     onError: (_err, _vars, context) => {
-      if (context?.previousUser) {
-        queryClient.setQueryData(userKeys.detail(userId), context.previousUser);
-      }
-      if (!context?.previousUser?.isPrivate) {
-        updateFollowingCount(queryClient, -1);
-      }
-    },
-    onSuccess: (data) => {
-      if (data.followed) {
-        invalidateFeed(queryClient);
+      if (context?.previousState) {
+        rollbackFollowState(queryClient, userId, context.previousState);
       }
     },
   });
@@ -81,29 +68,28 @@ export const useUserProfileViewModel = (userId: number) => {
   const unfollowMutation = useMutation({
     mutationFn: () => MobileUserService.unfollowUser(userId),
     onMutate: async () => {
-      await queryClient.cancelQueries({ queryKey: userKeys.detail(userId) });
-
-      const previousUser = queryClient.getQueryData<User>(userKeys.detail(userId));
-
-      if (previousUser) {
-        queryClient.setQueryData<User>(userKeys.detail(userId), {
-          ...previousUser,
-          isFollowing: false,
-          followersCount: Math.max(0, (Number(previousUser.followersCount) || 0) - 1),
-        });
-      }
-
-      updateFollowingCount(queryClient, -1);
-      removeUserReviewsFromFeed(queryClient, userId);
-
-      return { previousUser };
+      await queryClient.cancelQueries({ queryKey: queryKeys.users.detail(userId) });
+      const { previousState } = unfollowUserInCache(queryClient, userId);
+      return { previousState };
     },
     onError: (_err, _vars, context) => {
-      if (context?.previousUser) {
-        queryClient.setQueryData(userKeys.detail(userId), context.previousUser);
+      if (context?.previousState) {
+        rollbackFollowState(queryClient, userId, context.previousState);
       }
-      updateFollowingCount(queryClient, 1);
-      invalidateFeed(queryClient);
+    },
+  });
+
+  const cancelRequestMutation = useMutation({
+    mutationFn: () => MobileUserService.cancelFollowRequest(userId),
+    onMutate: async () => {
+      await queryClient.cancelQueries({ queryKey: queryKeys.users.detail(userId) });
+      const { previousState } = cancelFollowRequestInCache(queryClient, userId);
+      return { previousState };
+    },
+    onError: (_err, _vars, context) => {
+      if (context?.previousState) {
+        rollbackFollowState(queryClient, userId, context.previousState);
+      }
     },
   });
 
@@ -124,29 +110,6 @@ export const useUserProfileViewModel = (userId: number) => {
       fetchNextPage();
     }
   };
-
-  const cancelRequestMutation = useMutation({
-    mutationFn: () => MobileUserService.cancelFollowRequest(userId),
-    onMutate: async () => {
-      await queryClient.cancelQueries({ queryKey: userKeys.detail(userId) });
-
-      const previousUser = queryClient.getQueryData<User>(userKeys.detail(userId));
-
-      if (previousUser) {
-        queryClient.setQueryData<User>(userKeys.detail(userId), {
-          ...previousUser,
-          followRequestStatus: "none",
-        });
-      }
-
-      return { previousUser };
-    },
-    onError: (_err, _vars, context) => {
-      if (context?.previousUser) {
-        queryClient.setQueryData(userKeys.detail(userId), context.previousUser);
-      }
-    },
-  });
 
   const allReviews = reviewsData?.pages.flatMap((page) => page.data) ?? [];
 

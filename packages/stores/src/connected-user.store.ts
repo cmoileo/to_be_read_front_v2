@@ -4,26 +4,18 @@ import type { User } from "@repo/types";
 export const connectedUserKeys = {
   all: ["connectedUser"] as const,
   profile: () => [...connectedUserKeys.all, "profile"] as const,
+  pendingRequests: () => [...connectedUserKeys.all, "pendingRequests"] as const,
 };
 
-/**
- * Safely convert a value to a number, returning 0 if NaN
- */
 const toSafeNumber = (value: unknown): number => {
   const num = Number(value);
   return isNaN(num) ? 0 : num;
 };
 
-/**
- * Get the connected user from the cache
- */
 export const getConnectedUser = (queryClient: QueryClient): User | null => {
   return queryClient.getQueryData<User>(connectedUserKeys.profile()) ?? null;
 };
 
-/**
- * Set the connected user in the cache
- */
 export const setConnectedUser = (queryClient: QueryClient, user: User | null) => {
   if (user) {
     // Ensure all count fields are numbers
@@ -39,17 +31,11 @@ export const setConnectedUser = (queryClient: QueryClient, user: User | null) =>
   }
 };
 
-/**
- * Clear the connected user from the cache
- */
 export const clearConnectedUser = (queryClient: QueryClient) => {
   queryClient.setQueryData(connectedUserKeys.profile(), null);
   queryClient.removeQueries({ queryKey: connectedUserKeys.profile() });
 };
 
-/**
- * Update the connected user's following count (optimistic update)
- */
 export const updateFollowingCount = (queryClient: QueryClient, delta: number) => {
   queryClient.setQueryData<User>(connectedUserKeys.profile(), (oldUser) => {
     if (!oldUser) return oldUser;
@@ -62,9 +48,6 @@ export const updateFollowingCount = (queryClient: QueryClient, delta: number) =>
   });
 };
 
-/**
- * Update the connected user's followers count (optimistic update)
- */
 export const updateFollowersCount = (queryClient: QueryClient, delta: number) => {
   queryClient.setQueryData<User>(connectedUserKeys.profile(), (oldUser) => {
     if (!oldUser) return oldUser;
@@ -77,9 +60,6 @@ export const updateFollowersCount = (queryClient: QueryClient, delta: number) =>
   });
 };
 
-/**
- * Update the connected user's reviews count (optimistic update)
- */
 export const updateReviewsCount = (queryClient: QueryClient, delta: number) => {
   queryClient.setQueryData<User>(connectedUserKeys.profile(), (oldUser) => {
     if (!oldUser) return oldUser;
@@ -92,9 +72,6 @@ export const updateReviewsCount = (queryClient: QueryClient, delta: number) => {
   });
 };
 
-/**
- * Update the connected user with partial data
- */
 export const updateConnectedUser = (queryClient: QueryClient, updates: Partial<User>) => {
   queryClient.setQueryData<User>(connectedUserKeys.profile(), (oldUser) => {
     if (!oldUser) return oldUser;
@@ -105,9 +82,35 @@ export const updateConnectedUser = (queryClient: QueryClient, updates: Partial<U
   });
 };
 
-/**
- * Invalidate the connected user to refetch from server
- */
 export const invalidateConnectedUser = (queryClient: QueryClient) => {
   queryClient.invalidateQueries({ queryKey: connectedUserKeys.profile() });
+};
+
+export const getPendingRequestsCount = (queryClient: QueryClient): number => {
+  return queryClient.getQueryData<number>(connectedUserKeys.pendingRequests()) ?? 0;
+};
+
+export const setPendingRequestsCount = (queryClient: QueryClient, count: number) => {
+  queryClient.setQueryData(connectedUserKeys.pendingRequests(), count);
+};
+
+export const updatePendingRequestsCount = (queryClient: QueryClient, delta: number) => {
+  queryClient.setQueryData<number>(connectedUserKeys.pendingRequests(), (old) => {
+    return Math.max(0, (old ?? 0) + delta);
+  });
+};
+
+export const updatePrivacyStatus = (queryClient: QueryClient, isPrivate: boolean) => {
+  queryClient.setQueryData<User>(connectedUserKeys.profile(), (oldUser) => {
+    if (!oldUser) return oldUser;
+    return {
+      ...oldUser,
+      isPrivate,
+    };
+  });
+};
+
+export const isUserPrivate = (queryClient: QueryClient): boolean => {
+  const user = getConnectedUser(queryClient);
+  return user?.isPrivate ?? false;
 };

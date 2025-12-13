@@ -1,12 +1,13 @@
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useCallback } from "react";
 import type { NotificationItem } from "@repo/types";
-
-export const notificationKeys = {
-  all: ["notifications"] as const,
-  list: () => [...notificationKeys.all, "list"] as const,
-  unreadCount: () => [...notificationKeys.all, "unreadCount"] as const,
-};
+import {
+  queryKeys,
+  markNotificationAsReadInCache,
+  markAllNotificationsAsReadInCache,
+  removeNotificationFromCache,
+  updateFollowersCount,
+} from "@repo/stores";
 
 async function fetchNotifications(page: number) {
   const response = await fetch(`/api/notifications?page=${page}&limit=20`);
@@ -63,7 +64,7 @@ export const useNotificationsViewModel = () => {
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, refetch } =
     useInfiniteQuery({
-      queryKey: notificationKeys.list(),
+      queryKey: queryKeys.notifications.list(),
       queryFn: ({ pageParam = 1 }) => fetchNotifications(pageParam),
       getNextPageParam: (lastPage) => {
         if (lastPage.meta.currentPage < lastPage.meta.lastPage) {
@@ -76,7 +77,7 @@ export const useNotificationsViewModel = () => {
     });
 
   const { data: unreadCount = 0 } = useQuery({
-    queryKey: notificationKeys.unreadCount(),
+    queryKey: queryKeys.notifications.unreadCount(),
     queryFn: fetchUnreadCount,
     staleTime: 30000,
   });
@@ -92,38 +93,7 @@ export const useNotificationsViewModel = () => {
   const markAsReadMutation = useMutation({
     mutationFn: markAsRead,
     onMutate: async (notificationId: number) => {
-      await queryClient.cancelQueries({ queryKey: notificationKeys.list() });
-      await queryClient.cancelQueries({ queryKey: notificationKeys.unreadCount() });
-
-      const previousList = queryClient.getQueryData(notificationKeys.list());
-      const previousCount = queryClient.getQueryData(notificationKeys.unreadCount());
-
-      queryClient.setQueryData(notificationKeys.list(), (old: any) => {
-        if (!old) return old;
-        return {
-          ...old,
-          pages: old.pages.map((page: any) => ({
-            ...page,
-            data: page.data.map((n: NotificationItem) =>
-              n.id === notificationId ? { ...n, isRead: true } : n
-            ),
-          })),
-        };
-      });
-
-      queryClient.setQueryData(notificationKeys.unreadCount(), (old: number) =>
-        Math.max(0, (old || 0) - 1)
-      );
-
-      return { previousList, previousCount };
-    },
-    onError: (_err, _notificationId, context) => {
-      if (context?.previousList) {
-        queryClient.setQueryData(notificationKeys.list(), context.previousList);
-      }
-      if (context?.previousCount !== undefined) {
-        queryClient.setQueryData(notificationKeys.unreadCount(), context.previousCount);
-      }
+      markNotificationAsReadInCache(queryClient, notificationId);
     },
     onSuccess: () => {
       window.dispatchEvent(new CustomEvent("notification-read"));
@@ -133,34 +103,7 @@ export const useNotificationsViewModel = () => {
   const markAllAsReadMutation = useMutation({
     mutationFn: markAllAsRead,
     onMutate: async () => {
-      await queryClient.cancelQueries({ queryKey: notificationKeys.list() });
-      await queryClient.cancelQueries({ queryKey: notificationKeys.unreadCount() });
-
-      const previousList = queryClient.getQueryData(notificationKeys.list());
-      const previousCount = queryClient.getQueryData(notificationKeys.unreadCount());
-
-      queryClient.setQueryData(notificationKeys.list(), (old: any) => {
-        if (!old) return old;
-        return {
-          ...old,
-          pages: old.pages.map((page: any) => ({
-            ...page,
-            data: page.data.map((n: NotificationItem) => ({ ...n, isRead: true })),
-          })),
-        };
-      });
-
-      queryClient.setQueryData(notificationKeys.unreadCount(), 0);
-
-      return { previousList, previousCount };
-    },
-    onError: (_err, _vars, context) => {
-      if (context?.previousList) {
-        queryClient.setQueryData(notificationKeys.list(), context.previousList);
-      }
-      if (context?.previousCount !== undefined) {
-        queryClient.setQueryData(notificationKeys.unreadCount(), context.previousCount);
-      }
+      markAllNotificationsAsReadInCache(queryClient);
     },
     onSuccess: () => {
       window.dispatchEvent(new CustomEvent("notifications-all-read"));
@@ -170,39 +113,8 @@ export const useNotificationsViewModel = () => {
   const deleteMutation = useMutation({
     mutationFn: deleteNotification,
     onMutate: async (notificationId: number) => {
-      await queryClient.cancelQueries({ queryKey: notificationKeys.list() });
-      await queryClient.cancelQueries({ queryKey: notificationKeys.unreadCount() });
-
-      const previousList = queryClient.getQueryData(notificationKeys.list());
-      const previousCount = queryClient.getQueryData(notificationKeys.unreadCount());
       const notification = notifications.find((n) => n.id === notificationId);
-
-      queryClient.setQueryData(notificationKeys.list(), (old: any) => {
-        if (!old) return old;
-        return {
-          ...old,
-          pages: old.pages.map((page: any) => ({
-            ...page,
-            data: page.data.filter((n: NotificationItem) => n.id !== notificationId),
-          })),
-        };
-      });
-
-      if (notification && !notification.isRead) {
-        queryClient.setQueryData(notificationKeys.unreadCount(), (old: number) =>
-          Math.max(0, (old || 0) - 1)
-        );
-      }
-
-      return { previousList, previousCount };
-    },
-    onError: (_err, _notificationId, context) => {
-      if (context?.previousList) {
-        queryClient.setQueryData(notificationKeys.list(), context.previousList);
-      }
-      if (context?.previousCount !== undefined) {
-        queryClient.setQueryData(notificationKeys.unreadCount(), context.previousCount);
-      }
+      removeNotificationFromCache(queryClient, notificationId, notification?.isRead === false);
     },
   });
 
@@ -232,15 +144,21 @@ export const useNotificationsViewModel = () => {
 
   const acceptFollowRequestMutation = useMutation({
     mutationFn: acceptFollowRequest,
+    onMutate: async () => {
+      updateFollowersCount(queryClient, 1);
+    },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: notificationKeys.all });
+      queryClient.invalidateQueries({ queryKey: queryKeys.notifications.all });
+    },
+    onError: () => {
+      updateFollowersCount(queryClient, -1);
     },
   });
 
   const rejectFollowRequestMutation = useMutation({
     mutationFn: rejectFollowRequest,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: notificationKeys.all });
+      queryClient.invalidateQueries({ queryKey: queryKeys.notifications.all });
     },
   });
 
@@ -276,7 +194,7 @@ export const useNotificationsViewModel = () => {
 
 export const useUnreadNotificationCount = () => {
   const { data: count = 0 } = useQuery({
-    queryKey: notificationKeys.unreadCount(),
+    queryKey: queryKeys.notifications.unreadCount(),
     queryFn: fetchUnreadCount,
     refetchInterval: 30000,
   });

@@ -1,14 +1,7 @@
 import { useQuery, useInfiniteQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { MobileBookService } from "../services/mobile-book.service";
 import { MobileToReadListService } from "../services/mobile-to-read-list.service";
-import { toReadListKeys } from "./use-to-read-list-viewmodel";
-
-export const bookKeys = {
-  all: ["books"] as const,
-  detail: (bookId: string) => [...bookKeys.all, "detail", bookId] as const,
-  reviews: (bookId: string) => [...bookKeys.all, "reviews", bookId] as const,
-  isInList: (bookId: string) => [...bookKeys.all, "isInList", bookId] as const,
-};
+import { queryKeys, addBookToListCache, removeBookFromListCache } from "@repo/stores";
 
 export const useSingleBookViewModel = (bookId: string) => {
   const queryClient = useQueryClient();
@@ -18,7 +11,7 @@ export const useSingleBookViewModel = (bookId: string) => {
     isLoading: isLoadingBook,
     error: bookError,
   } = useQuery({
-    queryKey: bookKeys.detail(bookId),
+    queryKey: queryKeys.books.detail(bookId),
     queryFn: () => MobileBookService.getBook(bookId),
     enabled: !!bookId,
   });
@@ -30,7 +23,7 @@ export const useSingleBookViewModel = (bookId: string) => {
     isFetchingNextPage,
     isLoading: isLoadingReviews,
   } = useInfiniteQuery({
-    queryKey: bookKeys.reviews(bookId),
+    queryKey: queryKeys.books.reviews(bookId),
     queryFn: ({ pageParam = 1 }) => MobileBookService.getBookReviews(bookId, pageParam),
     getNextPageParam: (lastPage) => {
       if (lastPage.meta.currentPage < lastPage.meta.lastPage) {
@@ -43,7 +36,7 @@ export const useSingleBookViewModel = (bookId: string) => {
   });
 
   const { data: isInReadList = false } = useQuery({
-    queryKey: bookKeys.isInList(bookId),
+    queryKey: queryKeys.books.isInList(bookId),
     queryFn: async () => {
       const result = await MobileToReadListService.getToReadList(1);
       return result.data.some((item) => item.googleBookId === bookId);
@@ -53,17 +46,21 @@ export const useSingleBookViewModel = (bookId: string) => {
 
   const addToListMutation = useMutation({
     mutationFn: () => MobileToReadListService.addToReadList(bookId),
-    onSuccess: () => {
-      queryClient.setQueryData(bookKeys.isInList(bookId), true);
-      queryClient.invalidateQueries({ queryKey: toReadListKeys.all });
+    onMutate: async () => {
+      addBookToListCache(queryClient, bookId);
+    },
+    onError: () => {
+      removeBookFromListCache(queryClient, bookId);
     },
   });
 
   const removeFromListMutation = useMutation({
     mutationFn: () => MobileToReadListService.removeFromReadList(bookId),
-    onSuccess: () => {
-      queryClient.setQueryData(bookKeys.isInList(bookId), false);
-      queryClient.invalidateQueries({ queryKey: toReadListKeys.all });
+    onMutate: async () => {
+      removeBookFromListCache(queryClient, bookId);
+    },
+    onError: () => {
+      addBookToListCache(queryClient, bookId);
     },
   });
 

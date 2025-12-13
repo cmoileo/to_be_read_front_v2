@@ -2,7 +2,7 @@ import { useMutation, useInfiniteQuery, useQueryClient } from "@tanstack/react-q
 import { useRouter } from "next/navigation";
 import type { User, Review } from "@repo/types";
 import { getMyReviewsAction, updateProfileAction, deleteReviewAction } from "@/app/_profile/actions";
-import { useConnectedUser } from "@repo/stores";
+import { useConnectedUser, queryKeys } from "@repo/stores";
 
 interface UseProfileViewModelProps {
   initialUser: User | null;
@@ -15,7 +15,7 @@ export function useProfileViewModel({ initialUser, initialReviewsResponse }: Use
   const queryClient = useQueryClient();
 
   const { data: reviewsData, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery({
-    queryKey: ["my-reviews"],
+    queryKey: queryKeys.myReviews(user?.id),
     queryFn: async ({ pageParam = 1 }) => {
       return getMyReviewsAction(pageParam);
     },
@@ -74,12 +74,12 @@ export function useProfileViewModel({ initialUser, initialReviewsResponse }: Use
       return deleteReviewAction(reviewId);
     },
     onMutate: async (reviewId) => {
-      await queryClient.cancelQueries({ queryKey: ["my-reviews"] });
+      await queryClient.cancelQueries({ queryKey: queryKeys.myReviews(user?.id) });
       
-      const previousData = queryClient.getQueryData(["my-reviews"]);
+      const previousData = queryClient.getQueryData(queryKeys.myReviews(user?.id));
       const previousUser = user;
       
-      queryClient.setQueryData(["my-reviews"], (oldData: any) => {
+      queryClient.setQueryData(queryKeys.myReviews(user?.id), (oldData: any) => {
         if (!oldData) return oldData;
         return {
           ...oldData,
@@ -98,7 +98,7 @@ export function useProfileViewModel({ initialUser, initialReviewsResponse }: Use
     },
     onError: (_err, _vars, context) => {
       if (context?.previousData) {
-        queryClient.setQueryData(["my-reviews"], context.previousData);
+        queryClient.setQueryData(queryKeys.myReviews(user?.id), context.previousData);
       }
       if (context?.previousUser) {
         setUser(context.previousUser);

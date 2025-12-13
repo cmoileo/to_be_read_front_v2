@@ -2,6 +2,13 @@ import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from "@tansta
 import { useMemo, useCallback } from "react";
 import type { NotificationItem } from "@repo/types";
 import { MobileStorage } from "../services/mobile-storage.service";
+import {
+  queryKeys,
+  markNotificationAsReadInCache,
+  markAllNotificationsAsReadInCache,
+  removeNotificationFromCache,
+  updateFollowersCount,
+} from "@repo/stores";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -12,12 +19,6 @@ const getAuthHeaders = async (): Promise<Record<string, string>> => {
     "Content-Type": "application/json",
     Authorization: `Bearer ${accessToken}`,
   };
-};
-
-export const notificationKeys = {
-  all: ["notifications"] as const,
-  list: () => [...notificationKeys.all, "list"] as const,
-  unreadCount: () => [...notificationKeys.all, "unreadCount"] as const,
 };
 
 async function fetchNotifications(page: number) {
@@ -35,7 +36,7 @@ async function fetchUnreadCount() {
   return data.count;
 }
 
-async function markAsRead(notificationId: number) {
+async function markAsReadApi(notificationId: number) {
   const headers = await getAuthHeaders();
   const response = await fetch(`${API_URL}/notifications/${notificationId}/read`, {
     method: "PATCH",
@@ -44,7 +45,7 @@ async function markAsRead(notificationId: number) {
   return response.ok;
 }
 
-async function markAllAsRead() {
+async function markAllAsReadApi() {
   const headers = await getAuthHeaders();
   const response = await fetch(`${API_URL}/notifications/mark-all-read`, {
     method: "POST",
@@ -53,7 +54,7 @@ async function markAllAsRead() {
   return response.ok;
 }
 
-async function deleteNotification(notificationId: number) {
+async function deleteNotificationApi(notificationId: number) {
   const headers = await getAuthHeaders();
   const response = await fetch(`${API_URL}/notifications/${notificationId}`, {
     method: "DELETE",
@@ -62,7 +63,7 @@ async function deleteNotification(notificationId: number) {
   return response.ok;
 }
 
-async function acceptFollowRequest(requestId: number) {
+async function acceptFollowRequestApi(requestId: number) {
   const headers = await getAuthHeaders();
   const response = await fetch(`${API_URL}/follow-request/${requestId}/accept`, {
     method: "POST",
@@ -72,7 +73,7 @@ async function acceptFollowRequest(requestId: number) {
   return response.json();
 }
 
-async function rejectFollowRequest(requestId: number) {
+async function rejectFollowRequestApi(requestId: number) {
   const headers = await getAuthHeaders();
   const response = await fetch(`${API_URL}/follow-request/${requestId}/reject`, {
     method: "POST",
@@ -87,7 +88,7 @@ export const useNotificationsViewModel = () => {
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, refetch } =
     useInfiniteQuery({
-      queryKey: notificationKeys.list(),
+      queryKey: queryKeys.notifications.list(),
       queryFn: ({ pageParam = 1 }) => fetchNotifications(pageParam),
       getNextPageParam: (lastPage) => {
         if (lastPage.meta.currentPage < lastPage.meta.lastPage) {
@@ -99,7 +100,7 @@ export const useNotificationsViewModel = () => {
     });
 
   const { data: unreadCount = 0 } = useQuery({
-    queryKey: notificationKeys.unreadCount(),
+    queryKey: queryKeys.notifications.unreadCount(),
     queryFn: fetchUnreadCount,
   });
 
@@ -109,81 +110,37 @@ export const useNotificationsViewModel = () => {
   }, [data]);
 
   const markAsReadMutation = useMutation({
-    mutationFn: markAsRead,
+    mutationFn: markAsReadApi,
     onMutate: async (notificationId: number) => {
-      await queryClient.cancelQueries({ queryKey: notificationKeys.list() });
-
-      queryClient.setQueryData(notificationKeys.list(), (old: any) => {
-        if (!old) return old;
-        return {
-          ...old,
-          pages: old.pages.map((page: any) => ({
-            ...page,
-            data: page.data.map((n: NotificationItem) =>
-              n.id === notificationId ? { ...n, isRead: true } : n
-            ),
-          })),
-        };
-      });
-
-      queryClient.setQueryData(notificationKeys.unreadCount(), (old: number) =>
-        Math.max(0, (old || 0) - 1)
-      );
+      await queryClient.cancelQueries({ queryKey: queryKeys.notifications.list() });
+      markNotificationAsReadInCache(queryClient, notificationId);
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: notificationKeys.all });
+      queryClient.invalidateQueries({ queryKey: queryKeys.notifications.all });
     },
   });
 
   const markAllAsReadMutation = useMutation({
-    mutationFn: markAllAsRead,
+    mutationFn: markAllAsReadApi,
     onMutate: async () => {
-      await queryClient.cancelQueries({ queryKey: notificationKeys.list() });
-
-      queryClient.setQueryData(notificationKeys.list(), (old: any) => {
-        if (!old) return old;
-        return {
-          ...old,
-          pages: old.pages.map((page: any) => ({
-            ...page,
-            data: page.data.map((n: NotificationItem) => ({ ...n, isRead: true })),
-          })),
-        };
-      });
-
-      queryClient.setQueryData(notificationKeys.unreadCount(), 0);
+      await queryClient.cancelQueries({ queryKey: queryKeys.notifications.list() });
+      markAllNotificationsAsReadInCache(queryClient);
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: notificationKeys.all });
+      queryClient.invalidateQueries({ queryKey: queryKeys.notifications.all });
     },
   });
 
   const deleteMutation = useMutation({
-    mutationFn: deleteNotification,
+    mutationFn: deleteNotificationApi,
     onMutate: async (notificationId: number) => {
-      await queryClient.cancelQueries({ queryKey: notificationKeys.list() });
-
+      await queryClient.cancelQueries({ queryKey: queryKeys.notifications.list() });
       const notification = notifications.find((n) => n.id === notificationId);
-
-      queryClient.setQueryData(notificationKeys.list(), (old: any) => {
-        if (!old) return old;
-        return {
-          ...old,
-          pages: old.pages.map((page: any) => ({
-            ...page,
-            data: page.data.filter((n: NotificationItem) => n.id !== notificationId),
-          })),
-        };
-      });
-
-      if (notification && !notification.isRead) {
-        queryClient.setQueryData(notificationKeys.unreadCount(), (old: number) =>
-          Math.max(0, (old || 0) - 1)
-        );
-      }
+      const wasUnread = notification ? !notification.isRead : false;
+      removeNotificationFromCache(queryClient, notificationId, wasUnread);
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: notificationKeys.all });
+      queryClient.invalidateQueries({ queryKey: queryKeys.notifications.all });
     },
   });
 
@@ -212,16 +169,33 @@ export const useNotificationsViewModel = () => {
   );
 
   const acceptFollowRequestMutation = useMutation({
-    mutationFn: acceptFollowRequest,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: notificationKeys.all });
+    mutationFn: acceptFollowRequestApi,
+    onMutate: async (requestId: number) => {
+      const notification = notifications.find(
+        (n) => n.type === "follow_request" && n.data?.requestId === String(requestId)
+      );
+      if (notification) {
+        removeNotificationFromCache(queryClient, notification.id, !notification.isRead);
+      }
+      updateFollowersCount(queryClient, 1);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.notifications.all });
     },
   });
 
   const rejectFollowRequestMutation = useMutation({
-    mutationFn: rejectFollowRequest,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: notificationKeys.all });
+    mutationFn: rejectFollowRequestApi,
+    onMutate: async (requestId: number) => {
+      const notification = notifications.find(
+        (n) => n.type === "follow_request" && n.data?.requestId === String(requestId)
+      );
+      if (notification) {
+        removeNotificationFromCache(queryClient, notification.id, !notification.isRead);
+      }
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.notifications.all });
     },
   });
 
@@ -257,7 +231,7 @@ export const useNotificationsViewModel = () => {
 
 export const useUnreadNotificationCount = () => {
   const { data: count = 0 } = useQuery({
-    queryKey: notificationKeys.unreadCount(),
+    queryKey: queryKeys.notifications.unreadCount(),
     queryFn: fetchUnreadCount,
     staleTime: Infinity,
   });

@@ -1,7 +1,7 @@
 import { useInfiniteQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import type { Review, PaginatedResponse } from "@repo/types";
 import { getFeedAction, likeReviewAction } from "@/app/_feed/actions";
-import { feedKeys, toggleLikeInFeed } from "@repo/stores";
+import { queryKeys, toggleReviewLike } from "@repo/stores";
 
 interface UseFeedViewModelProps {
   initialFeedResponse: PaginatedResponse<Review> | null;
@@ -19,7 +19,7 @@ export function useFeedViewModel({ initialFeedResponse }: UseFeedViewModelProps)
     refetch,
     isRefetching,
   } = useInfiniteQuery({
-    queryKey: feedKeys.list(),
+    queryKey: queryKeys.feed.list(),
     queryFn: async ({ pageParam = 1 }) => {
       return getFeedAction(pageParam);
     },
@@ -41,17 +41,17 @@ export function useFeedViewModel({ initialFeedResponse }: UseFeedViewModelProps)
   const likeMutation = useMutation({
     mutationFn: (reviewId: number) => likeReviewAction(reviewId),
     onMutate: async (reviewId: number) => {
-      await queryClient.cancelQueries({ queryKey: feedKeys.list() });
+      await queryClient.cancelQueries({ queryKey: queryKeys.feed.list() });
 
-      const previousData = queryClient.getQueryData(feedKeys.list());
+      const previousData = queryClient.getQueryData(queryKeys.feed.list());
 
-      toggleLikeInFeed(queryClient, reviewId);
+      toggleReviewLike(queryClient, reviewId);
 
       return { previousData };
     },
     onError: (_err, _reviewId, context) => {
       if (context?.previousData) {
-        queryClient.setQueryData(feedKeys.list(), context.previousData);
+        queryClient.setQueryData(queryKeys.feed.list(), context.previousData);
       }
     },
   });
