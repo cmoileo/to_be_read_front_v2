@@ -3,7 +3,8 @@
         "login": {
             "title": "Login",
             "description": "Sign in to your Inkgora account",
-            "email": "Email",
+            "emailOrUsername": "Email or Username",
+            "emailOrUsernamePlaceholder": "Enter your email or username",
             "password": "Password",
             "forgotPassword": "Forgot password?",
             "submit": "Sign in",
@@ -48,6 +49,7 @@
         },
         "validation": {
             "emailInvalid": "Invalid email",
+            "emailOrUsernameInvalid": "Please enter a valid email or username",
             "usernameMin": "Username must be at least 3 characters",
             "usernameMax": "Username cannot exceed 32 characters",
             "usernameFormat": "Username can only contain lowercase letters, numbers and underscores",

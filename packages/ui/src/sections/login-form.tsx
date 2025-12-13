@@ -80,16 +80,16 @@ export function LoginForm({
             {(field) => (
               <div className="space-y-2">
                 <Label htmlFor={field.name} className="text-sm font-medium">
-                  {t("auth.login.email")}
+                  {t("auth.login.emailOrUsername")}
                 </Label>
                 <Input
                   id={field.name}
-                  type="email"
+                  type="text"
                   value={field.state.value}
                   onBlur={field.handleBlur}
                   onChange={(e) => field.handleChange(e.target.value)}
                   disabled={isLoading}
-                  placeholder="votre@email.com"
+                  placeholder={t("auth.login.emailOrUsernamePlaceholder")}
                   className="h-12"
                 />
                 {field.state.meta.errors.length > 0 && (

@@ -28,7 +28,18 @@ export const passwordSchema = getPasswordSchema();
 
 export const getLoginSchema = () =>
   z.object({
-    email: getEmailSchema(),
+    email: z
+      .string()
+      .refine(
+        (val) => {
+          const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val);
+          const isUsername = /^[a-z0-9_]{3,32}$/.test(val.toLowerCase());
+          return isEmail || isUsername;
+        },
+        {
+          message: i18n.t("auth.validation.emailOrUsernameInvalid"),
+        }
+      ),
     password: z.string().min(8, i18n.t("auth.validation.passwordMin")),
     rememberMe: z.boolean().default(false),
   });

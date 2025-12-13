@@ -3,7 +3,8 @@
         "login": {
             "title": "Connexion",
             "description": "Connectez-vous à votre compte Inkgora",
-            "email": "Email",
+            "emailOrUsername": "Email ou nom d'utilisateur",
+            "emailOrUsernamePlaceholder": "Entrez votre email ou nom d'utilisateur",
             "password": "Mot de passe",
             "forgotPassword": "Mot de passe oublié ?",
             "submit": "Se connecter",
@@ -48,6 +49,7 @@
         },
         "validation": {
             "emailInvalid": "Email invalide",
+            "emailOrUsernameInvalid": "Veuillez entrer un email ou un nom d'utilisateur valide",
             "usernameMin": "Le nom d'utilisateur doit contenir au moins 3 caractères",
             "usernameMax": "Le nom d'utilisateur ne peut pas dépasser 32 caractères",
             "usernameFormat": "Le nom d'utilisateur ne peut contenir que des lettres minuscules, chiffres et underscores",
