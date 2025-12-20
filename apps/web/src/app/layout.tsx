@@ -4,9 +4,52 @@ import { Providers } from "@/components/providers";
 import { Navigation } from "@/components/navigation";
 import { getUserFromCookies } from "./_auth/actions";
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://inkgora.com";
+
 export const metadata: Metadata = {
-  title: "Inkgora - Partagez vos critiques littéraires",
-  description: "Réseau social de critiques de livres",
+  metadataBase: new URL(siteUrl),
+  title: {
+    default: "Inkgora - Partagez vos critiques littéraires",
+    template: "%s | Inkgora",
+  },
+  description: "Découvrez, partagez et discutez de vos lectures avec une communauté de passionnés. Créez des critiques, suivez des lecteurs et trouvez votre prochaine lecture.",
+  keywords: ["livres", "critiques littéraires", "lecture", "réseau social", "avis livres", "communauté lecteurs", "bookstagram", "book reviews"],
+  authors: [{ name: "Inkgora" }],
+  creator: "Inkgora",
+  publisher: "Inkgora",
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  openGraph: {
+    type: "website",
+    locale: "fr_FR",
+    url: siteUrl,
+    siteName: "Inkgora",
+    title: "Inkgora - Partagez vos critiques littéraires",
+    description: "Découvrez, partagez et discutez de vos lectures avec une communauté de passionnés.",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Inkgora - Réseau social de critiques littéraires",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Inkgora - Partagez vos critiques littéraires",
+    description: "Découvrez, partagez et discutez de vos lectures avec une communauté de passionnés.",
+    images: ["/og-image.png"],
+  },
   icons: {
     icon: [
       { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
@@ -22,6 +65,9 @@ export const metadata: Metadata = {
     capable: true,
     statusBarStyle: "black-translucent",
     title: "Inkgora",
+  },
+  alternates: {
+    canonical: siteUrl,
   },
 };
 

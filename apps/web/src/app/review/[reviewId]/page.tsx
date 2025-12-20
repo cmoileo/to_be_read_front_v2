@@ -1,10 +1,54 @@
 import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
 import { WebReviewService } from "@/services/web-review.service";
 import SingleReviewClient from "./single-review-client";
 
 interface SingleReviewPageProps {
   params: Promise<{ reviewId: string }>;
+}
+
+export async function generateMetadata({ params }: SingleReviewPageProps): Promise<Metadata> {
+  const { reviewId } = await params;
+  const reviewIdNum = parseInt(reviewId, 10);
+
+  if (isNaN(reviewIdNum)) {
+    return {};
+  }
+
+  try {
+    const review = await WebReviewService.getReview(reviewIdNum);
+    
+    if (!review) {
+      return {};
+    }
+
+    const bookTitle = review.book?.title || "un livre";
+    const username = review.user?.username || "un utilisateur";
+    const title = `Critique de ${bookTitle} par @${username}`;
+    const description = review.content 
+      ? review.content.substring(0, 160) 
+      : `Découvrez la critique de ${bookTitle} sur Inkgora`;
+
+    return {
+      title,
+      description,
+      openGraph: {
+        title,
+        description,
+        images: review.book?.thumbnail ? [{ url: review.book.thumbnail }] : [],
+        type: "article",
+      },
+      twitter: {
+        card: "summary",
+        title,
+        description,
+        images: review.book?.thumbnail ? [review.book.thumbnail] : [],
+      },
+    };
+  } catch {
+    return {};
+  }
 }
 
 export default async function SingleReviewPage({ params }: SingleReviewPageProps) {

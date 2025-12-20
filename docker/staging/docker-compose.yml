@@ -11,12 +11,14 @@ services:
       dockerfile: docker/staging/Dockerfile
       args:
         - NEXT_PUBLIC_API_URL=https://api-staging.inkgora.com
+        - NEXT_PUBLIC_SITE_URL=https://staging.inkgora.com
     restart: unless-stopped
     env_file:
       - .env
     environment:
       - NODE_ENV=production
       - NEXT_PUBLIC_API_URL=https://api-staging.inkgora.com
+      - NEXT_PUBLIC_SITE_URL=https://staging.inkgora.com
     ports:
       - 3000
     labels:
