@@ -68,7 +68,7 @@ export class WebAuthService {
     });
   }
 
-  static async resetPasswordConfirm(data: { token: string; password: string }): Promise<void> {
+  static async resetPasswordConfirm(data: { email: string; token: string; password: string }): Promise<void> {
     return callApi("/auth/reset-password/confirm", {
       method: "POST",
       body: JSON.stringify(data),

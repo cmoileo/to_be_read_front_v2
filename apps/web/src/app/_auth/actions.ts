@@ -66,7 +66,7 @@ export async function resetPasswordRequest(email: string) {
   return WebAuthService.resetPasswordRequest(email);
 }
 
-export async function resetPasswordConfirm(data: { token: string; password: string }) {
+export async function resetPasswordConfirm(data: { email: string, token: string; password: string }) {
   return WebAuthService.resetPasswordConfirm(data);
 }
 

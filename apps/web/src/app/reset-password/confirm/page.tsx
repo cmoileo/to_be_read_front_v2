@@ -7,9 +7,10 @@ import { useSearchParams } from "next/navigation";
 export default function ResetPasswordConfirmPage() {
   const searchParams = useSearchParams();
   const token = searchParams.get("token") || "";
+  const email = searchParams.get("email") || "";
   const viewModel = useResetPasswordConfirmViewModel();
 
-  if (!token) {
+  if (!token || !email) {
     return (
       <div className="flex min-h-screen items-center justify-center p-6">
         <div className="w-full max-w-md text-center">
@@ -25,7 +26,7 @@ export default function ResetPasswordConfirmPage() {
   return (
     <div className="flex min-h-screen items-center justify-center p-6">
       <ResetPasswordConfirmForm
-        onSubmit={viewModel.confirmReset}
+        onSubmit={(values) => viewModel.confirmReset({ ...values, email })}
         token={token}
         isLoading={viewModel.isLoading}
         error={viewModel.error}
