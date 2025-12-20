@@ -23,10 +23,10 @@ export async function generateMetadata({ params }: UserProfilePageProps): Promis
       return {};
     }
 
-    const title = `@${user.username}`;
-    const description = user.bio 
-      ? user.bio.substring(0, 160) 
-      : `Découvrez le profil de @${user.username} sur Inkgora`;
+    const title = `@${user.userName}`;
+    const description = user.biography 
+      ? user.biography.substring(0, 160) 
+      : `Découvrez le profil de @${user.userName} sur Inkgora`;
 
     return {
       title,

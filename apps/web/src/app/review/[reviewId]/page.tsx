@@ -23,8 +23,8 @@ export async function generateMetadata({ params }: SingleReviewPageProps): Promi
       return {};
     }
 
-    const bookTitle = review.book?.title || "un livre";
-    const username = review.user?.username || "un utilisateur";
+    const bookTitle = review.book.volumeInfo.title || "un livre";
+    const username = review.author.userName
     const title = `Critique de ${bookTitle} par @${username}`;
     const description = review.content 
       ? review.content.substring(0, 160) 
