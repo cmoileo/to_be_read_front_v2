@@ -29,6 +29,7 @@ export async function generateMetadata({ params }: SingleReviewPageProps): Promi
     const description = review.content 
       ? review.content.substring(0, 160) 
       : `Découvrez la critique de ${bookTitle} sur Inkgora`;
+    const imageUrl = review.book?.volumeInfo?.imageLinks?.thumbnail;
 
     return {
       title,
@@ -36,14 +37,14 @@ export async function generateMetadata({ params }: SingleReviewPageProps): Promi
       openGraph: {
         title,
         description,
-        images: review.book?.thumbnail ? [{ url: review.book.thumbnail }] : [],
+        ...(imageUrl && { images: [{ url: imageUrl }] }),
         type: "article",
       },
       twitter: {
         card: "summary",
         title,
         description,
-        images: review.book?.thumbnail ? [review.book.thumbnail] : [],
+        ...(imageUrl && { images: [imageUrl] }),
       },
     };
   } catch {

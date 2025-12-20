@@ -18,26 +18,26 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       return {};
     }
 
-    const title = book.title;
-    const description = book.description 
-      ? book.description.substring(0, 160) 
-      : `Découvrez les critiques de ${book.title} sur Inkgora`;
-    const authors = book.authors?.join(", ") || "Auteur inconnu";
-
+    const title = book.volumeInfo.title;
+    const description = book.volumeInfo.description 
+      ? book.volumeInfo.description.substring(0, 160) 
+      : `Découvrez les critiques de ${book.volumeInfo.title} sur Inkgora`;
+    const authors = book.volumeInfo.authors?.join(", ") || "Auteur inconnu";
+    const imageUrl = book.volumeInfo.imageLinks?.thumbnail;
     return {
       title: `${title} - ${authors}`,
       description,
       openGraph: {
         title: `${title} - ${authors}`,
         description,
-        images: book.thumbnail ? [{ url: book.thumbnail }] : [],
+        ...(imageUrl && { images: [{ url: imageUrl }] }),
         type: "book",
       },
       twitter: {
         card: "summary",
         title: `${title} - ${authors}`,
         description,
-        images: book.thumbnail ? [book.thumbnail] : [],
+        ...(imageUrl && { images: [imageUrl] }),
       },
     };
   } catch {

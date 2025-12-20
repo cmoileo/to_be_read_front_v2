@@ -34,14 +34,14 @@ export async function generateMetadata({ params }: UserProfilePageProps): Promis
       openGraph: {
         title: `${title} sur Inkgora`,
         description,
-        images: user.avatar ? [{ url: user.avatar }] : [],
+        ...(user.avatar && { images: [{ url: user.avatar }] }),
         type: "profile",
       },
       twitter: {
         card: "summary",
         title: `${title} sur Inkgora`,
         description,
-        images: user.avatar ? [user.avatar] : [],
+        ...(user.avatar && { images: [user.avatar] }),
       },
     };
   } catch {
