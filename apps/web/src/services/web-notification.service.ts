@@ -41,6 +41,16 @@ class WebNotificationService {
 
     try {
       const config = getFirebaseConfig();
+      
+      // Debug: log Firebase config being used
+      console.log("[WebNotification] Initializing with Firebase config:", {
+        projectId: config.projectId,
+        messagingSenderId: config.messagingSenderId,
+        appId: config.appId,
+        hasApiKey: !!config.apiKey,
+        hasVapidKey: !!VAPID_KEY,
+      });
+
       if (!this.isFirebaseConfigured(config)) {
         console.warn("Firebase not configured, notifications disabled");
         return false;
@@ -72,6 +82,7 @@ class WebNotificationService {
       }
 
       this.initialized = true;
+      console.log("[WebNotification] Initialized successfully with project:", config.projectId);
       return true;
     } catch (error) {
       console.error("Failed to initialize notifications:", error);
@@ -119,6 +130,12 @@ class WebNotificationService {
       const token = await getToken(this.messaging, {
         vapidKey: VAPID_KEY,
         serviceWorkerRegistration: this.swRegistration || undefined,
+      });
+
+      console.log("[WebNotification] FCM token obtained:", {
+        tokenPrefix: token.substring(0, 20) + "...",
+        projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+        messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
       });
 
       this.currentToken = token;
