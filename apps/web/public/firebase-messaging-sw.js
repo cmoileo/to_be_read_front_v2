@@ -14,7 +14,10 @@ function initializeFirebase() {
   if (!firebaseConfig) return;
 
   try {
-    firebase.initializeApp(firebaseConfig);
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+    
     const messaging = firebase.messaging();
 
     messaging.onBackgroundMessage((payload) => {
