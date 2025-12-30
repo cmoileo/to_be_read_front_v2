@@ -12,9 +12,11 @@ import type { User, UserDetailed } from "@repo/types";
 export function Providers({
   children,
   initialUser,
+  initialAccessToken,
 }: {
   children: ReactNode;
   initialUser: User | null;
+  initialAccessToken?: string;
 }) {
   const [queryClient] = useState(
     () =>
@@ -34,7 +36,7 @@ export function Providers({
     <QueryClientProvider client={queryClient}>
       <ThemeProvider defaultTheme={userTheme}>
         <I18nProvider>
-          <AuthProvider initialUser={initialUser}>
+          <AuthProvider initialUser={initialUser} initialAccessToken={initialAccessToken}>
             <NotificationProvider>{children}</NotificationProvider>
           </AuthProvider>
         </I18nProvider>

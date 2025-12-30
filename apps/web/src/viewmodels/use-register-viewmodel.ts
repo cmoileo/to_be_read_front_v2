@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { TokenStorage } from "@repo/services";
 import { registerAction, checkUsernameAvailability } from "@/app/_auth/actions";
 import type { RegisterFormValues } from "@repo/ui";
 import { getSystemTheme } from "@/providers/theme-provider";
@@ -31,7 +32,8 @@ export function useRegisterViewModel() {
     
     startTransition(async () => {
       try {
-        await registerAction(credentials);
+        const result = await registerAction(credentials);
+        TokenStorage.setToken(result.accessToken);
         router.push("/");
         router.refresh();
       } catch (err: any) {

@@ -3,6 +3,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { useToast } from "@repo/ui";
+import { TokenStorage } from "@repo/services";
 import {
   logoutAction,
   deleteAccountAction,
@@ -31,6 +32,7 @@ export function useSettingsViewModel() {
       await logoutAction();
     },
     onSuccess: () => {
+      TokenStorage.clearToken();
       clearUser();
       router.push("/login");
       router.refresh();
@@ -42,6 +44,7 @@ export function useSettingsViewModel() {
       return deleteAccountAction();
     },
     onSuccess: () => {
+      TokenStorage.clearToken();
       clearUser();
       router.push("/login");
       router.refresh();

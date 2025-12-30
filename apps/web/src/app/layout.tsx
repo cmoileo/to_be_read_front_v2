@@ -99,7 +99,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const user = await getUserFromCookies();
+  const authData = await getUserFromCookies();
 
   return (
     <html lang="fr" suppressHydrationWarning>
@@ -108,7 +108,7 @@ export default async function RootLayout({
       </head>
       <body className="antialiased" suppressHydrationWarning>
         <div className="min-h-screen bg-background font-sans antialiased">
-          <Providers initialUser={user}>
+          <Providers initialUser={authData?.user ?? null} initialAccessToken={authData?.accessToken}>
             <Navigation />
             {children}
           </Providers>

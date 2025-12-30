@@ -7,13 +7,13 @@ import { WebStorageService } from "@/services/web-storage.service";
 export async function loginAction(credentials: LoginCredentials & { rememberMe?: boolean }) {
   const data = await WebAuthService.login(credentials);
   await WebStorageService.setAuthCookies(data, credentials.rememberMe ?? false);
-  return { user: data.user };
+  return { user: data.user, accessToken: data.token.token };
 }
 
 export async function registerAction(credentials: RegisterCredentials & { rememberMe?: boolean }) {
   const data = await WebAuthService.register(credentials);
   await WebStorageService.setAuthCookies(data, credentials.rememberMe ?? false);
-  return { user: data.user };
+  return { user: data.user, accessToken: data.token.token };
 }
 
 export async function logoutAction() {
@@ -38,7 +38,7 @@ export async function getUserFromCookies() {
   
   try {
     const data = await WebAuthService.getMe(access);
-    return data.user;
+    return { user: data.user, accessToken: access };
   } catch {
     const refreshToken = await WebStorageService.getRefreshToken();
     if (!refreshToken) return null;
@@ -50,7 +50,7 @@ export async function getUserFromCookies() {
       await WebStorageService.setRefreshToken(refreshData.refreshToken, rememberMe);
       
       const userData = await WebAuthService.getMe(refreshData.token.token);
-      return userData.user;
+      return { user: userData.user, accessToken: refreshData.token.token };
     } catch {
       await WebStorageService.clearAuthCookies();
       return null;

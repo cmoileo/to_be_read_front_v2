@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { TokenStorage } from "@repo/services";
 import { loginAction } from "@/app/_auth/actions";
 import type { LoginFormValues } from "@repo/ui";
 
@@ -15,10 +16,11 @@ export function useLoginViewModel() {
     startTransition(async () => {
       try {
         const { rememberMe, ...credentials } = values;
-        await loginAction({
+        const result = await loginAction({
           ...credentials,
           rememberMe,
         });
+        TokenStorage.setToken(result.accessToken);
         router.push("/");
         router.refresh();
       } catch (err: any) {
