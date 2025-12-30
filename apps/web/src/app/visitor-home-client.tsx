@@ -119,6 +119,41 @@ export function VisitorHomeClient() {
           </div>
         </div>
       </div>
+
+      {/* Footer */}
+      <footer className="py-8 px-6 border-t border-border/50 bg-background">
+        <div className="max-w-5xl mx-auto">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+            <div className="flex items-center gap-2">
+              <BookOpen className="h-5 w-5 text-primary" />
+              <span className="font-semibold">Inkgora</span>
+            </div>
+            <nav className="flex flex-wrap justify-center gap-6 text-sm">
+              <Link
+                href="/legal#privacy"
+                className="text-muted-foreground hover:text-foreground transition-colors"
+              >
+                {t("legal.privacy.title")}
+              </Link>
+              <Link
+                href="/legal#terms"
+                className="text-muted-foreground hover:text-foreground transition-colors"
+              >
+                {t("legal.terms.title")}
+              </Link>
+              <Link
+                href="/legal#mentions"
+                className="text-muted-foreground hover:text-foreground transition-colors"
+              >
+                {t("legal.mentions.title")}
+              </Link>
+            </nav>
+            <p className="text-sm text-muted-foreground">
+              © {new Date().getFullYear()} Inkgora
+            </p>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }

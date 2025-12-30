@@ -46,6 +46,7 @@ export * from "./sections/to-read-list-screen";
 export * from "./sections/notifications-screen";
 export * from "./sections/settings-section";
 export * from "./sections/privacy-settings-dialog";
+export * from "./sections/legal-screen";
 export * from "./components/user-list-item";
 export * from "./components/to-read-list-item-card";
 export * from "./schemas/auth.schema";

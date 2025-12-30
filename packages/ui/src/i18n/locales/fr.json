@@ -323,5 +323,47 @@
     "pullToRefresh": {
         "release": "Relâchez pour actualiser",
         "pull": "Tirez pour actualiser"
+    },
+    "legal": {
+        "page_title": "Informations Légales",
+        "last_updated": "Dernière mise à jour : {{date}}",
+        "contact_us": "Pour toute question, contactez-nous à : {{email}}",
+        "mentions": {
+            "title": "Mentions Légales",
+            "editor_title": "Éditeur du Service",
+            "editor_content": "Le service Inkgora est édité par Léo Fezard, entrepreneur individuel, domicilié au 61 rue de Lyon, 75012 Paris, France, immatriculé sous le numéro SIRET 888 038 858 00013.",
+            "hosting_title": "Hébergement",
+            "hosting_content": "L'application Web et l'API sont hébergées par IKOULA (France). Le stockage des images est assuré par un service compatible S3 hébergé à Paris (France). La base de données est hébergée par NeonDB en Europe.",
+            "director_title": "Directeur de la publication",
+            "director_content": "Léo Fezard"
+        },
+        "terms": {
+            "title": "Conditions Générales d'Utilisation (CGU)",
+            "intro": "Bienvenue sur Inkgora. En accédant à notre application web ou mobile, vous acceptez les présentes conditions sans réserve.",
+            "access_title": "Accès au service",
+            "access_content": "Le service est accessible gratuitement à tout utilisateur disposant d'un accès à internet. L'inscription est réservée aux personnes âgées de 15 ans et plus.",
+            "account_security_title": "Sécurité du compte",
+            "account_security_content": "Vous êtes responsable de la confidentialité de vos identifiants. Inkgora ne pourra être tenu responsable en cas d'accès frauduleux à votre compte dû à une négligence de votre part.",
+            "intellectual_property_title": "Propriété Intellectuelle & Contenu",
+            "intellectual_property_content": "Vous restez propriétaire des critiques et commentaires que vous publiez. Toutefois, en publiant sur Inkgora, vous nous accordez une licence non-exclusive, mondiale et gratuite pour héberger, afficher et reproduire votre contenu sur la plateforme. Vous vous engagez à ne pas publier de contenu haineux, diffamatoire ou violant les droits d'auteur.",
+            "google_books_title": "Service Tiers",
+            "google_books_content": "Les données relatives aux livres (titres, couvertures, auteurs) proviennent de l'API Google Books. Inkgora n'est pas responsable de l'exactitude de ces données.",
+            "liability_title": "Responsabilité",
+            "liability_content": "Inkgora est fourni 'tel quel'. Nous ne garantissons pas que le service sera exempt de bugs ou d'interruptions. L'éditeur ne saurait être tenu responsable des dommages directs ou indirects liés à l'utilisation du service."
+        },
+        "privacy": {
+            "title": "Politique de Confidentialité",
+            "intro": "Nous accordons une importance capitale à la protection de vos données personnelles, conformément au RGPD.",
+            "data_collected_title": "Données collectées",
+            "data_collected_content": "Nous collectons les données que vous nous fournissez lors de votre inscription (email, pseudo, mot de passe chiffré) et lors de votre utilisation du service (critiques, listes de lecture, interactions).",
+            "purpose_title": "Finalité du traitement",
+            "purpose_content": "Vos données servent uniquement à créer votre compte, gérer votre profil, afficher votre fil d'actualité personnalisé et assurer le bon fonctionnement du réseau social.",
+            "cookies_title": "Cookies et Traceurs",
+            "cookies_content": "Inkgora n'utilise aucun cookie publicitaire ni traceur tiers. Nous utilisons uniquement des mécanismes de stockage technique (JWT/Tokens) strictement nécessaires à votre authentification et au maintien de votre session.",
+            "sharing_title": "Partage des données",
+            "sharing_content": "Vos données personnelles ne sont jamais vendues à des tiers. Elles sont stockées de manière sécurisée en Europe.",
+            "user_rights_title": "Vos droits",
+            "user_rights_content": "Conformément à la réglementation, vous disposez d'un droit d'accès, de rectification et de suppression de vos données. Vous pouvez exercer ces droits en nous contactant à contact@inkgora.com ou via les paramètres de votre compte."
+        }
     }
 }

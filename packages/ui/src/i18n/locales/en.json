@@ -323,5 +323,47 @@
     "pullToRefresh": {
         "release": "Release to refresh",
         "pull": "Pull to refresh"
+    },
+    "legal": {
+        "page_title": "Legal Information",
+        "last_updated": "Last updated: {{date}}",
+        "contact_us": "For any questions, contact us at: {{email}}",
+        "mentions": {
+            "title": "Legal Notice",
+            "editor_title": "Service Publisher",
+            "editor_content": "Inkgora is published by Léo Fezard, sole proprietor, residing at 61 rue de Lyon, 75012 Paris, France, registered under SIRET number 888 038 858 00013.",
+            "hosting_title": "Hosting",
+            "hosting_content": "The Web application and API are hosted by IKOULA (France). Image storage is provided by an S3-compatible service hosted in Paris (France). The database is hosted by NeonDB in Europe.",
+            "director_title": "Director of Publication",
+            "director_content": "Léo Fezard"
+        },
+        "terms": {
+            "title": "Terms of Service",
+            "intro": "Welcome to Inkgora. By accessing our web or mobile application, you agree to these terms without reservation.",
+            "access_title": "Access to Service",
+            "access_content": "The service is accessible free of charge to any user with internet access. Registration is restricted to persons aged 15 and over.",
+            "account_security_title": "Account Security",
+            "account_security_content": "You are responsible for the confidentiality of your credentials. Inkgora cannot be held liable for fraudulent access to your account due to negligence on your part.",
+            "intellectual_property_title": "Intellectual Property & Content",
+            "intellectual_property_content": "You retain ownership of the reviews and comments you post. However, by posting on Inkgora, you grant us a non-exclusive, worldwide, royalty-free license to host, display, and reproduce your content on the platform. You agree not to post hateful, defamatory content or content that violates copyright laws.",
+            "google_books_title": "Third-Party Service",
+            "google_books_content": "Book data (titles, covers, authors) is sourced from the Google Books API. Inkgora is not responsible for the accuracy of this data.",
+            "liability_title": "Liability",
+            "liability_content": "Inkgora is provided 'as is'. We do not guarantee that the service will be free of bugs or interruptions. The publisher cannot be held liable for direct or indirect damages related to the use of the service."
+        },
+        "privacy": {
+            "title": "Privacy Policy",
+            "intro": "We place great importance on the protection of your personal data, in accordance with the GDPR.",
+            "data_collected_title": "Data Collected",
+            "data_collected_content": "We collect data you provide during registration (email, username, encrypted password) and during your use of the service (reviews, reading lists, interactions).",
+            "purpose_title": "Purpose of Processing",
+            "purpose_content": "Your data is used solely to create your account, manage your profile, display your personalized feed, and ensure the proper functioning of the social network.",
+            "cookies_title": "Cookies and Trackers",
+            "cookies_content": "Inkgora does not use any advertising cookies or third-party trackers. We only use technical storage mechanisms (JWT/Tokens) strictly necessary for your authentication and session maintenance.",
+            "sharing_title": "Data Sharing",
+            "sharing_content": "Your personal data is never sold to third parties. It is stored securely in Europe.",
+            "user_rights_title": "Your Rights",
+            "user_rights_content": "In accordance with regulations, you have a right to access, rectify, and delete your data. You can exercise these rights by contacting us at contact@inkgora.com or via your account settings."
+        }
     }
 }
