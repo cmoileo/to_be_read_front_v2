@@ -72,8 +72,8 @@ export interface ResetPasswordConfirm {
 }
 
 export interface DeviceToken {
-  token: string;
-  platform: "ios" | "android" | "web" | "desktop";
+  fcmToken: string;
+  platform?: "ios" | "android" | "web" | "desktop";
 }
 
 export type NotificationPermissionStatus = "granted" | "denied" | "default";

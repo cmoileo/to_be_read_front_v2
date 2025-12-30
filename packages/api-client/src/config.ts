@@ -1,11 +1,13 @@
 declare const process: any;
 
+// Get API URL at build time - Vite will replace these
+// @ts-ignore
+const VITE_API_URL = import.meta.env?.VITE_API_URL || "";
+
 const getApiUrl = (): string => {
-  // 1. Vite environment variables (mobile app)
-  // @ts-ignore - import.meta.env is available in Vite but not in Next.js
-  if (typeof import.meta !== "undefined" && import.meta.env?.VITE_API_URL) {
-    // @ts-ignore
-    return import.meta.env.VITE_API_URL as string;
+  // 1. Vite environment variables (mobile app) - evaluated at build time
+  if (VITE_API_URL) {
+    return VITE_API_URL;
   }
   
   // 2. Next.js client-side (window.ENV)

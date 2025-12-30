@@ -1,9 +1,10 @@
 import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
 import { MobileStorage } from "../services/mobile-storage.service";
-import { SettingsSection, PrivacySettingsDialog } from "@repo/ui";
+import { SettingsSection, PrivacySettingsDialog, Button } from "@repo/ui";
 import { useSettingsViewModel } from "../viewmodels/use-settings-viewmodel";
 import { usePlatform } from "../hooks/use-platform";
 import { PageTransition } from "../components/page-transition";
+import { Bug } from "lucide-react";
 
 export const Route = createFileRoute("/settings")({
   beforeLoad: async () => {
@@ -52,6 +53,16 @@ function SettingsPage() {
           onOpenPrivacySettings={handleOpenPrivacySettings}
           onBack={() => navigate({ to: "/profile" })}
         />
+        
+        {/* Debug Button */}
+        <Button
+          onClick={() => navigate({ to: "/debug-logs" })}
+          variant="outline"
+          className="mt-4 w-full"
+        >
+          <Bug className="h-4 w-4 mr-2" />
+          Debug Logs (Dev)
+        </Button>
       </PageTransition>
 
       <PrivacySettingsDialog

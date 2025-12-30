@@ -1,5 +1,8 @@
 import UIKit
 import Capacitor
+import UserNotifications
+import FirebaseCore
+import FirebaseMessaging
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -7,8 +10,40 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+        print("[AppDelegate] App starting...")
+        
+        // Configure Firebase FIRST - required before any Firebase calls
+        FirebaseApp.configure()
+        print("[AppDelegate] Firebase configured")
+        
         return true
+    }
+
+    // MARK: - APNs Token Handling (from Capacitor docs)
+    
+    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        let tokenString = deviceToken.map { String(format: "%02.2hhx", $0) }.joined()
+        print("[AppDelegate] APNs token received: \(tokenString.prefix(40))...")
+        
+        // Pass APNs token to Firebase
+        Messaging.messaging().apnsToken = deviceToken
+        
+        // Get FCM token from Firebase and post it to Capacitor
+        Messaging.messaging().token(completion: { (token, error) in
+            if let error = error {
+                print("[AppDelegate] Error getting FCM token: \(error.localizedDescription)")
+                NotificationCenter.default.post(name: .capacitorDidFailToRegisterForRemoteNotifications, object: error)
+            } else if let token = token {
+                print("[AppDelegate] FCM token received: \(token.prefix(40))...")
+                // Post the FCM token STRING directly to Capacitor
+                NotificationCenter.default.post(name: .capacitorDidRegisterForRemoteNotifications, object: token)
+            }
+        })
+    }
+    
+    func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
+        print("[AppDelegate] Failed to register for remote notifications: \(error.localizedDescription)")
+        NotificationCenter.default.post(name: .capacitorDidFailToRegisterForRemoteNotifications, object: error)
     }
 
     func applicationWillResignActive(_ application: UIApplication) {

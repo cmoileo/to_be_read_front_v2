@@ -1,3 +1,5 @@
+import "./utils/debug-logger";
+
 import "@repo/ui/src/styles/globals.css";
 import React from "react";
 import ReactDOM from "react-dom/client";
