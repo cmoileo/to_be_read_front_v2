@@ -2,9 +2,10 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { ProfileScreen, AuthPromptDialog, type AuthPromptType } from "@repo/ui";
+import { ProfileScreen, AuthPromptDialog, ReportDialog, type AuthPromptType } from "@repo/ui";
 import { useConnectedUser } from "@repo/stores";
 import { useUserProfileViewModel } from "@/viewmodels/use-user-profile-viewmodel";
+import { useReportViewModel } from "@/viewmodels/use-report-viewmodel";
 import type { User, Review, PaginatedResponse } from "@repo/types";
 
 interface UserProfileClientProps {
@@ -33,6 +34,8 @@ export default function UserProfileClient({
     handleCancelRequest,
     handleLoadMore,
   } = useUserProfileViewModel({ initialUser, initialReviewsResponse });
+
+  const reportViewModel = useReportViewModel();
 
   const showAuthPrompt = (type: AuthPromptType) => {
     setAuthPromptType(type);
@@ -79,6 +82,14 @@ export default function UserProfileClient({
     handleCancelRequest();
   };
 
+  const handleReportUser = (userId: number) => {
+    if (!currentUser) {
+      showAuthPrompt("follow");
+      return;
+    }
+    reportViewModel.openReportDialog("user", userId);
+  };
+
   return (
     <>
       <ProfileScreen
@@ -98,6 +109,7 @@ export default function UserProfileClient({
         onReviewClick={handleReviewClick}
         onFollowersClick={handleFollowersClick}
         onFollowingClick={handleFollowingClick}
+        onReportUser={handleReportUser}
       />
       <AuthPromptDialog
         open={authPromptOpen}
@@ -105,6 +117,14 @@ export default function UserProfileClient({
         promptType={authPromptType}
         onLogin={() => router.push("/login")}
         onRegister={() => router.push("/register")}
+      />
+      <ReportDialog
+        open={reportViewModel.isOpen}
+        onOpenChange={reportViewModel.closeReportDialog}
+        entityType={reportViewModel.entityType}
+        entityId={reportViewModel.entityId}
+        onSubmit={reportViewModel.submitReport}
+        isLoading={reportViewModel.isLoading}
       />
     </>
   );

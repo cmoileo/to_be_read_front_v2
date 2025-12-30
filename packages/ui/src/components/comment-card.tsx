@@ -1,7 +1,14 @@
 import { Avatar, AvatarFallback, AvatarImage } from "./avatar";
 import { Button } from "./button";
-import { Heart, Trash2 } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "./dropdown-menu";
+import { Heart, Trash2, MoreHorizontal, Flag } from "lucide-react";
 import { cn } from "../lib/utils";
+import { useTranslation } from "react-i18next";
 
 interface CommentAuthor {
   id: number;
@@ -24,6 +31,7 @@ interface CommentCardProps {
   onLike?: (commentId: number) => void;
   onDelete?: (commentId: number) => void;
   onAuthorClick?: (authorId: number) => void;
+  onReport?: (commentId: number) => void;
 }
 
 export function CommentCard({
@@ -31,7 +39,10 @@ export function CommentCard({
   onLike,
   onDelete,
   onAuthorClick,
+  onReport,
 }: CommentCardProps) {
+  const { t } = useTranslation();
+
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString(undefined, {
@@ -93,6 +104,25 @@ export function CommentCard({
             >
               <Trash2 className="h-4 w-4" />
             </Button>
+          )}
+
+          {!comment.isFromCurrentUser && onReport && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="sm" className="h-7 px-2">
+                  <MoreHorizontal className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem
+                  onClick={() => onReport(comment.id)}
+                  className="text-destructive focus:text-destructive"
+                >
+                  <Flag className="h-4 w-4 mr-2" />
+                  {t("report.reportContent")}
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           )}
         </div>
       </div>

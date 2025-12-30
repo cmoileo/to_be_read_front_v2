@@ -10,6 +10,7 @@ import { MobileStorage } from "../../services/mobile-storage.service";
 import {
   BottomNav,
   ProfileScreen,
+  ReportDialog,
   useTranslation,
   Home,
   Search,
@@ -18,6 +19,7 @@ import {
   ArrowLeft,
 } from "@repo/ui";
 import { useUserProfileViewModel } from "../../viewmodels/use-user-profile-viewmodel";
+import { useReportViewModel } from "../../viewmodels/use-report-viewmodel";
 import { usePlatform } from "../../hooks/use-platform";
 import { PageTransition } from "../../components/page-transition";
 
@@ -67,6 +69,8 @@ function UserProfilePage() {
     handleCancelRequest,
     handleLoadMore,
   } = useUserProfileViewModel(userIdNumber);
+
+  const reportViewModel = useReportViewModel();
 
   const navItems = [
     {
@@ -121,6 +125,10 @@ function UserProfilePage() {
     });
   };
 
+  const handleReportUser = (userId: number) => {
+    reportViewModel.openReportDialog("user", userId);
+  };
+
   return (
     <div className="flex min-h-screen flex-col">
       <PageTransition className="flex-1 pb-20">
@@ -149,11 +157,21 @@ function UserProfilePage() {
             onReviewClick={handleReviewClick}
             onFollowersClick={handleFollowersClick}
             onFollowingClick={handleFollowingClick}
+            onReportUser={handleReportUser}
           />
         </div>
       </PageTransition>
 
       <BottomNav items={navItems} onNavigate={handleNavigate} />
+
+      <ReportDialog
+        open={reportViewModel.isOpen}
+        onOpenChange={reportViewModel.closeReportDialog}
+        entityType={reportViewModel.entityType}
+        entityId={reportViewModel.entityId}
+        onSubmit={reportViewModel.submitReport}
+        isLoading={reportViewModel.isLoading}
+      />
     </div>
   );
 }

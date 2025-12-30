@@ -2,9 +2,10 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { SingleReviewScreen, AuthPromptDialog, type AuthPromptType } from "@repo/ui";
+import { SingleReviewScreen, AuthPromptDialog, ReportDialog, type AuthPromptType } from "@repo/ui";
 import { useConnectedUser } from "@repo/stores";
 import { useSingleReviewViewModel } from "@/viewmodels/use-single-review-viewmodel";
+import { useReportViewModel } from "@/viewmodels/use-report-viewmodel";
 import type { SingleReview, CommentsPaginatedResponse } from "@/services/web-review.service";
 
 interface SingleReviewClientProps {
@@ -34,6 +35,8 @@ export default function SingleReviewClient({
     handleDeleteComment,
     handleLoadMoreComments,
   } = useSingleReviewViewModel({ initialReview, initialCommentsResponse });
+
+  const reportViewModel = useReportViewModel();
 
   const showAuthPrompt = (type: AuthPromptType) => {
     setAuthPromptType(type);
@@ -76,6 +79,22 @@ export default function SingleReviewClient({
     await handleCreateComment(content);
   };
 
+  const handleReportReview = (reviewId: number) => {
+    if (!user) {
+      showAuthPrompt("like");
+      return;
+    }
+    reportViewModel.openReportDialog("review", reviewId);
+  };
+
+  const handleReportComment = (commentId: number) => {
+    if (!user) {
+      showAuthPrompt("like");
+      return;
+    }
+    reportViewModel.openReportDialog("comment", commentId);
+  };
+
   return (
     <>
       <SingleReviewScreen
@@ -93,6 +112,8 @@ export default function SingleReviewClient({
         onLoadMoreComments={handleLoadMoreComments}
         onAuthorClick={handleAuthorClick}
         onBookClick={handleBookClick}
+        onReportReview={handleReportReview}
+        onReportComment={handleReportComment}
       />
       <AuthPromptDialog
         open={authPromptOpen}
@@ -100,6 +121,14 @@ export default function SingleReviewClient({
         promptType={authPromptType}
         onLogin={() => router.push("/login")}
         onRegister={() => router.push("/register")}
+      />
+      <ReportDialog
+        open={reportViewModel.isOpen}
+        onOpenChange={reportViewModel.closeReportDialog}
+        entityType={reportViewModel.entityType}
+        entityId={reportViewModel.entityId}
+        onSubmit={reportViewModel.submitReport}
+        isLoading={reportViewModel.isLoading}
       />
     </>
   );

@@ -43,6 +43,7 @@ interface FeedScreenProps {
   onRefresh?: () => void;
   onCreateReview?: () => void;
   onSearch?: () => void;
+  onReport?: (reviewId: number) => void;
 }
 
 export function FeedScreen({
@@ -58,6 +59,7 @@ export function FeedScreen({
   onRefresh,
   onCreateReview,
   onSearch,
+  onReport,
 }: FeedScreenProps) {
   const { t } = useTranslation();
 
@@ -144,6 +146,7 @@ export function FeedScreen({
               onLike={onLike}
               onAuthorClick={onAuthorClick}
               onReviewClick={onReviewClick}
+              onReport={onReport}
             />
           </div>
         ))}

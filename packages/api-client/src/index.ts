@@ -6,6 +6,7 @@ export * from "./apis/comments.api";
 export * from "./apis/users.api";
 export * from "./apis/books.api";
 export * from "./apis/search.api";
+export * from "./apis/reports.api";
 export * from "./hooks/use-auth";
 export * from "./hooks/use-reviews";
 export * from "./hooks/use-comments";

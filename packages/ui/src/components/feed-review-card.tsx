@@ -3,7 +3,14 @@ import { Avatar, AvatarFallback, AvatarImage } from "./avatar";
 import { Rating } from "./rating";
 import { Button } from "./button";
 import { cn } from "../lib/utils";
-import { Heart, MessageCircle } from "lucide-react";
+import { Heart, MessageCircle, MoreHorizontal, Flag } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "./dropdown-menu";
+import { useTranslation } from "react-i18next";
 
 interface FeedReview {
   id: number;
@@ -36,6 +43,7 @@ interface FeedReviewCardProps {
   onLike?: (reviewId: number) => void;
   onAuthorClick?: (authorId: number) => void;
   onReviewClick?: (reviewId: number) => void;
+  onReport?: (reviewId: number) => void;
 }
 
 export function FeedReviewCard({
@@ -43,7 +51,10 @@ export function FeedReviewCard({
   onLike,
   onAuthorClick,
   onReviewClick,
+  onReport,
 }: FeedReviewCardProps) {
+  const { t } = useTranslation();
+
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString(undefined, {
@@ -78,9 +89,26 @@ export function FeedReviewCard({
               >
                 @{review.author?.userName}
               </button>
-              <span className="text-xs text-muted-foreground flex-shrink-0 bg-muted/50 px-2 py-0.5 rounded-full">
-                {formatDate(review.createdAt)}
-              </span>
+              <div className="flex items-center gap-1">
+                <span className="text-xs text-muted-foreground flex-shrink-0 bg-muted/50 px-2 py-0.5 rounded-full">
+                  {formatDate(review.createdAt)}
+                </span>
+                {!review.isFromMe && onReport && (
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="icon" className="h-7 w-7">
+                        <MoreHorizontal className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem onClick={() => onReport(review.id)}>
+                        <Flag className="h-4 w-4 mr-2" />
+                        {t("report.title")}
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                )}
+              </div>
             </div>
             <p className="text-xs text-muted-foreground truncate mt-0.5">
               {review.book?.volumeInfo?.title}

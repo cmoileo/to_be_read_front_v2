@@ -1,7 +1,8 @@
 import { createFileRoute, redirect, useNavigate, useRouter } from "@tanstack/react-router";
 import { MobileStorage } from "../../services/mobile-storage.service";
-import { SingleReviewScreen } from "@repo/ui";
+import { SingleReviewScreen, ReportDialog } from "@repo/ui";
 import { useSingleReviewViewModel } from "../../viewmodels/use-single-review-viewmodel";
+import { useReportViewModel } from "../../viewmodels/use-report-viewmodel";
 import { usePlatform } from "../../hooks/use-platform";
 import { PageTransition } from "../../components/page-transition";
 
@@ -36,6 +37,8 @@ function SingleReviewPage() {
     handleLoadMoreComments,
   } = useSingleReviewViewModel(reviewIdNum);
 
+  const reportViewModel = useReportViewModel();
+
   const handleBack = () => {
     router.history.back();
   };
@@ -46,6 +49,14 @@ function SingleReviewPage() {
 
   const handleBookClick = (bookId: string) => {
     navigate({ to: "/book/$bookId", params: { bookId } });
+  };
+
+  const handleReportReview = (reviewId: number) => {
+    reportViewModel.openReportDialog("review", reviewId);
+  };
+
+  const handleReportComment = (commentId: number) => {
+    reportViewModel.openReportDialog("comment", commentId);
   };
 
   return (
@@ -65,6 +76,17 @@ function SingleReviewPage() {
         onLoadMoreComments={handleLoadMoreComments}
         onAuthorClick={handleAuthorClick}
         onBookClick={handleBookClick}
+        onReportReview={handleReportReview}
+        onReportComment={handleReportComment}
+      />
+
+      <ReportDialog
+        open={reportViewModel.isOpen}
+        onOpenChange={reportViewModel.closeReportDialog}
+        entityType={reportViewModel.entityType}
+        entityId={reportViewModel.entityId}
+        onSubmit={reportViewModel.submitReport}
+        isLoading={reportViewModel.isLoading}
       />
     </PageTransition>
   );

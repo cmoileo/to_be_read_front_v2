@@ -1,8 +1,9 @@
 import { createFileRoute, redirect, useNavigate, useRouterState } from "@tanstack/react-router";
-import { BottomNav, FeedScreen, useTranslation, Home, Search, PenSquare, User } from "@repo/ui";
+import { BottomNav, FeedScreen, useTranslation, Home, Search, PenSquare, User, ReportDialog } from "@repo/ui";
 import { Bell } from "lucide-react";
 import { MobileStorage } from "../services/mobile-storage.service";
 import { useFeedViewModel } from "../viewmodels/use-feed-viewmodel";
+import { useReportViewModel } from "../viewmodels/use-report-viewmodel";
 import { useNotificationRegistration } from "../hooks/use-notification-registration";
 import { useUnreadNotificationCount } from "../viewmodels/use-notifications-viewmodel";
 import { useSSENotifications } from "../hooks/use-sse-notifications";
@@ -47,6 +48,8 @@ function Index() {
     handleLike,
     handleRefresh,
   } = useFeedViewModel();
+
+  const reportViewModel = useReportViewModel();
 
   const navItems = [
     {
@@ -93,6 +96,10 @@ function Index() {
 
   const handleSearch = () => {
     navigate({ to: "/search" } as any);
+  };
+
+  const handleReportReview = (reviewId: number) => {
+    reportViewModel.openReportDialog("review", reviewId);
   };
 
   const { isOnline } = useNetworkStatus();
@@ -152,12 +159,22 @@ function Index() {
               onRefresh={handleRefresh}
               onCreateReview={handleCreateReview}
               onSearch={handleSearch}
+              onReport={handleReportReview}
             />
           </PageTransition>
         </PullToRefresh>
       )}
 
       <BottomNav items={navItems} onNavigate={handleNavigate} />
+
+      <ReportDialog
+        open={reportViewModel.isOpen}
+        onOpenChange={reportViewModel.closeReportDialog}
+        entityType={reportViewModel.entityType}
+        entityId={reportViewModel.entityId}
+        onSubmit={reportViewModel.submitReport}
+        isLoading={reportViewModel.isLoading}
+      />
     </div>
   );
 }

@@ -1,6 +1,12 @@
 import { useState } from "react";
-import { ArrowLeft, Heart, MessageCircle } from "lucide-react";
+import { ArrowLeft, Heart, MessageCircle, MoreHorizontal, Flag } from "lucide-react";
 import { Button } from "../components/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "../components/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "../components/avatar";
 import { Rating } from "../components/rating";
 import { Separator } from "../components/separator";
@@ -80,6 +86,8 @@ interface SingleReviewScreenProps {
   onLoadMoreComments?: () => void;
   onAuthorClick?: (authorId: number) => void;
   onBookClick?: (bookId: string) => void;
+  onReportReview?: (reviewId: number) => void;
+  onReportComment?: (commentId: number) => void;
 }
 
 export function SingleReviewScreen({
@@ -97,6 +105,8 @@ export function SingleReviewScreen({
   onLoadMoreComments,
   onAuthorClick,
   onBookClick,
+  onReportReview,
+  onReportComment,
 }: SingleReviewScreenProps) {
   const { t } = useTranslation();
   const [commentToDelete, setCommentToDelete] = useState<number | null>(null);
@@ -224,6 +234,27 @@ export function SingleReviewScreen({
             <MessageCircle className="h-5 w-5" />
             <span>{comments.length}</span>
           </div>
+
+          {!review.isFromMe && onReportReview && (
+            <div className="ml-auto">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="sm" className="gap-2">
+                    <MoreHorizontal className="h-5 w-5" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem
+                    onClick={() => onReportReview(review.id)}
+                    className="text-destructive focus:text-destructive"
+                  >
+                    <Flag className="h-4 w-4 mr-2" />
+                    {t("report.reportContent")}
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+          )}
         </div>
       </div>
 
@@ -249,6 +280,7 @@ export function SingleReviewScreen({
                 onLike={onLikeComment}
                 onDelete={(id) => setCommentToDelete(id)}
                 onAuthorClick={onAuthorClick}
+                onReport={onReportComment}
               />
             ))
           )}

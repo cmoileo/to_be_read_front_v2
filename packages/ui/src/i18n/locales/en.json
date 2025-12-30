@@ -365,5 +365,32 @@
             "user_rights_title": "Your Rights",
             "user_rights_content": "In accordance with regulations, you have a right to access, rectify, and delete your data. You can exercise these rights by contacting us at contact@inkgora.com or via your account settings."
         }
+    },
+    "report": {
+        "title": "Report Content",
+        "description": "Help us understand why you're reporting this {{entity}}.",
+        "reason": "Reason",
+        "selectReason": "Select a reason",
+        "additionalDetails": "Additional details (optional)",
+        "descriptionPlaceholder": "Provide more context about why you're reporting this content...",
+        "submit": "Submit Report",
+        "success": "Your report has been submitted. Thank you for helping keep our community safe.",
+        "error": "Failed to submit report. Please try again.",
+        "alreadyReported": "You have already reported this content.",
+        "reportContent": "Report",
+        "reportUser": "Report user",
+        "entityTypes": {
+            "review": "review",
+            "comment": "comment",
+            "user": "user"
+        },
+        "reasons": {
+            "SPAM": "Spam or misleading",
+            "HARASSMENT": "Harassment or bullying",
+            "HATE_SPEECH": "Hate speech or discrimination",
+            "SPOILERS": "Unmarked spoilers",
+            "INAPPROPRIATE": "Inappropriate content",
+            "OTHER": "Other"
+        }
     }
 }

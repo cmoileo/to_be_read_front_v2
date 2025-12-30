@@ -1,8 +1,9 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { FeedScreen } from "@repo/ui";
+import { FeedScreen, ReportDialog } from "@repo/ui";
 import { useFeedViewModel } from "@/viewmodels/use-feed-viewmodel";
+import { useReportViewModel } from "@/viewmodels/use-report-viewmodel";
 import { useNotificationRegistration } from "@/hooks/use-notification-registration";
 import type { Review, PaginatedResponse } from "@repo/types";
 
@@ -26,6 +27,8 @@ export default function FeedClient({ initialFeedResponse }: FeedClientProps) {
     handleRefresh,
   } = useFeedViewModel({ initialFeedResponse });
 
+  const reportViewModel = useReportViewModel();
+
   const handleAuthorClick = (authorId: number) => {
     router.push(`/user/${authorId}`);
   };
@@ -40,6 +43,10 @@ export default function FeedClient({ initialFeedResponse }: FeedClientProps) {
 
   const handleSearch = () => {
     router.push("/search");
+  };
+
+  const handleReportReview = (reviewId: number) => {
+    reportViewModel.openReportDialog("review", reviewId);
   };
 
   return (
@@ -57,6 +64,16 @@ export default function FeedClient({ initialFeedResponse }: FeedClientProps) {
         onRefresh={handleRefresh}
         onCreateReview={handleCreateReview}
         onSearch={handleSearch}
+        onReport={handleReportReview}
+      />
+
+      <ReportDialog
+        open={reportViewModel.isOpen}
+        onOpenChange={reportViewModel.closeReportDialog}
+        entityType={reportViewModel.entityType}
+        entityId={reportViewModel.entityId}
+        onSubmit={reportViewModel.submitReport}
+        isLoading={reportViewModel.isLoading}
       />
     </div>
   );

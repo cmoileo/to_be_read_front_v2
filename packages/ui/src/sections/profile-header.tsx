@@ -1,8 +1,14 @@
 import { Avatar, AvatarImage, AvatarFallback } from "../components/avatar";
 import { Button } from "../components/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "../components/dropdown-menu";
 import { useTranslation } from "react-i18next";
 import { cn } from "../lib/utils";
-import { Pencil, Loader2, FileText, Users, UserPlus, BookMarked, Settings, Lock, UserX, Clock } from "lucide-react";
+import { Pencil, Loader2, FileText, Users, UserPlus, BookMarked, Settings, Lock, UserX, Clock, MoreHorizontal, Flag } from "lucide-react";
 
 interface User {
   id: number;
@@ -29,6 +35,7 @@ interface ProfileHeaderProps {
   onFollowingClick?: () => void;
   onReadingListClick?: () => void;
   onSettingsClick?: () => void;
+  onReportUser?: (userId: number) => void;
 }
 
 export const ProfileHeader = ({
@@ -43,6 +50,7 @@ export const ProfileHeader = ({
   onFollowingClick,
   onReadingListClick,
   onSettingsClick,
+  onReportUser,
 }: ProfileHeaderProps) => {
   const { t } = useTranslation();
 
@@ -193,6 +201,28 @@ export const ProfileHeader = ({
                   >
                     <UserX className="h-5 w-5" />
                   </Button>
+                )}
+                {onReportUser && (
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="rounded-full h-9 w-9 hover:bg-muted/50"
+                      >
+                        <MoreHorizontal className="h-5 w-5" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem
+                        onClick={() => onReportUser(user.id)}
+                        className="text-destructive focus:text-destructive"
+                      >
+                        <Flag className="h-4 w-4 mr-2" />
+                        {t("report.reportUser")}
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 )}
               </div>
             )}

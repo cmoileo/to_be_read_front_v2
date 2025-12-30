@@ -365,5 +365,32 @@
             "user_rights_title": "Vos droits",
             "user_rights_content": "Conformément à la réglementation, vous disposez d'un droit d'accès, de rectification et de suppression de vos données. Vous pouvez exercer ces droits en nous contactant à contact@inkgora.com ou via les paramètres de votre compte."
         }
+    },
+    "report": {
+        "title": "Signaler un contenu",
+        "description": "Aidez-nous à comprendre pourquoi vous signalez {{entity}}.",
+        "reason": "Motif",
+        "selectReason": "Sélectionnez un motif",
+        "additionalDetails": "Détails supplémentaires (optionnel)",
+        "descriptionPlaceholder": "Décrivez plus précisément pourquoi vous signalez ce contenu...",
+        "submit": "Envoyer le signalement",
+        "success": "Votre signalement a été envoyé. Merci de contribuer à la sécurité de notre communauté.",
+        "error": "Échec de l'envoi du signalement. Veuillez réessayer.",
+        "alreadyReported": "Vous avez déjà signalé ce contenu.",
+        "reportContent": "Signaler",
+        "reportUser": "Signaler l'utilisateur",
+        "entityTypes": {
+            "review": "cette critique",
+            "comment": "ce commentaire",
+            "user": "cet utilisateur"
+        },
+        "reasons": {
+            "SPAM": "Spam ou contenu trompeur",
+            "HARASSMENT": "Harcèlement ou intimidation",
+            "HATE_SPEECH": "Discours haineux ou discrimination",
+            "SPOILERS": "Spoilers non signalés",
+            "INAPPROPRIATE": "Contenu inapproprié",
+            "OTHER": "Autre"
+        }
     }
 }
