@@ -3,6 +3,7 @@
 import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useConnectedUser } from "@repo/stores";
 import type {
   GoogleBook,
   BookReview,
@@ -30,6 +31,7 @@ export const useSingleBookViewModel = ({
 }: UseSingleBookViewModelProps) => {
   const router = useRouter();
   const queryClient = useQueryClient();
+  const { user } = useConnectedUser();
   const [reviews, setReviews] = useState<BookReview[]>(initialReviewsResponse.data);
   const [currentPage, setCurrentPage] = useState(initialReviewsResponse.meta.currentPage);
   const [hasMoreReviews, setHasMoreReviews] = useState(
@@ -48,6 +50,7 @@ export const useSingleBookViewModel = ({
         return false;
       }
     },
+    enabled: !!user,
   });
 
   const addToListMutation = useMutation({
