@@ -68,8 +68,9 @@ RUN pnpm build --filter web
 # -------- Production Stage --------
 FROM node:20-alpine AS runner
 
-# Security updates
-RUN apk --no-cache upgrade
+# Security updates and wget for healthcheck
+RUN apk --no-cache upgrade \
+    && apk add --no-cache wget
 
 # Create non-root user
 RUN addgroup --system --gid 1001 nodejs \
@@ -88,5 +89,9 @@ EXPOSE 3000
 
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
+  CMD wget --no-verbose --tries=1 --spider http://localhost:3000 || exit 1
 
 CMD ["node", "apps/web/server.js"]
