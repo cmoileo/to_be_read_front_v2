@@ -28,7 +28,9 @@
             "error": "An error occurred during registration",
             "usernameTaken": "This username is already taken",
             "passwordHint": "At least 8 characters with uppercase, lowercase, number and special character",
-            "rememberMe": "Remember me"
+            "rememberMe": "Remember me",
+            "acceptTerms": "I accept the",
+            "termsLink": "terms of use"
         },
         "resetPassword": {
             "requestTitle": "Forgot password",
@@ -58,7 +60,8 @@
             "passwordLowercase": "Password must contain at least one lowercase letter",
             "passwordNumber": "Password must contain at least one number",
             "passwordSpecial": "Password must contain at least one special character",
-            "passwordMismatch": "Passwords do not match"
+            "passwordMismatch": "Passwords do not match",
+            "termsRequired": "You must accept the terms of use"
         },
         "logout": "Logout"
     },

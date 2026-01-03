@@ -43,6 +43,7 @@ export function RegisterForm({
       password: "",
       confirmPassword: "",
       rememberMe: false,
+      acceptTerms: false,
     },
     onSubmit: async ({ value }) => {
       await onSubmit(value);
@@ -239,6 +240,49 @@ export function RegisterForm({
                 <Label htmlFor={field.name} className="text-sm font-medium cursor-pointer">
                   {t("auth.register.rememberMe")}
                 </Label>
+              </div>
+            )}
+          </form.Field>
+
+          <form.Field
+            name="acceptTerms"
+            validators={{
+              onChange: ({ value }) => {
+                if (!value) {
+                  return t("auth.validation.termsRequired");
+                }
+                return undefined;
+              },
+            }}
+          >
+            {(field) => (
+              <div className="space-y-2">
+                <div className="flex items-start space-x-2">
+                  <Checkbox
+                    id={field.name}
+                    checked={field.state.value}
+                    onCheckedChange={(checked) => field.handleChange(checked === true)}
+                    disabled={isLoading}
+                    className="mt-0.5"
+                  />
+                  <Label htmlFor={field.name} className="text-sm font-medium cursor-pointer leading-tight">
+                    {t("auth.register.acceptTerms")}{" "}
+                    <a
+                      href="/legal"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-primary hover:text-primary/80 underline"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      {t("auth.register.termsLink")}
+                    </a>
+                  </Label>
+                </div>
+                {field.state.meta.errors.length > 0 && (
+                  <p className="text-sm text-destructive flex items-center gap-1">
+                    <span>•</span> {field.state.meta.errors[0]}
+                  </p>
+                )}
               </div>
             )}
           </form.Field>

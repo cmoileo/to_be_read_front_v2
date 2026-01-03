@@ -103,12 +103,6 @@ export function LoginForm({
 
           <form.Field
             name="password"
-            validators={{
-              onChange: ({ value }) => {
-                const result = getLoginSchema().shape.password.safeParse(value);
-                return result.success ? undefined : result.error.errors[0]?.message;
-              },
-            }}
           >
             {(field) => (
               <div className="space-y-2">
@@ -125,11 +119,6 @@ export function LoginForm({
                   placeholder="••••••••"
                   className="h-12"
                 />
-                {field.state.meta.errors.length > 0 && (
-                  <p className="text-sm text-destructive flex items-center gap-1">
-                    <span>•</span> {field.state.meta.errors[0]}
-                  </p>
-                )}
               </div>
             )}
           </form.Field>

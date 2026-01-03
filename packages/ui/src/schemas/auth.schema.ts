@@ -52,6 +52,7 @@ export const getRegisterSchema = () =>
       password: getPasswordSchema(),
       confirmPassword: z.string(),
       rememberMe: z.boolean().default(false),
+      acceptTerms: z.boolean().default(false),
     })
     .refine((data) => data.password === data.confirmPassword, {
       message: i18n.t("auth.validation.passwordMismatch"),

@@ -28,7 +28,9 @@
             "error": "Une erreur est survenue lors de l'inscription",
             "usernameTaken": "Ce nom d'utilisateur est déjà pris",
             "passwordHint": "Au moins 8 caractères avec majuscule, minuscule, chiffre et caractère spécial",
-            "rememberMe": "Rester connecté"
+            "rememberMe": "Rester connecté",
+            "acceptTerms": "J'accepte les",
+            "termsLink": "conditions d'utilisation"
         },
         "resetPassword": {
             "requestTitle": "Mot de passe oublié",
@@ -58,7 +60,8 @@
             "passwordLowercase": "Le mot de passe doit contenir au moins une minuscule",
             "passwordNumber": "Le mot de passe doit contenir au moins un chiffre",
             "passwordSpecial": "Le mot de passe doit contenir au moins un caractère spécial",
-            "passwordMismatch": "Les mots de passe ne correspondent pas"
+            "passwordMismatch": "Les mots de passe ne correspondent pas",
+            "termsRequired": "Vous devez accepter les conditions d'utilisation"
         },
         "logout": "Déconnexion"
     },
