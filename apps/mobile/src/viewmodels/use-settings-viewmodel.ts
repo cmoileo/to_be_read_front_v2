@@ -32,9 +32,9 @@ export function useSettingsViewModel() {
       await MobileAuthService.logout();
     },
     onSuccess: async () => {
-      await MobileStorage.clearTokens();
       clearUser();
-      navigate({ to: "/onboarding" });
+      queryClient.clear();
+      await navigate({ to: "/onboarding", replace: true });
     },
   });
 
