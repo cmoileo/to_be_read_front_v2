@@ -64,9 +64,12 @@ function UserProfilePage() {
     isLoading,
     hasMore,
     isFetchingMore,
+    isBlockLoading,
     handleFollow,
     handleUnfollow,
     handleCancelRequest,
+    handleBlock,
+    handleUnblock,
     handleLoadMore,
   } = useUserProfileViewModel(userIdNumber);
 
@@ -150,6 +153,7 @@ function UserProfilePage() {
             isLoading={isLoading}
             hasMore={hasMore}
             isFetchingMore={isFetchingMore}
+            isBlockLoading={isBlockLoading}
             onFollow={handleFollow}
             onUnfollow={handleUnfollow}
             onCancelRequest={handleCancelRequest}
@@ -158,6 +162,8 @@ function UserProfilePage() {
             onFollowersClick={handleFollowersClick}
             onFollowingClick={handleFollowingClick}
             onReportUser={handleReportUser}
+            onBlockUser={() => handleBlock()}
+            onUnblockUser={() => handleUnblock()}
           />
         </div>
       </PageTransition>

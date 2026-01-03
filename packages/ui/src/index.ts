@@ -26,6 +26,8 @@ export * from "./components/comment-card";
 export * from "./components/comment-form";
 export * from "./components/auth-prompt-dialog";
 export * from "./components/report-dialog";
+export * from "./components/block-user-button";
+export * from "./components/blocked-users-list";
 export * from "./lib/utils";
 export * from "./hooks/use-toast";
 export * from "./sections/login-form";

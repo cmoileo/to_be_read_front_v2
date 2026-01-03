@@ -51,6 +51,7 @@ function SettingsPage() {
           onChangeLanguage={handleChangeLanguage}
           onToggleNotifications={handleToggleNotifications}
           onOpenPrivacySettings={handleOpenPrivacySettings}
+          onOpenBlockedUsers={() => navigate({ to: "/blocked-users" })}
           onBack={() => navigate({ to: "/profile" })}
         />
         

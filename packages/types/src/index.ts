@@ -9,3 +9,4 @@ export * from "./to-read-list.types";
 export * from "./notification.types";
 export * from "./follow-request.types";
 export * from "./report.types";
+export * from "./block.types";

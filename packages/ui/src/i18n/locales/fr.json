@@ -392,5 +392,18 @@
             "INAPPROPRIATE": "Contenu inapproprié",
             "OTHER": "Autre"
         }
+    },
+    "block": {
+        "block": "Bloquer",
+        "unblock": "Débloquer",
+        "confirmTitle": "Bloquer cet utilisateur ?",
+        "confirmDescription": "Il ne pourra plus voir votre profil, vous trouver ou vous contacter. Vous vous désabonnerez automatiquement l'un de l'autre.",
+        "blockedUsers": "Utilisateurs bloqués",
+        "noBlockedUsers": "Vous n'avez bloqué personne",
+        "blockSuccess": "Utilisateur bloqué",
+        "unblockSuccess": "Utilisateur débloqué",
+        "blockError": "Échec du blocage",
+        "unblockError": "Échec du déblocage",
+        "userBlockedYou": "Vous ne pouvez pas voir ce profil"
     }
 }

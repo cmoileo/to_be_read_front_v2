@@ -1,5 +1,6 @@
 import { useQuery, useInfiniteQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { MobileUserService } from "../services/mobile-user.service";
+import { BlocksApi, blockKeys } from "@repo/api-client";
 import {
   queryKeys,
   followUserInCache,
@@ -7,6 +8,10 @@ import {
   cancelFollowRequestInCache,
   rollbackFollowState,
   initializeFollowState,
+  blockUserInCache,
+  unblockUserInCache,
+  rollbackBlockState,
+  invalidateBlockRelatedCaches,
 } from "@repo/stores";
 import { HapticsService } from "../services/native";
 
@@ -116,6 +121,56 @@ export const useUserProfileViewModel = (userId: number) => {
     cancelRequestMutation.mutate();
   };
 
+  // Block mutations
+  const blockMutation = useMutation({
+    mutationFn: () => BlocksApi.blockUser(userId),
+    onMutate: async () => {
+      await queryClient.cancelQueries({ queryKey: queryKeys.users.detail(userId) });
+      HapticsService.mediumImpact();
+      const { previousState, previousUserData } = blockUserInCache(queryClient, userId);
+      return { previousState, previousUserData };
+    },
+    onSuccess: () => {
+      HapticsService.success();
+      invalidateBlockRelatedCaches(queryClient, userId);
+    },
+    onError: (_err, _vars, context) => {
+      HapticsService.error();
+      if (context?.previousState) {
+        rollbackBlockState(queryClient, userId, context.previousState, context.previousUserData);
+      }
+    },
+  });
+
+  const unblockMutation = useMutation({
+    mutationFn: () => BlocksApi.unblockUser(userId),
+    onMutate: async () => {
+      await queryClient.cancelQueries({ queryKey: queryKeys.users.detail(userId) });
+      HapticsService.lightImpact();
+      const { previousState } = unblockUserInCache(queryClient, userId);
+      return { previousState };
+    },
+    onSuccess: () => {
+      HapticsService.success();
+      queryClient.invalidateQueries({ queryKey: queryKeys.users.detail(userId) });
+      queryClient.invalidateQueries({ queryKey: blockKeys.list() });
+    },
+    onError: (_err, _vars, context) => {
+      HapticsService.error();
+      if (context?.previousState) {
+        rollbackBlockState(queryClient, userId, context.previousState);
+      }
+    },
+  });
+
+  const handleBlock = () => {
+    blockMutation.mutate();
+  };
+
+  const handleUnblock = () => {
+    unblockMutation.mutate();
+  };
+
   const handleLoadMore = () => {
     if (hasNextPage && !isFetchingNextPage) {
       fetchNextPage();
@@ -131,9 +186,12 @@ export const useUserProfileViewModel = (userId: number) => {
     hasMore: hasNextPage ?? false,
     isFetchingMore: isFetchingNextPage,
     isFollowLoading: followMutation.isPending || unfollowMutation.isPending || cancelRequestMutation.isPending,
+    isBlockLoading: blockMutation.isPending || unblockMutation.isPending,
     handleFollow,
     handleUnfollow,
     handleCancelRequest,
+    handleBlock,
+    handleUnblock,
     handleLoadMore,
   };
 };

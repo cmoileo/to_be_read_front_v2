@@ -8,7 +8,8 @@ import {
   unfollowUserAction,
   getUserReviewsAction,
 } from "@/app/user/[userId]/actions";
-import { removeUserReviewsFromFeed, invalidateFeed, updateFollowingCount } from "@repo/stores";
+import { removeUserReviewsFromFeed, invalidateFeed, updateFollowingCount, blockUserInCache, unblockUserInCache, rollbackBlockState, invalidateBlockRelatedCaches } from "@repo/stores";
+import { BlocksApi } from "@repo/api-client";
 
 interface UseUserProfileViewModelProps {
   initialUser: User;
@@ -28,6 +29,67 @@ export const useUserProfileViewModel = ({
   );
   const [isFetchingMore, setIsFetchingMore] = useState(false);
   const [isFollowLoading, startFollowTransition] = useTransition();
+  const [isBlockLoading, setIsBlockLoading] = useState(false);
+
+  const handleBlock = useCallback(async () => {
+    if (isBlockLoading) return;
+    
+    setIsBlockLoading(true);
+    const previousUserState = { isBlocked: user.isBlocked, isFollowing: user.isFollowing };
+    
+    try {
+      // Optimistic update
+      setUser((prev) => ({
+        ...prev,
+        isBlocked: true,
+        isFollowing: false,
+      }));
+      const { previousState } = blockUserInCache(queryClient, user.id);
+      
+      await BlocksApi.blockUser(user.id);
+      invalidateBlockRelatedCaches(queryClient, user.id);
+    } catch (error) {
+      // Rollback on error
+      setUser((prev) => ({
+        ...prev,
+        isBlocked: previousUserState.isBlocked,
+        isFollowing: previousUserState.isFollowing,
+      }));
+      rollbackBlockState(queryClient, user.id, { isBlocked: previousUserState.isBlocked ?? false, hasBlockedMe: user.hasBlockedMe ?? false });
+      console.error("Failed to block user:", error);
+    } finally {
+      setIsBlockLoading(false);
+    }
+  }, [user.id, user.isBlocked, user.isFollowing, user.hasBlockedMe, isBlockLoading, queryClient]);
+
+  const handleUnblock = useCallback(async () => {
+    if (isBlockLoading) return;
+    
+    setIsBlockLoading(true);
+    const previousUserState = { isBlocked: user.isBlocked };
+    
+    try {
+      // Optimistic update
+      setUser((prev) => ({
+        ...prev,
+        isBlocked: false,
+      }));
+      unblockUserInCache(queryClient, user.id);
+      
+      await BlocksApi.unblockUser(user.id);
+      invalidateBlockRelatedCaches(queryClient, user.id);
+    } catch (error) {
+      // Rollback on error
+      setUser((prev) => ({
+        ...prev,
+        isBlocked: previousUserState.isBlocked,
+      }));
+      rollbackBlockState(queryClient, user.id, { isBlocked: previousUserState.isBlocked ?? false, hasBlockedMe: user.hasBlockedMe ?? false });
+      console.error("Failed to unblock user:", error);
+    } finally {
+      setIsBlockLoading(false);
+    }
+  }, [user.id, user.isBlocked, user.hasBlockedMe, isBlockLoading, queryClient]);
 
   const handleFollow = useCallback(() => {
     startFollowTransition(async () => {
@@ -136,9 +198,12 @@ export const useUserProfileViewModel = ({
     hasMore,
     isFetchingMore,
     isFollowLoading,
+    isBlockLoading,
     handleFollow,
     handleUnfollow,
     handleCancelRequest,
     handleLoadMore,
+    handleBlock,
+    handleUnblock,
   };
 };

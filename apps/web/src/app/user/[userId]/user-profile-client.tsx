@@ -29,10 +29,13 @@ export default function UserProfileClient({
     hasMore,
     isFetchingMore,
     isFollowLoading,
+    isBlockLoading,
     handleFollow,
     handleUnfollow,
     handleCancelRequest,
     handleLoadMore,
+    handleBlock,
+    handleUnblock,
   } = useUserProfileViewModel({ initialUser, initialReviewsResponse });
 
   const reportViewModel = useReportViewModel();
@@ -90,6 +93,22 @@ export default function UserProfileClient({
     reportViewModel.openReportDialog("user", userId);
   };
 
+  const handleBlockWithAuth = (userId: number) => {
+    if (!currentUser) {
+      showAuthPrompt("follow");
+      return;
+    }
+    handleBlock();
+  };
+
+  const handleUnblockWithAuth = (userId: number) => {
+    if (!currentUser) {
+      showAuthPrompt("follow");
+      return;
+    }
+    handleUnblock();
+  };
+
   return (
     <>
       <ProfileScreen
@@ -101,6 +120,7 @@ export default function UserProfileClient({
         isOwnProfile={user.isMe ?? false}
         showBackButton={true}
         isFollowLoading={isFollowLoading}
+        isBlockLoading={isBlockLoading}
         onBack={handleBack}
         onFollow={handleFollowWithAuth}
         onUnfollow={handleUnfollowWithAuth}
@@ -110,6 +130,8 @@ export default function UserProfileClient({
         onFollowersClick={handleFollowersClick}
         onFollowingClick={handleFollowingClick}
         onReportUser={handleReportUser}
+        onBlockUser={handleBlockWithAuth}
+        onUnblockUser={handleUnblockWithAuth}
       />
       <AuthPromptDialog
         open={authPromptOpen}

@@ -10,6 +10,8 @@ export interface User {
   isMe: boolean;
   isPrivate?: boolean;
   followRequestStatus?: "none" | "pending" | "accepted" | "rejected";
+  isBlocked?: boolean;
+  hasBlockedMe?: boolean;
   createdAt: string;
   updatedAt: string;
   email?: string;

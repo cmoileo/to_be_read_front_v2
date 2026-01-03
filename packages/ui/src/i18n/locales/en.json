@@ -392,5 +392,18 @@
             "INAPPROPRIATE": "Inappropriate content",
             "OTHER": "Other"
         }
+    },
+    "block": {
+        "block": "Block",
+        "unblock": "Unblock",
+        "confirmTitle": "Block this user?",
+        "confirmDescription": "They won't be able to see your profile, find you, or contact you. You will automatically unfollow each other.",
+        "blockedUsers": "Blocked Users",
+        "noBlockedUsers": "You haven't blocked anyone yet",
+        "blockSuccess": "User blocked",
+        "unblockSuccess": "User unblocked",
+        "blockError": "Failed to block user",
+        "unblockError": "Failed to unblock user",
+        "userBlockedYou": "You cannot view this profile"
     }
 }

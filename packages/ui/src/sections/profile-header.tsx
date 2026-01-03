@@ -5,10 +5,11 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
 } from "../components/dropdown-menu";
 import { useTranslation } from "react-i18next";
 import { cn } from "../lib/utils";
-import { Pencil, Loader2, FileText, Users, UserPlus, BookMarked, Settings, Lock, UserX, Clock, MoreHorizontal, Flag } from "lucide-react";
+import { Pencil, Loader2, FileText, Users, UserPlus, BookMarked, Settings, Lock, UserX, Clock, MoreHorizontal, Flag, Ban, UserCheck } from "lucide-react";
 
 interface User {
   id: number;
@@ -21,12 +22,15 @@ interface User {
   isFollowing: boolean;
   isPrivate?: boolean;
   followRequestStatus?: "none" | "pending" | "accepted" | "rejected";
+  isBlocked?: boolean;
+  hasBlockedMe?: boolean;
 }
 
 interface ProfileHeaderProps {
   user: User;
   isOwnProfile: boolean;
   isFollowLoading?: boolean;
+  isBlockLoading?: boolean;
   onEdit?: () => void;
   onFollow?: () => void;
   onUnfollow?: () => void;
@@ -36,12 +40,15 @@ interface ProfileHeaderProps {
   onReadingListClick?: () => void;
   onSettingsClick?: () => void;
   onReportUser?: (userId: number) => void;
+  onBlockUser?: (userId: number) => void;
+  onUnblockUser?: (userId: number) => void;
 }
 
 export const ProfileHeader = ({
   user,
   isOwnProfile,
   isFollowLoading = false,
+  isBlockLoading = false,
   onEdit,
   onFollow,
   onUnfollow,
@@ -51,6 +58,8 @@ export const ProfileHeader = ({
   onReadingListClick,
   onSettingsClick,
   onReportUser,
+  onBlockUser,
+  onUnblockUser,
 }: ProfileHeaderProps) => {
   const { t } = useTranslation();
 
@@ -202,7 +211,7 @@ export const ProfileHeader = ({
                     <UserX className="h-5 w-5" />
                   </Button>
                 )}
-                {onReportUser && (
+                {(onReportUser || onBlockUser || onUnblockUser) && (
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button
@@ -214,13 +223,34 @@ export const ProfileHeader = ({
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                      <DropdownMenuItem
-                        onClick={() => onReportUser(user.id)}
-                        className="text-destructive focus:text-destructive"
-                      >
-                        <Flag className="h-4 w-4 mr-2" />
-                        {t("report.reportUser")}
-                      </DropdownMenuItem>
+                      {(onBlockUser || onUnblockUser) && (
+                        <>
+                          <DropdownMenuItem
+                            onClick={() => user.isBlocked ? onUnblockUser?.(user.id) : onBlockUser?.(user.id)}
+                            disabled={isBlockLoading}
+                            className="text-destructive focus:text-destructive"
+                          >
+                            {isBlockLoading ? (
+                              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                            ) : user.isBlocked ? (
+                              <UserCheck className="h-4 w-4 mr-2" />
+                            ) : (
+                              <Ban className="h-4 w-4 mr-2" />
+                            )}
+                            {user.isBlocked ? t("block.unblock") : t("block.block")}
+                          </DropdownMenuItem>
+                          {onReportUser && <DropdownMenuSeparator />}
+                        </>
+                      )}
+                      {onReportUser && (
+                        <DropdownMenuItem
+                          onClick={() => onReportUser(user.id)}
+                          className="text-destructive focus:text-destructive"
+                        >
+                          <Flag className="h-4 w-4 mr-2" />
+                          {t("report.reportUser")}
+                        </DropdownMenuItem>
+                      )}
                     </DropdownMenuContent>
                   </DropdownMenu>
                 )}

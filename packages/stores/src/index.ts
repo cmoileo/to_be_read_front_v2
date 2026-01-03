@@ -5,4 +5,5 @@ export * from "./notification.store";
 export * from "./likes.store";
 export * from "./follow.store";
 export * from "./to-read-list.store";
+export * from "./block.store";
 export * from "./hooks/use-connected-user";

@@ -28,6 +28,8 @@ interface User {
   isFollowing: boolean;
   isPrivate?: boolean;
   followRequestStatus?: "none" | "pending" | "accepted" | "rejected";
+  isBlocked?: boolean;
+  hasBlockedMe?: boolean;
 }
 
 interface Review {
@@ -73,6 +75,9 @@ interface ProfileScreenProps {
   onReadingListClick?: () => void;
   onSettingsClick?: () => void;
   onReportUser?: (userId: number) => void;
+  onBlockUser?: (userId: number) => void;
+  onUnblockUser?: (userId: number) => void;
+  isBlockLoading?: boolean;
 }
 
 export const ProfileScreen = ({
@@ -101,6 +106,9 @@ export const ProfileScreen = ({
   onReadingListClick,
   onSettingsClick,
   onReportUser,
+  onBlockUser,
+  onUnblockUser,
+  isBlockLoading = false,
 }: ProfileScreenProps) => {
   const { t } = useTranslation();
   const [reviewToDelete, setReviewToDelete] = useState<number | null>(null);
@@ -142,6 +150,7 @@ export const ProfileScreen = ({
           user={user}
           isOwnProfile={isOwnProfile}
           isFollowLoading={isFollowLoading}
+          isBlockLoading={isBlockLoading}
           onEdit={onEdit}
           onFollow={onFollow}
           onUnfollow={onUnfollow}
@@ -151,6 +160,8 @@ export const ProfileScreen = ({
           onReadingListClick={onReadingListClick}
           onSettingsClick={onSettingsClick}
           onReportUser={onReportUser}
+          onBlockUser={onBlockUser}
+          onUnblockUser={onUnblockUser}
         />
 
         <Separator />
