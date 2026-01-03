@@ -15,6 +15,8 @@ interface ApiUser {
   isMe: boolean;
   isPrivate?: boolean;
   followRequestStatus?: "none" | "pending" | "accepted" | "rejected";
+  isBlocked?: boolean;
+  hasBlockedMe?: boolean;
   createdAt: string;
 }
 
@@ -41,7 +43,7 @@ function mapApiUserToUser(apiUser: ApiUser): User {
   return {
     id: apiUser.id,
     userName: apiUser.userName,
-    avatar: apiUser.avatar,
+    avatar: apiUser.avatarUrl || apiUser.avatar,
     biography: apiUser.biography,
     followersCount: apiUser.followersCount,
     followingCount: apiUser.followingCount,
@@ -50,6 +52,8 @@ function mapApiUserToUser(apiUser: ApiUser): User {
     isMe: apiUser.isMe,
     isPrivate: apiUser.isPrivate,
     followRequestStatus: apiUser.followRequestStatus,
+    isBlocked: apiUser.isBlocked,
+    hasBlockedMe: apiUser.hasBlockedMe,
     createdAt: apiUser.createdAt,
     updatedAt: apiUser.createdAt,
   };

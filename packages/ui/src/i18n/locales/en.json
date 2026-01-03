@@ -404,6 +404,7 @@
         "unblockSuccess": "User unblocked",
         "blockError": "Failed to block user",
         "unblockError": "Failed to unblock user",
-        "userBlockedYou": "You cannot view this profile"
+        "userBlockedYou": "You cannot view this profile",
+        "hasBlockedYou": "This user has blocked you"
     }
 }

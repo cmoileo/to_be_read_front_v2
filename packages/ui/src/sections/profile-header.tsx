@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Avatar, AvatarImage, AvatarFallback } from "../components/avatar";
 import { Button } from "../components/button";
 import {
@@ -7,6 +8,16 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
 } from "../components/dropdown-menu";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "../components/alert-dialog";
 import { useTranslation } from "react-i18next";
 import { cn } from "../lib/utils";
 import { Pencil, Loader2, FileText, Users, UserPlus, BookMarked, Settings, Lock, UserX, Clock, MoreHorizontal, Flag, Ban, UserCheck } from "lucide-react";
@@ -62,12 +73,16 @@ export const ProfileHeader = ({
   onUnblockUser,
 }: ProfileHeaderProps) => {
   const { t } = useTranslation();
+  const [showBlockConfirm, setShowBlockConfirm] = useState(false);
 
   const getInitials = () => {
     return user?.userName?.substring(0, 2).toUpperCase() || "??";
   };
 
   const handleFollowToggle = () => {
+    if (user.hasBlockedMe) {
+      return;
+    }
     if (user.isFollowing && onUnfollow) {
       onUnfollow();
     } else if (!user.isFollowing && onFollow) {
@@ -82,6 +97,15 @@ export const ProfileHeader = ({
   };
 
   const getFollowButtonContent = () => {
+    if (user.hasBlockedMe) {
+      return (
+        <>
+          <Ban className="w-4 h-4" />
+          {t("block.hasBlockedYou")}
+        </>
+      );
+    }
+
     if (isFollowLoading) {
       return <Loader2 className="w-4 h-4 animate-spin" />;
     }
@@ -112,6 +136,9 @@ export const ProfileHeader = ({
   };
 
   const getFollowButtonVariant = () => {
+    if (user.hasBlockedMe) {
+      return "destructive";
+    }
     if (user.followRequestStatus === "pending") {
       return "secondary";
     }
@@ -119,7 +146,7 @@ export const ProfileHeader = ({
   };
 
   const isFollowButtonDisabled = () => {
-    return isFollowLoading || user.followRequestStatus === "pending";
+    return isFollowLoading || user.followRequestStatus === "pending" || user.hasBlockedMe === true;
   };
 
   return (
@@ -211,7 +238,7 @@ export const ProfileHeader = ({
                     <UserX className="h-5 w-5" />
                   </Button>
                 )}
-                {(onReportUser || onBlockUser || onUnblockUser) && (
+                {(onReportUser || onBlockUser || onUnblockUser) && !user.hasBlockedMe && (
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button
@@ -226,7 +253,13 @@ export const ProfileHeader = ({
                       {(onBlockUser || onUnblockUser) && (
                         <>
                           <DropdownMenuItem
-                            onClick={() => user.isBlocked ? onUnblockUser?.(user.id) : onBlockUser?.(user.id)}
+                            onClick={() => {
+                              if (user.isBlocked) {
+                                onUnblockUser?.(user.id);
+                              } else {
+                                setShowBlockConfirm(true);
+                              }
+                            }}
                             disabled={isBlockLoading}
                             className="text-destructive focus:text-destructive"
                           >
@@ -309,6 +342,29 @@ export const ProfileHeader = ({
           </Button>
         )}
       </div>
+
+      <AlertDialog open={showBlockConfirm} onOpenChange={setShowBlockConfirm}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t("block.confirmTitle")}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {t("block.confirmDescription")}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                setShowBlockConfirm(false);
+                onBlockUser?.(user.id);
+              }}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {t("block.block")}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

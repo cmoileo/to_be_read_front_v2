@@ -404,6 +404,7 @@
         "unblockSuccess": "Utilisateur débloqué",
         "blockError": "Échec du blocage",
         "unblockError": "Échec du déblocage",
-        "userBlockedYou": "Vous ne pouvez pas voir ce profil"
+        "userBlockedYou": "Vous ne pouvez pas voir ce profil",
+        "hasBlockedYou": "Cet utilisateur vous a bloqué"
     }
 }
