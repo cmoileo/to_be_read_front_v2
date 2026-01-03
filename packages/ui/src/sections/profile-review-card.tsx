@@ -1,6 +1,7 @@
 import { Card, CardContent } from "../components/card";
 import { Rating } from "../components/rating";
 import { Button } from "../components/button";
+import { SpoilerGuard } from "../components/spoiler-guard";
 import { Trash2, Heart, MessageCircle } from "lucide-react";
 
 interface Review {
@@ -9,6 +10,7 @@ interface Review {
   value: number;
   likesCount: number;
   commentsCount: number;
+  containsSpoiler: boolean;
   book: {
     volumeInfo: {
       title: string;
@@ -66,7 +68,9 @@ export const ProfileReviewCard = ({
 
             <Rating value={review.value} readOnly size="sm" />
 
-            <p className="text-sm line-clamp-2">{review.content}</p>
+            <SpoilerGuard active={review.containsSpoiler}>
+              <p className="text-sm line-clamp-2">{review.content}</p>
+            </SpoilerGuard>
 
             <div className="flex gap-4 text-xs text-muted-foreground">
               <span className="flex items-center gap-1">

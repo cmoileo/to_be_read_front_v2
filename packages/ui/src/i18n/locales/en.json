@@ -159,7 +159,15 @@
             "ratingLabel": "Rating",
             "contentLabel": "Your review",
             "contentPlaceholder": "Share your thoughts about this book...",
+            "spoilerLabel": "This review contains spoilers",
+            "spoilerDescription": "Hide critical plot points from other readers",
             "submit": "Publish review"
+        },
+        "spoiler": {
+            "warning": "This review contains spoilers",
+            "description": "Click below to reveal the content",
+            "reveal": "View review",
+            "hide": "Hide review"
         },
         "success": {
             "title": "Review published",

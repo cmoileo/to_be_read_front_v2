@@ -2,6 +2,7 @@ import { Review } from "@repo/types";
 import { Card, CardContent, CardHeader } from "./card";
 import { Avatar, AvatarFallback, AvatarImage } from "./avatar";
 import { Rating } from "./rating";
+import { SpoilerGuard } from "./spoiler-guard";
 
 interface ReviewCardProps {
   review: Review;
@@ -31,7 +32,9 @@ export function ReviewCard({ review, onClick }: ReviewCardProps) {
         </div>
       </CardHeader>
       <CardContent>
-        <p className="text-sm line-clamp-3">{review.content}</p>
+        <SpoilerGuard active={review.containsSpoiler}>
+          <p className="text-sm line-clamp-3">{review.content}</p>
+        </SpoilerGuard>
       </CardContent>
     </Card>
   );

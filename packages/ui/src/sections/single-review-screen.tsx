@@ -12,6 +12,7 @@ import { Rating } from "../components/rating";
 import { Separator } from "../components/separator";
 import { CommentCard } from "../components/comment-card";
 import { CommentForm } from "../components/comment-form";
+import { SpoilerGuard } from "../components/spoiler-guard";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -50,6 +51,7 @@ interface Review {
   likesCount: number;
   isLiked: boolean;
   isFromMe: boolean;
+  containsSpoiler: boolean;
   createdAt: string;
   author: ReviewAuthor;
   book: ReviewBook;
@@ -216,7 +218,9 @@ export function SingleReviewScreen({
           </div>
         </div>
 
-        <p className="text-sm leading-relaxed whitespace-pre-wrap">{review.content}</p>
+        <SpoilerGuard active={review.containsSpoiler}>
+          <p className="text-sm leading-relaxed whitespace-pre-wrap">{review.content}</p>
+        </SpoilerGuard>
 
         <div className="flex items-center gap-4 mt-4 pt-3 border-t border-border/50">
           <Button

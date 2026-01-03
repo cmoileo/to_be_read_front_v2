@@ -11,6 +11,7 @@ export interface Review {
   commentsCount: number;
   isLiked: boolean;
   isFromMe?: boolean;
+  containsSpoiler: boolean;
   createdAt: string;
   updatedAt: string;
   author: UserAuthor;
@@ -21,4 +22,5 @@ export interface CreateReviewData {
   content: string;
   value: number;
   googleBookId: string;
+  containsSpoiler?: boolean;
 }

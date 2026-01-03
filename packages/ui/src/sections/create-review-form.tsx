@@ -7,11 +7,17 @@ import { Label } from "../components/label";
 import { Rating } from "../components/rating";
 import { BookSearchSelect } from "../components/book-search-select";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/card";
+import { Switch } from "../components/switch";
 import { useTranslation } from "react-i18next";
 import type { GoogleBook } from "@repo/types";
 
 interface CreateReviewFormProps {
-  onSubmit: (data: { content: string; value: number; googleBookId: string }) => Promise<void>;
+  onSubmit: (data: {
+    content: string;
+    value: number;
+    googleBookId: string;
+    containsSpoiler?: boolean;
+  }) => Promise<void>;
   onSearchBooks: (query: string) => Promise<GoogleBook[]>;
   isLoading?: boolean;
   error?: string;
@@ -27,6 +33,7 @@ export function CreateReviewForm({
   const [selectedBook, setSelectedBook] = useState<GoogleBook | null>(null);
   const [rating, setRating] = useState(0);
   const [content, setContent] = useState("");
+  const [containsSpoiler, setContainsSpoiler] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const validateForm = () => {
@@ -64,11 +71,13 @@ export function CreateReviewForm({
         content: content.trim(),
         value: rating,
         googleBookId: selectedBook.id,
+        containsSpoiler,
       });
 
       setSelectedBook(null);
       setRating(0);
       setContent("");
+      setContainsSpoiler(false);
       setErrors({});
     } catch (err) {
       console.error(err);
@@ -118,6 +127,23 @@ export function CreateReviewForm({
               <span>{errors.content}</span>
               <span>{content.length}/1000</span>
             </div>
+          </div>
+
+          <div className="flex items-center justify-between rounded-lg border p-4 space-x-4">
+            <div className="flex-1 space-y-1">
+              <Label htmlFor="spoiler-toggle" className="cursor-pointer">
+                {t("review.create.spoilerLabel")}
+              </Label>
+              <p className="text-sm text-muted-foreground">
+                {t("review.create.spoilerDescription")}
+              </p>
+            </div>
+            <Switch
+              id="spoiler-toggle"
+              checked={containsSpoiler}
+              onCheckedChange={setContainsSpoiler}
+              disabled={isLoading}
+            />
           </div>
 
           {error && (

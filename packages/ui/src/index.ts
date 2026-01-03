@@ -28,6 +28,7 @@ export * from "./components/auth-prompt-dialog";
 export * from "./components/report-dialog";
 export * from "./components/block-user-button";
 export * from "./components/blocked-users-list";
+export * from "./components/spoiler-guard";
 export * from "./lib/utils";
 export * from "./hooks/use-toast";
 export * from "./sections/login-form";

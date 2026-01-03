@@ -11,6 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "./dropdown-menu";
 import { useTranslation } from "react-i18next";
+import { SpoilerGuard } from "./spoiler-guard";
 
 interface FeedReview {
   id: number;
@@ -20,6 +21,7 @@ interface FeedReview {
   commentsCount: number;
   isLiked: boolean;
   isFromMe?: boolean;
+  containsSpoiler: boolean;
   createdAt: string;
   author: {
     id: number;
@@ -139,9 +141,11 @@ export function FeedReviewCard({
             <div className="mb-2">
               <Rating value={review.value} readOnly size="sm" />
             </div>
-            <p className="text-sm leading-relaxed line-clamp-4 text-foreground/90">
-              {review.content}
-            </p>
+            <SpoilerGuard active={review.containsSpoiler}>
+              <p className="text-sm leading-relaxed line-clamp-4 text-foreground/90">
+                {review.content}
+              </p>
+            </SpoilerGuard>
           </div>
         </div>
       </CardContent>

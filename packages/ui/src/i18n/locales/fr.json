@@ -159,7 +159,15 @@
             "ratingLabel": "Note",
             "contentLabel": "Votre critique",
             "contentPlaceholder": "Partagez votre avis sur ce livre...",
+            "spoilerLabel": "Cette critique contient des spoilers",
+            "spoilerDescription": "Masquer les éléments clés de l'intrigue aux autres lecteurs",
             "submit": "Publier la critique"
+        },
+        "spoiler": {
+            "warning": "Cette critique contient des spoilers",
+            "description": "Cliquez ci-dessous pour révéler le contenu",
+            "reveal": "Voir la critique",
+            "hide": "Masquer la critique"
         },
         "success": {
             "title": "Critique publiée",
