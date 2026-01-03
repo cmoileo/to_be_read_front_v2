@@ -5,7 +5,6 @@ import { useState } from "react";
 import { MobileAuthService } from "../services/mobile-auth.service";
 import { MobileProfileService } from "../services/mobile-profile.service";
 import { useConnectedUser } from "@repo/stores";
-import { MobileStorage } from "../services/mobile-storage.service";
 import { useToast } from "@repo/ui";
 
 export function useSettingsViewModel() {
