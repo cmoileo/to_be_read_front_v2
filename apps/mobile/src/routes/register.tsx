@@ -24,23 +24,30 @@ function RegisterPage() {
   useEffect(() => {
     if (!Capacitor.isNativePlatform()) return;
 
-    const showListener = Keyboard.addListener("keyboardWillShow", (info) => {
-      if (containerRef.current) {
-        containerRef.current.style.transform = `translateY(-${info.keyboardHeight / 2}px)`;
-        containerRef.current.style.transition = "transform 0.3s ease-out";
-      }
-    });
+    let showListener: any;
+    let hideListener: any;
 
-    const hideListener = Keyboard.addListener("keyboardWillHide", () => {
-      if (containerRef.current) {
-        containerRef.current.style.transform = "translateY(0)";
-        containerRef.current.style.transition = "transform 0.3s ease-out";
-      }
-    });
+    const setupListeners = async () => {
+      showListener = await Keyboard.addListener("keyboardWillShow", (info) => {
+        if (containerRef.current) {
+          containerRef.current.style.transform = `translateY(-${info.keyboardHeight / 2}px)`;
+          containerRef.current.style.transition = "transform 0.3s ease-out";
+        }
+      });
+
+      hideListener = await Keyboard.addListener("keyboardWillHide", () => {
+        if (containerRef.current) {
+          containerRef.current.style.transform = "translateY(0)";
+          containerRef.current.style.transition = "transform 0.3s ease-out";
+        }
+      });
+    };
+
+    setupListeners();
 
     return () => {
-      showListener.remove();
-      hideListener.remove();
+      showListener?.remove();
+      hideListener?.remove();
     };
   }, []);
 
