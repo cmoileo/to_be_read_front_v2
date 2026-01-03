@@ -28,6 +28,7 @@ interface FeedReview {
       };
     };
   };
+  containsSpoiler: boolean;
 }
 
 interface FeedScreenProps {

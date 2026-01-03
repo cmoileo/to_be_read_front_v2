@@ -27,6 +27,7 @@ interface ApiReview {
       };
     };
   };
+  containsSpoiler: boolean;
 }
 
 interface ApiComment {
@@ -71,6 +72,7 @@ export interface SingleReview {
       };
     };
   };
+  containsSpoiler: boolean;
 }
 
 export interface SingleComment {
@@ -99,6 +101,7 @@ function mapApiReviewToReview(apiReview: ApiReview): SingleReview {
     isLiked: apiReview.hasUserLiked,
     isFromMe: apiReview.isFromMe,
     createdAt: apiReview.createdAt,
+    containsSpoiler: apiReview.containsSpoiler,
     author: {
       id: apiReview.author.id,
       userName: apiReview.author.userName,

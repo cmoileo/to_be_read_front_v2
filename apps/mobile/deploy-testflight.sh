@@ -16,7 +16,7 @@ echo ""
 # 2. Copier .env.staging vers .env et build
 echo "🏗️  Étape 2/4: Configuration staging et build du frontend..."
 cp .env.staging .env
-pnpm run build
+pnpm run build:staging
 echo ""
 
 # 3. Sync avec Capacitor

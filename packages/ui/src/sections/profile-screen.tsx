@@ -47,6 +47,7 @@ interface Review {
       };
     };
   };
+  containsSpoiler: boolean;
 }
 
 interface ProfileScreenProps {

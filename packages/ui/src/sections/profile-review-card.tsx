@@ -10,7 +10,6 @@ interface Review {
   value: number;
   likesCount: number;
   commentsCount: number;
-  containsSpoiler: boolean;
   book: {
     volumeInfo: {
       title: string;
@@ -20,6 +19,7 @@ interface Review {
       };
     };
   };
+  containsSpoiler: boolean;
 }
 
 interface ProfileReviewCardProps {
