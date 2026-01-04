@@ -55,7 +55,7 @@ export const ProfileReviewCard = ({
   return (
     <Card className="cursor-pointer hover:bg-accent/50 transition-colors" onClick={handleClick}>
       <CardContent className="p-4">
-        <div className="flex gap-4">
+        <div className="flex gap-4 items">
           {bookThumbnail && (
             <img src={bookThumbnail} alt={bookTitle} className="w-16 h-24 object-cover rounded" />
           )}

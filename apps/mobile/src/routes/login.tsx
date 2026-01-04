@@ -52,8 +52,8 @@ function LoginPage() {
   }, []);
 
   return (
-    <PageTransition className="flex min-h-screen items-center justify-center p-6 safe-area-inset-top safe-area-inset-bottom">
-      <div ref={containerRef} className="w-full">
+    <PageTransition className="flex min-h-screen items-start p-6 safe-area-inset-top safe-area-inset-bottom overflow-y-auto">
+      <div ref={containerRef} className="w-full my-auto">
         <LoginForm
           onSubmit={viewModel.login}
           isLoading={viewModel.isLoading}

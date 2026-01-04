@@ -145,7 +145,7 @@ function UserProfilePage() {
           </button>
         </div>
 
-        <div className="p-4">
+        <div>
           <ProfileScreen
             user={user}
             reviews={reviews}
