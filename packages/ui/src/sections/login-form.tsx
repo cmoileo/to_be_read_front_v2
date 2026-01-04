@@ -11,7 +11,7 @@ import {
   CardHeader,
   CardTitle,
 } from "../components/card";
-import { getLoginSchema, type LoginFormValues } from "../schemas/auth.schema";
+import { type LoginFormValues } from "../schemas/auth.schema";
 import { useTranslation } from "react-i18next";
 import { BookOpen, AlertCircle, Loader2 } from "lucide-react";
 
