@@ -36,6 +36,7 @@ function SettingsPage() {
     handleToggleNotifications,
     handleOpenPrivacySettings,
     handleSavePrivacySettings,
+    handleOpenLegal,
     setShowPrivacyDialog,
   } = useSettingsViewModel();
 
@@ -56,6 +57,7 @@ function SettingsPage() {
           onToggleNotifications={handleToggleNotifications}
           onOpenPrivacySettings={handleOpenPrivacySettings}
           onOpenBlockedUsers={() => navigate({ to: "/blocked-users" })}
+          onOpenLegal={handleOpenLegal}
           onBack={() => navigate({ to: "/profile" })}
         />
         

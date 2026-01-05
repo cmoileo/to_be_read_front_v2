@@ -293,7 +293,9 @@
         "deleteAccountConfirmDescription": "This action cannot be undone. All your reviews, comments, and personal data will be permanently deleted.",
         "deleteAccountConfirm": "Delete my account",
         "deleteAccountSuccess": "Your account has been deleted",
-        "deleteAccountError": "Failed to delete account"
+        "deleteAccountError": "Failed to delete account",
+        "legal": "Legal Information",
+        "legalDescription": "Terms, privacy policy, and legal notices"
     },
     "visitorHome": {
         "heroTitle": "Inkgora",

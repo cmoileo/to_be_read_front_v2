@@ -293,7 +293,9 @@
         "deleteAccountConfirmDescription": "Cette action est irréversible. Toutes vos critiques, commentaires et données personnelles seront définitivement supprimés.",
         "deleteAccountConfirm": "Supprimer mon compte",
         "deleteAccountSuccess": "Votre compte a été supprimé",
-        "deleteAccountError": "Échec de la suppression du compte"
+        "deleteAccountError": "Échec de la suppression du compte",
+        "legal": "Informations légales",
+        "legalDescription": "CGU, politique de confidentialité et mentions légales"
     },
     "visitorHome": {
         "heroTitle": "Inkgora",

@@ -119,6 +119,10 @@ export function useSettingsViewModel() {
     privacySettingsMutation.mutate(isPrivate);
   };
 
+  const handleOpenLegal = () => {
+    navigate({ to: "/legal" });
+  };
+
   return {
     currentLocale,
     currentTheme: theme,
@@ -135,6 +139,7 @@ export function useSettingsViewModel() {
     handleToggleNotifications,
     handleOpenPrivacySettings,
     handleSavePrivacySettings,
+    handleOpenLegal,
     setShowPrivacyDialog,
   };
 }
