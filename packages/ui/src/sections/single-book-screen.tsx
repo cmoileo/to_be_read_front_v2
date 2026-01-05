@@ -45,7 +45,7 @@ interface BookInfo {
 }
 
 interface ReviewAuthor {
-  id: number;
+  id: string;
   userName: string;
   avatar: string | null;
 }
@@ -54,7 +54,7 @@ interface Review {
   id: number;
   content: string;
   value: number;
-  authorId: number;
+  authorId: string;
   createdAt: string;
   author: ReviewAuthor;
   likesCount: number;
@@ -75,7 +75,7 @@ interface SingleBookScreenProps {
   onBack?: () => void;
   onLoadMoreReviews?: () => void;
   onReviewClick?: (reviewId: number) => void;
-  onAuthorClick?: (authorId: number) => void;
+  onAuthorClick?: (authorId: string) => void;
   onToggleReadList?: () => void;
 }
 

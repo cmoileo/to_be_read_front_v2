@@ -14,7 +14,7 @@ export class ReviewsApi {
     return HttpClient.delete<{ message: string }>(`/review/${id}`);
   }
 
-  static async getUserReviews(userId: number, page: number): Promise<PaginatedResponse<Review>> {
+  static async getUserReviews(userId: string, page: number): Promise<PaginatedResponse<Review>> {
     return HttpClient.get<PaginatedResponse<Review>>(`/user/${userId}/reviews/${page}`);
   }
 

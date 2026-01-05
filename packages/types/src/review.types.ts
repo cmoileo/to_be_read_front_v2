@@ -6,7 +6,7 @@ export interface Review {
   content: string;
   value: number;
   googleBookId: string;
-  authorId: number;
+  authorId: string;
   likesCount: number;
   commentsCount: number;
   isLiked: boolean;

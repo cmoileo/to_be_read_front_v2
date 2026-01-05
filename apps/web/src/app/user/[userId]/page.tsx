@@ -10,14 +10,13 @@ interface UserProfilePageProps {
 
 export async function generateMetadata({ params }: UserProfilePageProps): Promise<Metadata> {
   const { userId } = await params;
-  const userIdNum = parseInt(userId, 10);
 
-  if (isNaN(userIdNum)) {
+  if (!userId) {
     return {};
   }
 
   try {
-    const user = await WebUserService.getUser(userIdNum);
+    const user = await WebUserService.getUser(userId);
     
     if (!user) {
       return {};
@@ -51,9 +50,8 @@ export async function generateMetadata({ params }: UserProfilePageProps): Promis
 
 export default async function UserProfilePage({ params }: UserProfilePageProps) {
   const { userId } = await params;
-  const userIdNum = parseInt(userId, 10);
 
-  if (isNaN(userIdNum)) {
+  if (!userId) {
     notFound();
   }
 
@@ -65,8 +63,8 @@ export default async function UserProfilePage({ params }: UserProfilePageProps) 
 
   try {
     [user, initialReviewsResponse] = await Promise.all([
-      WebUserService.getUser(userIdNum, accessToken),
-      WebUserService.getUserReviews(userIdNum, 1, accessToken),
+      WebUserService.getUser(userId, accessToken),
+      WebUserService.getUserReviews(userId, 1, accessToken),
     ]);
   } catch (error) {
     console.error("Failed to fetch user profile:", error);

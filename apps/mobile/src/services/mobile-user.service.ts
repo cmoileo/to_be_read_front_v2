@@ -2,7 +2,7 @@ import type { User, Review, PaginatedResponse, FollowResponse } from "@repo/type
 import { HttpInterceptor } from "./http-interceptor.service";
 
 interface ApiUser {
-  id: number;
+  id: string;
   userName: string;
   avatarUrl: string | null;
   biography: string | null;
@@ -19,7 +19,7 @@ interface ApiUser {
 }
 
 interface ApiFollowUser {
-  id: number;
+  id: string;
   userName: string;
   avatar?: string | null;
   avatarUrl?: string | null;
@@ -29,7 +29,7 @@ interface ApiFollowUser {
 }
 
 export interface FollowUser {
-  id: number;
+  id: string;
   userName: string;
   avatar: string | null;
   biography: string | null;
@@ -69,32 +69,32 @@ function mapApiFollowUserToFollowUser(apiUser: ApiFollowUser): FollowUser {
 }
 
 export class MobileUserService {
-  static async getUser(userId: number): Promise<User> {
+  static async getUser(userId: string): Promise<User> {
     const apiUser = await HttpInterceptor.get<ApiUser>(`/user/${userId}`);
     return mapApiUserToUser(apiUser);
   }
 
   static async getUserReviews(
-    userId: number,
+    userId: string,
     page: number = 1
   ): Promise<PaginatedResponse<Review>> {
     return HttpInterceptor.get<PaginatedResponse<Review>>(`/user/${userId}/reviews/${page}`);
   }
 
-  static async followUser(userId: number): Promise<FollowResponse> {
+  static async followUser(userId: string): Promise<FollowResponse> {
     return HttpInterceptor.get<FollowResponse>(`/user/${userId}/follow`);
   }
 
-  static async unfollowUser(userId: number): Promise<{ message: string }> {
+  static async unfollowUser(userId: string): Promise<{ message: string }> {
     return HttpInterceptor.get<{ message: string }>(`/user/${userId}/unfollow`);
   }
 
-  static async cancelFollowRequest(userId: number): Promise<{ message: string }> {
+  static async cancelFollowRequest(userId: string): Promise<{ message: string }> {
     return HttpInterceptor.delete<{ message: string }>(`/user/${userId}/cancel-follow-request`);
   }
 
   static async getFollowers(
-    userId: number,
+    userId: string,
     page: number = 1
   ): Promise<PaginatedResponse<FollowUser>> {
     const response = await HttpInterceptor.get<PaginatedResponse<ApiFollowUser>>(
@@ -107,7 +107,7 @@ export class MobileUserService {
   }
 
   static async getFollowings(
-    userId: number,
+    userId: string,
     page: number = 1
   ): Promise<PaginatedResponse<FollowUser>> {
     const response = await HttpInterceptor.get<PaginatedResponse<ApiFollowUser>>(

@@ -3,7 +3,7 @@ import type { UserAuthor } from "./user.types";
 export interface Comment {
   id: number;
   reviewId: number;
-  authorId: number;
+  authorId: string;
   content: string;
   likesCount: number;
   isLiked: boolean;

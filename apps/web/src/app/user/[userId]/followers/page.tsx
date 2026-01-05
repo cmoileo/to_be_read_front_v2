@@ -9,9 +9,8 @@ interface FollowersPageProps {
 
 export default async function FollowersPage({ params }: FollowersPageProps) {
   const { userId } = await params;
-  const userIdNum = parseInt(userId, 10);
 
-  if (isNaN(userIdNum)) {
+  if (!userId) {
     notFound();
   }
 
@@ -24,13 +23,13 @@ export default async function FollowersPage({ params }: FollowersPageProps) {
 
   try {
     const [user, followersResponse] = await Promise.all([
-      WebUserService.getUser(userIdNum, accessToken),
-      WebUserService.getFollowers(userIdNum, 1, accessToken),
+      WebUserService.getUser(userId, accessToken),
+      WebUserService.getFollowers(userId, 1, accessToken),
     ]);
 
     return (
       <FollowersClient
-        userId={userIdNum}
+        userId={userId}
         userName={user.userName}
         initialData={followersResponse}
       />

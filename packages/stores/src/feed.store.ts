@@ -10,7 +10,7 @@ export const feedKeys = {
  * Removes all reviews from a specific user from the feed cache
  * Used when unfollowing someone
  */
-export const removeUserReviewsFromFeed = (queryClient: QueryClient, userId: number) => {
+export const removeUserReviewsFromFeed = (queryClient: QueryClient, userId: string) => {
   queryClient.setQueryData(feedKeys.list(), (old: any) => {
     if (!old) return old;
     return {

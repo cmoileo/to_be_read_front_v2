@@ -5,7 +5,7 @@ import { Loader2 } from "lucide-react";
 import { cn } from "../lib/utils";
 
 interface UserListItemUser {
-  id: number;
+  id: string;
   userName: string;
   avatar?: string | null;
   biography?: string | null;
@@ -16,9 +16,9 @@ interface UserListItemUser {
 interface UserListItemProps {
   user: UserListItemUser;
   isFollowLoading?: boolean;
-  onUserClick?: (userId: number) => void;
-  onFollow?: (userId: number) => void;
-  onUnfollow?: (userId: number) => void;
+  onUserClick?: (userId: string) => void;
+  onFollow?: (userId: string) => void;
+  onUnfollow?: (userId: string) => void;
 }
 
 export function UserListItem({

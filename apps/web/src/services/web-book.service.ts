@@ -1,7 +1,7 @@
 const API_URL = process.env.NEXT_PUBLIC_API_URL!;
 
 interface ApiReviewAuthor {
-  id: number;
+  id: string;
   userName: string;
   avatarUrl?: string | null;
   avatar?: string | null;
@@ -12,7 +12,7 @@ interface ApiBookReview {
   content: string;
   value: number;
   googleBookId: string;
-  authorId: number;
+  authorId: string;
   createdAt: string;
   author: ApiReviewAuthor;
   likesCount: number;
@@ -26,10 +26,10 @@ export interface BookReview {
   content: string;
   value: number;
   googleBookId: string;
-  authorId: number;
+  authorId: string;
   createdAt: string;
   author: {
-    id: number;
+    id: string;
     userName: string;
     avatar: string | null;
   };

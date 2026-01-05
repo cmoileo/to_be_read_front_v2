@@ -13,7 +13,7 @@ export class MobileProfileService {
     return HttpInterceptor.get<{ user: User }>("/me");
   }
 
-  static async getProfile(userId: number): Promise<{ user: User }> {
+  static async getProfile(userId: string): Promise<{ user: User }> {
     return HttpInterceptor.get<{ user: User }>(`/user/${userId}`);
   }
 
@@ -40,7 +40,7 @@ export class MobileProfileService {
     return HttpInterceptor.get<PaginatedResponse<Review>>(`/my-reviews/${page}`);
   }
 
-  static async getUserReviews(userId: number, page: number = 1): Promise<PaginatedResponse<Review>> {
+  static async getUserReviews(userId: string, page: number = 1): Promise<PaginatedResponse<Review>> {
     return HttpInterceptor.get<PaginatedResponse<Review>>(`/user/${userId}/reviews/${page}`);
   }
 

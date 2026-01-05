@@ -1,5 +1,5 @@
 export interface User {
-  id: number;
+  id: string;
   userName: string;
   avatar: string | null;
   biography: string | null;
@@ -29,13 +29,13 @@ export interface UserDetailed extends User {
 }
 
 export interface UserAuthor {
-  id: number;
+  id: string;
   userName: string;
   avatar: string | null;
   isMe: boolean;
 }
 
 export interface UserBasic {
-  id: number;
+  id: string;
   userName: string;
 }

@@ -15,7 +15,7 @@ interface AuthProviderProps {
 export function AuthProvider({ children, initialUser, initialAccessToken }: AuthProviderProps) {
   const queryClient = useQueryClient();
   const isHydrated = useRef(false);
-  const lastUserId = useRef<number | null>(null);
+  const lastUserId = useRef<string | null>(null);
 
   if (!isHydrated.current) {
     queryClient.setQueryData(connectedUserKeys.profile(), initialUser);

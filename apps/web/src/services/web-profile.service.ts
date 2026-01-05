@@ -50,7 +50,7 @@ export class WebProfileService {
     return callApi<{ user: User }>("/me", {}, accessToken);
   }
 
-  static async getProfile(userId: number, accessToken: string): Promise<{ user: User }> {
+  static async getProfile(userId: string, accessToken: string): Promise<{ user: User }> {
     return callApi<{ user: User }>(`/user/${userId}`, {}, accessToken);
   }
 
@@ -87,7 +87,7 @@ export class WebProfileService {
     };
   }
 
-  static async getUserReviews(userId: number, page: number, accessToken: string): Promise<PaginatedResponse<Review>> {
+  static async getUserReviews(userId: string, page: number, accessToken: string): Promise<PaginatedResponse<Review>> {
     const response = await callApi<PaginatedResponse<Review>>(`/user/${userId}/reviews/${page}`, {}, accessToken);
     return {
       ...response,

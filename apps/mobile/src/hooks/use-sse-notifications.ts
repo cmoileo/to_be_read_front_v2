@@ -12,7 +12,7 @@ interface SSEEvent {
   count?: number;
 }
 
-export function useSSENotifications(userId: number | undefined) {
+export function useSSENotifications(userId: string | undefined) {
   const queryClient = useQueryClient();
   const transmitRef = useRef<Transmit | null>(null);
   const subscriptionRef = useRef<any>(null);

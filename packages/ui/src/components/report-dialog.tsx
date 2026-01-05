@@ -26,7 +26,7 @@ interface ReportDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   entityType: ReportEntityType;
-  entityId: number;
+  entityId: number | string;
   onSubmit: (reason: ReportReason, description?: string) => void;
   isLoading?: boolean;
 }

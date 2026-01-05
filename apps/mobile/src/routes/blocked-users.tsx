@@ -39,7 +39,7 @@ function BlockedUsersPage() {
     router.history.back();
   };
 
-  const handleUserClick = (userId: number) => {
+  const handleUserClick = (userId: string) => {
     navigate({ to: `/user/${userId}` });
   };
 

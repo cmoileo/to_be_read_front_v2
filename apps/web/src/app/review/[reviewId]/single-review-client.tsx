@@ -47,7 +47,7 @@ export default function SingleReviewClient({
     router.back();
   };
 
-  const handleAuthorClick = (authorId: number) => {
+  const handleAuthorClick = (authorId: string) => {
     router.push(`/user/${authorId}`);
   };
 

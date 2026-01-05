@@ -11,7 +11,7 @@ import { cn } from "../lib/utils";
 import { useTranslation } from "react-i18next";
 
 interface CommentAuthor {
-  id: number;
+  id: string;
   userName: string;
   avatar: string | null;
 }
@@ -30,7 +30,7 @@ interface CommentCardProps {
   comment: Comment;
   onLike?: (commentId: number) => void;
   onDelete?: (commentId: number) => void;
-  onAuthorClick?: (authorId: number) => void;
+  onAuthorClick?: (authorId: string) => void;
   onReport?: (commentId: number) => void;
 }
 

@@ -5,7 +5,7 @@ import { ReviewsApi } from "../apis/reviews.api";
 export const reviewKeys = {
   all: ["reviews"] as const,
   detail: (id: number) => [...reviewKeys.all, "detail", id] as const,
-  userReviews: (userId: number) => [...reviewKeys.all, "user", userId] as const,
+  userReviews: (userId: string) => [...reviewKeys.all, "user", userId] as const,
   feed: () => [...reviewKeys.all, "feed"] as const,
 };
 
@@ -19,7 +19,7 @@ export const useReview = (id: number) => {
   });
 };
 
-export const useUserReviews = (userId: number) => {
+export const useUserReviews = (userId: string) => {
   return useInfiniteQuery({
     queryKey: reviewKeys.userReviews(userId),
     queryFn: ({ pageParam = 1 }) => ReviewsApi.getUserReviews(userId, pageParam),

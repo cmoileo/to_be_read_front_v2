@@ -56,8 +56,6 @@ function UserProfilePage() {
   const currentPath = routerState.location.pathname;
   const { isMobile } = usePlatform();
 
-  const userIdNumber = parseInt(userId, 10);
-
   const {
     user,
     reviews,
@@ -71,7 +69,7 @@ function UserProfilePage() {
     handleBlock,
     handleUnblock,
     handleLoadMore,
-  } = useUserProfileViewModel(userIdNumber);
+  } = useUserProfileViewModel(userId);
 
   const reportViewModel = useReportViewModel();
 
@@ -116,20 +114,20 @@ function UserProfilePage() {
 
   const handleFollowersClick = () => {
     navigate({
-      to: `/user/${userIdNumber}/followers`,
+      to: `/user/${userId}/followers`,
       search: { userName: user?.userName },
     });
   };
 
   const handleFollowingClick = () => {
     navigate({
-      to: `/user/${userIdNumber}/following`,
+      to: `/user/${userId}/following`,
       search: { userName: user?.userName },
     });
   };
 
-  const handleReportUser = (userId: number) => {
-    reportViewModel.openReportDialog("user", userId);
+  const handleReportUser = (reportedUserId: string) => {
+    reportViewModel.openReportDialog("user", reportedUserId);
   };
 
   return (

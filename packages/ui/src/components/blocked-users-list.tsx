@@ -11,10 +11,10 @@ interface BlockedUsersListProps {
   isLoading?: boolean;
   hasMore?: boolean;
   isFetchingMore?: boolean;
-  unblockingUserId?: number | null;
-  onUnblock: (userId: number) => void;
+  unblockingUserId?: string | null;
+  onUnblock: (userId: string) => void;
   onLoadMore?: () => void;
-  onUserClick?: (userId: number) => void;
+  onUserClick?: (userId: string) => void;
 }
 
 export const BlockedUsersList = ({

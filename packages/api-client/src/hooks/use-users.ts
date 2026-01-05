@@ -3,13 +3,13 @@ import { UsersApi } from "../apis/users.api";
 
 export const userKeys = {
   all: ["users"] as const,
-  detail: (id: number) => [...userKeys.all, "detail", id] as const,
+  detail: (id: string) => [...userKeys.all, "detail", id] as const,
   search: (query: string) => [...userKeys.all, "search", query] as const,
-  followers: (userId: number) => [...userKeys.all, "followers", userId] as const,
-  followings: (userId: number) => [...userKeys.all, "followings", userId] as const,
+  followers: (userId: string) => [...userKeys.all, "followers", userId] as const,
+  followings: (userId: string) => [...userKeys.all, "followings", userId] as const,
 };
 
-export const useUser = (id: number) => {
+export const useUser = (id: string) => {
   return useQuery({
     queryKey: userKeys.detail(id),
     queryFn: async () => {
@@ -36,7 +36,7 @@ export const useFollowUser = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (id: number) => UsersApi.followUser(id),
+    mutationFn: (id: string) => UsersApi.followUser(id),
     onSuccess: (_, id) => {
       queryClient.invalidateQueries({ queryKey: userKeys.detail(id) });
     },
@@ -47,14 +47,14 @@ export const useUnfollowUser = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (id: number) => UsersApi.unfollowUser(id),
+    mutationFn: (id: string) => UsersApi.unfollowUser(id),
     onSuccess: (_, id) => {
       queryClient.invalidateQueries({ queryKey: userKeys.detail(id) });
     },
   });
 };
 
-export const useFollowers = (userId: number) => {
+export const useFollowers = (userId: string) => {
   return useInfiniteQuery({
     queryKey: userKeys.followers(userId),
     queryFn: ({ pageParam = 1 }) => UsersApi.getFollowers(userId, pageParam),
@@ -66,7 +66,7 @@ export const useFollowers = (userId: number) => {
   });
 };
 
-export const useFollowings = (userId: number) => {
+export const useFollowings = (userId: string) => {
   return useInfiniteQuery({
     queryKey: userKeys.followings(userId),
     queryFn: ({ pageParam = 1 }) => UsersApi.getFollowings(userId, pageParam),

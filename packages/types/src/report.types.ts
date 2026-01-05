@@ -16,15 +16,15 @@ export type ReportStatus = "PENDING" | "RESOLVED" | "DISMISSED";
 
 export interface Report {
   id: number;
-  reporterId: number;
+  reporterId: string;
   entityType: ReportEntityType;
   reviewId: number | null;
   commentId: number | null;
-  reportedUserId: number | null;
+  reportedUserId: string | null;
   reason: ReportReason;
   description: string | null;
   status: ReportStatus;
-  resolvedById: number | null;
+  resolvedById: string | null;
   resolvedAt: string | null;
   createdAt: string;
   updatedAt: string;
@@ -37,7 +37,7 @@ export interface Report {
 
 export interface CreateReportData {
   entityType: ReportEntityType;
-  entityId: number;
+  entityId: number | string;
   reason: ReportReason;
   description?: string;
 }

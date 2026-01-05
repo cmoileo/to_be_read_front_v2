@@ -4,7 +4,7 @@ import { Button } from "../components/button";
 import { Loader2, UserX } from "lucide-react";
 
 interface FollowUser {
-  id: number;
+  id: string;
   userName: string;
   avatar?: string | null;
   biography?: string | null;
@@ -19,9 +19,9 @@ interface FollowListScreenProps {
   hasMore: boolean;
   isFetchingMore: boolean;
   onLoadMore: () => void;
-  onUserClick: (userId: number) => void;
-  onFollow: (userId: number) => void;
-  onUnfollow: (userId: number) => void;
+  onUserClick: (userId: string) => void;
+  onFollow: (userId: string) => void;
+  onUnfollow: (userId: string) => void;
 }
 
 export function FollowListScreen({

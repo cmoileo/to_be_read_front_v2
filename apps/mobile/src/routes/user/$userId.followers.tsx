@@ -49,8 +49,6 @@ function FollowersPage() {
   const currentPath = routerState.location.pathname;
   const { isMobile } = usePlatform();
 
-  const userIdNumber = parseInt(userId, 10);
-
   const {
     users,
     isLoading,
@@ -59,7 +57,7 @@ function FollowersPage() {
     handleLoadMore,
     handleFollow,
     handleUnfollow,
-  } = useFollowListViewModel(userIdNumber, "followers");
+  } = useFollowListViewModel(userId, "followers");
 
   const navItems = [
     {
@@ -92,7 +90,7 @@ function FollowersPage() {
     navigate({ to: href });
   };
 
-  const handleUserClick = (clickedUserId: number) => {
+  const handleUserClick = (clickedUserId: string) => {
     navigate({ to: `/user/${clickedUserId}` });
   };
 

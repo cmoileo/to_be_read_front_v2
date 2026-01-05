@@ -24,7 +24,7 @@ interface FeedReview {
   containsSpoiler: boolean;
   createdAt: string;
   author: {
-    id: number;
+    id: string;
     userName: string;
     avatar?: string | null;
   };
@@ -43,7 +43,7 @@ interface FeedReview {
 interface FeedReviewCardProps {
   review: FeedReview;
   onLike?: (reviewId: number) => void;
-  onAuthorClick?: (authorId: number) => void;
+  onAuthorClick?: (authorId: string) => void;
   onReviewClick?: (reviewId: number) => void;
   onReport?: (reviewId: number) => void;
 }

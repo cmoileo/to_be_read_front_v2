@@ -85,7 +85,7 @@ export default function UserProfileClient({
     handleCancelRequest();
   };
 
-  const handleReportUser = (userId: number) => {
+  const handleReportUser = (userId: string) => {
     if (!currentUser) {
       showAuthPrompt("follow");
       return;
@@ -93,7 +93,7 @@ export default function UserProfileClient({
     reportViewModel.openReportDialog("user", userId);
   };
 
-  const handleBlockWithAuth = (userId: number) => {
+  const handleBlockWithAuth = (userId: string) => {
     if (!currentUser) {
       showAuthPrompt("follow");
       return;
@@ -101,7 +101,7 @@ export default function UserProfileClient({
     handleBlock();
   };
 
-  const handleUnblockWithAuth = (userId: number) => {
+  const handleUnblockWithAuth = (userId: string) => {
     if (!currentUser) {
       showAuthPrompt("follow");
       return;

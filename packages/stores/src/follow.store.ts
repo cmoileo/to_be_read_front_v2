@@ -15,14 +15,14 @@ interface FollowState {
 
 export const getUserFollowState = (
   queryClient: QueryClient,
-  userId: number
+  userId: string
 ): FollowState | null => {
   return queryClient.getQueryData<FollowState>(followKeys.user(userId)) ?? null;
 };
 
 export const setUserFollowState = (
   queryClient: QueryClient,
-  userId: number,
+  userId: string,
   state: FollowState
 ) => {
   queryClient.setQueryData(followKeys.user(userId), state);
@@ -30,7 +30,7 @@ export const setUserFollowState = (
 
 export const initializeFollowState = (
   queryClient: QueryClient,
-  userId: number,
+  userId: string,
   isFollowing: boolean,
   followersCount: number,
   followRequestStatus: FollowRequestStatus = "none"
@@ -43,7 +43,7 @@ export const initializeFollowState = (
 
 export const followUserInCache = (
   queryClient: QueryClient,
-  userId: number,
+  userId: string,
   isPrivateAccount: boolean
 ): { previousState: FollowState | null } => {
   const previousState = getUserFollowState(queryClient, userId);
@@ -71,7 +71,7 @@ export const followUserInCache = (
 
 export const unfollowUserInCache = (
   queryClient: QueryClient,
-  userId: number
+  userId: string
 ): { previousState: FollowState | null } => {
   const previousState = getUserFollowState(queryClient, userId);
 
@@ -94,7 +94,7 @@ export const unfollowUserInCache = (
 
 export const cancelFollowRequestInCache = (
   queryClient: QueryClient,
-  userId: number
+  userId: string
 ): { previousState: FollowState | null } => {
   const previousState = getUserFollowState(queryClient, userId);
 
@@ -112,7 +112,7 @@ export const cancelFollowRequestInCache = (
 
 export const acceptFollowRequestInCache = (
   queryClient: QueryClient,
-  requesterId: number
+  requesterId: string
 ) => {
   updateFollowersCount(queryClient, 1);
 
@@ -121,7 +121,7 @@ export const acceptFollowRequestInCache = (
 
 export const rollbackFollowState = (
   queryClient: QueryClient,
-  userId: number,
+  userId: string,
   previousState: FollowState | null
 ) => {
   if (previousState) {
@@ -132,7 +132,7 @@ export const rollbackFollowState = (
 
 const syncFollowStateToUserProfile = (
   queryClient: QueryClient,
-  userId: number,
+  userId: string,
   state: FollowState
 ) => {
   queryClient.setQueryData(queryKeys.users.detail(userId), (old: User | undefined) => {
@@ -148,7 +148,7 @@ const syncFollowStateToUserProfile = (
 
 const syncFollowStateToFollowLists = (
   queryClient: QueryClient,
-  userId: number,
+  userId: string,
   state: FollowState
 ) => {
   const queries = queryClient.getQueryCache().findAll({
@@ -176,7 +176,7 @@ const invalidateFeedForNewFollowing = (queryClient: QueryClient) => {
   queryClient.invalidateQueries({ queryKey: queryKeys.feed.list() });
 };
 
-const removeUserReviewsFromFeedInternal = (queryClient: QueryClient, userId: number) => {
+const removeUserReviewsFromFeedInternal = (queryClient: QueryClient, userId: string) => {
   queryClient.setQueryData(queryKeys.feed.list(), (old: any) => {
     if (!old) return old;
     return {

@@ -5,7 +5,7 @@ import { queryKeys } from "./keys/query-keys";
 export const blockKeys = {
   all: ["blocks"] as const,
   list: () => [...blockKeys.all, "list"] as const,
-  status: (userId: number) => [...blockKeys.all, "status", userId] as const,
+  status: (userId: string) => [...blockKeys.all, "status", userId] as const,
 };
 
 interface BlockState {
@@ -15,14 +15,14 @@ interface BlockState {
 
 export const getBlockState = (
   queryClient: QueryClient,
-  userId: number
+  userId: string
 ): BlockState | null => {
   return queryClient.getQueryData<BlockState>(blockKeys.status(userId)) ?? null;
 };
 
 export const setBlockState = (
   queryClient: QueryClient,
-  userId: number,
+  userId: string,
   state: BlockState
 ) => {
   queryClient.setQueryData(blockKeys.status(userId), state);
@@ -30,7 +30,7 @@ export const setBlockState = (
 
 export const blockUserInCache = (
   queryClient: QueryClient,
-  userId: number
+  userId: string
 ): { previousState: BlockState | null; previousUserData: User | null } => {
   const previousState = getBlockState(queryClient, userId);
   const previousUserData = queryClient.getQueryData<User>(queryKeys.users.detail(userId)) ?? null;
@@ -57,7 +57,7 @@ export const blockUserInCache = (
 
 export const unblockUserInCache = (
   queryClient: QueryClient,
-  userId: number
+  userId: string
 ): { previousState: BlockState | null } => {
   const previousState = getBlockState(queryClient, userId);
 
@@ -80,7 +80,7 @@ export const unblockUserInCache = (
 
 export const rollbackBlockState = (
   queryClient: QueryClient,
-  userId: number,
+  userId: string,
   previousState: BlockState | null,
   previousUserData?: User | null
 ) => {
@@ -92,7 +92,7 @@ export const rollbackBlockState = (
   }
 };
 
-export const invalidateBlockRelatedCaches = (queryClient: QueryClient, userId: number) => {
+export const invalidateBlockRelatedCaches = (queryClient: QueryClient, userId: string) => {
   queryClient.invalidateQueries({ queryKey: queryKeys.feed.all });
   queryClient.invalidateQueries({ queryKey: queryKeys.users.detail(userId) });
   queryClient.invalidateQueries({ queryKey: queryKeys.followList.followers(userId) });

@@ -5,13 +5,13 @@ interface ApiReview {
   content: string;
   value: number;
   googleBookId: string;
-  authorId: number;
+  authorId: string;
   createdAt: string;
   likesCount: number;
   hasUserLiked: boolean;
   isFromMe: boolean;
   author: {
-    id: number;
+    id: string;
     userName: string;
     avatarUrl?: string | null;
     avatar?: string | null;
@@ -34,9 +34,9 @@ interface ApiComment {
   id: number;
   content: string;
   createdAt: string;
-  authorId: number;
+  authorId: string;
   author: {
-    id: number;
+    id: string;
     userName: string;
     avatarUrl?: string | null;
     avatar?: string | null;
@@ -51,13 +51,13 @@ export interface SingleReview {
   content: string;
   value: number;
   googleBookId: string;
-  authorId: number;
+  authorId: string;
   likesCount: number;
   isLiked: boolean;
   isFromMe: boolean;
   createdAt: string;
   author: {
-    id: number;
+    id: string;
     userName: string;
     avatar: string | null;
   };
@@ -77,14 +77,14 @@ export interface SingleReview {
 
 export interface SingleComment {
   id: number;
-  authorId: number;
+  authorId: string;
   content: string;
   likesCount: number;
   isLiked: boolean;
   isFromCurrentUser: boolean;
   createdAt: string;
   author: {
-    id: number;
+    id: string;
     userName: string;
     avatar: string | null;
   };

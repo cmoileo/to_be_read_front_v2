@@ -49,8 +49,6 @@ function FollowingPage() {
   const currentPath = routerState.location.pathname;
   const { isMobile } = usePlatform();
 
-  const userIdNumber = parseInt(userId, 10);
-
   const {
     users,
     isLoading,
@@ -59,7 +57,7 @@ function FollowingPage() {
     handleLoadMore,
     handleFollow,
     handleUnfollow,
-  } = useFollowListViewModel(userIdNumber, "following");
+  } = useFollowListViewModel(userId, "following");
 
   const navItems = [
     {
@@ -92,7 +90,7 @@ function FollowingPage() {
     navigate({ to: href });
   };
 
-  const handleUserClick = (clickedUserId: number) => {
+  const handleUserClick = (clickedUserId: string) => {
     navigate({ to: `/user/${clickedUserId}` });
   };
 

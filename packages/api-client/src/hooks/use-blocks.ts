@@ -4,7 +4,7 @@ import { BlocksApi } from "../apis/blocks.api";
 export const blockKeys = {
   all: ["blocks"] as const,
   list: () => [...blockKeys.all, "list"] as const,
-  status: (userId: number) => [...blockKeys.all, "status", userId] as const,
+  status: (userId: string) => [...blockKeys.all, "status", userId] as const,
 };
 
 export const useBlockedUsers = () => {
@@ -19,7 +19,7 @@ export const useBlockedUsers = () => {
   });
 };
 
-export const useBlockStatus = (userId: number) => {
+export const useBlockStatus = (userId: string) => {
   return useQuery({
     queryKey: blockKeys.status(userId),
     queryFn: () => BlocksApi.getBlockStatus(userId),
@@ -31,7 +31,7 @@ export const useBlockUser = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (userId: number) => BlocksApi.blockUser(userId),
+    mutationFn: (userId: string) => BlocksApi.blockUser(userId),
     onMutate: async (userId) => {
       // Cancel any outgoing queries
       await queryClient.cancelQueries({ queryKey: ["users", "detail", userId] });
@@ -85,7 +85,7 @@ export const useUnblockUser = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (userId: number) => BlocksApi.unblockUser(userId),
+    mutationFn: (userId: string) => BlocksApi.unblockUser(userId),
     onMutate: async (userId) => {
       await queryClient.cancelQueries({ queryKey: blockKeys.status(userId) });
       

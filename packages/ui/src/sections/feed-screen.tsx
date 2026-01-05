@@ -14,7 +14,7 @@ interface FeedReview {
   isFromMe?: boolean;
   createdAt: string;
   author: {
-    id: number;
+    id: string;
     userName: string;
     avatarUrl?: string | null;
   };
@@ -39,7 +39,7 @@ interface FeedScreenProps {
   isRefreshing?: boolean;
   onLoadMore?: () => void;
   onLike?: (reviewId: number) => void;
-  onAuthorClick?: (authorId: number) => void;
+  onAuthorClick?: (authorId: string) => void;
   onReviewClick?: (reviewId: number) => void;
   onRefresh?: () => void;
   onCreateReview?: () => void;

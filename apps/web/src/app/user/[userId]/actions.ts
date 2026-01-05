@@ -3,7 +3,7 @@
 import { cookies } from "next/headers";
 import { WebUserService } from "@/services/web-user.service";
 
-export async function followUserAction(userId: number) {
+export async function followUserAction(userId: string) {
   const cookieStore = await cookies();
   const accessToken = cookieStore.get("tbr_access_token")?.value;
 
@@ -14,7 +14,7 @@ export async function followUserAction(userId: number) {
   return WebUserService.followUser(userId, accessToken);
 }
 
-export async function unfollowUserAction(userId: number) {
+export async function unfollowUserAction(userId: string) {
   const cookieStore = await cookies();
   const accessToken = cookieStore.get("tbr_access_token")?.value;
 
@@ -25,7 +25,7 @@ export async function unfollowUserAction(userId: number) {
   return WebUserService.unfollowUser(userId, accessToken);
 }
 
-export async function getUserReviewsAction(userId: number, page: number) {
+export async function getUserReviewsAction(userId: string, page: number) {
   const cookieStore = await cookies();
   const accessToken = cookieStore.get("tbr_access_token")?.value;
 
@@ -36,7 +36,7 @@ export async function getUserReviewsAction(userId: number, page: number) {
   return WebUserService.getUserReviews(userId, page, accessToken);
 }
 
-export async function cancelFollowRequestAction(userId: number) {
+export async function cancelFollowRequestAction(userId: string) {
   const cookieStore = await cookies();
   const accessToken = cookieStore.get("tbr_access_token")?.value;
 

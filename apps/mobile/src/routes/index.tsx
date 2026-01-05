@@ -82,7 +82,7 @@ function Index() {
     navigate({ to: href });
   };
 
-  const handleAuthorClick = (authorId: number) => {
+  const handleAuthorClick = (authorId: string) => {
     navigate({ to: `/user/${authorId}` });
   };
 

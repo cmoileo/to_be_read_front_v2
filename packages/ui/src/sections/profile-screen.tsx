@@ -18,7 +18,7 @@ import {
 import { useTranslation } from "react-i18next";
 
 interface User {
-  id: number;
+  id: string;
   userName: string;
   avatar: string | null;
   biography: string | null;
@@ -75,9 +75,9 @@ interface ProfileScreenProps {
   onFollowingClick?: () => void;
   onReadingListClick?: () => void;
   onSettingsClick?: () => void;
-  onReportUser?: (userId: number) => void;
-  onBlockUser?: (userId: number) => void;
-  onUnblockUser?: (userId: number) => void;
+  onReportUser?: (userId: string) => void;
+  onBlockUser?: (userId: string) => void;
+  onUnblockUser?: (userId: string) => void;
   isBlockLoading?: boolean;
 }
 

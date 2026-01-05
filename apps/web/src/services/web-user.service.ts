@@ -3,7 +3,7 @@ import type { User, Review, PaginatedResponse, FollowResponse } from "@repo/type
 const API_URL = process.env.NEXT_PUBLIC_API_URL!;
 
 interface ApiUser {
-  id: number;
+  id: string;
   userName: string;
   avatar: string | null;
   avatarUrl: string | null;
@@ -21,7 +21,7 @@ interface ApiUser {
 }
 
 interface ApiFollowUser {
-  id: number;
+  id: string;
   userName: string;
   avatar?: string | null;
   avatarUrl?: string | null;
@@ -31,7 +31,7 @@ interface ApiFollowUser {
 }
 
 export interface FollowUser {
-  id: number;
+  id: string;
   userName: string;
   avatar: string | null;
   biography: string | null;
@@ -98,28 +98,28 @@ async function callApi<T>(path: string, init?: RequestInit, accessToken?: string
 }
 
 export class WebUserService {
-  static async getUser(userId: number, accessToken?: string): Promise<User> {
+  static async getUser(userId: string, accessToken?: string): Promise<User> {
     const apiUser = await callApi<ApiUser>(`/user/${userId}`, {}, accessToken);
     return mapApiUserToUser(apiUser);
   }
 
   static async getUserReviews(
-    userId: number,
+    userId: string,
     page: number,
     accessToken?: string
   ): Promise<PaginatedResponse<Review>> {
     return callApi<PaginatedResponse<Review>>(`/user/${userId}/reviews/${page}`, {}, accessToken);
   }
 
-  static async followUser(userId: number, accessToken: string): Promise<FollowResponse> {
+  static async followUser(userId: string, accessToken: string): Promise<FollowResponse> {
     return callApi<FollowResponse>(`/user/${userId}/follow`, {}, accessToken);
   }
 
-  static async unfollowUser(userId: number, accessToken: string): Promise<{ message: string }> {
+  static async unfollowUser(userId: string, accessToken: string): Promise<{ message: string }> {
     return callApi<{ message: string }>(`/user/${userId}/unfollow`, {}, accessToken);
   }
 
-  static async cancelFollowRequest(userId: number, accessToken: string): Promise<{ message: string }> {
+  static async cancelFollowRequest(userId: string, accessToken: string): Promise<{ message: string }> {
     return callApi<{ message: string }>(
       `/user/${userId}/cancel-follow-request`,
       { method: "DELETE" },
@@ -128,7 +128,7 @@ export class WebUserService {
   }
 
   static async getFollowers(
-    userId: number,
+    userId: string,
     page: number,
     accessToken: string
   ): Promise<PaginatedResponse<FollowUser>> {
@@ -144,7 +144,7 @@ export class WebUserService {
   }
 
   static async getFollowings(
-    userId: number,
+    userId: string,
     page: number,
     accessToken: string
   ): Promise<PaginatedResponse<FollowUser>> {

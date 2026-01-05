@@ -27,7 +27,7 @@ import { useTranslation } from "react-i18next";
 import { cn } from "../lib/utils";
 
 interface ReviewAuthor {
-  id: number;
+  id: string;
   userName: string;
   avatar: string | null;
 }
@@ -58,7 +58,7 @@ interface Review {
 }
 
 interface CommentAuthor {
-  id: number;
+  id: string;
   userName: string;
   avatar: string | null;
 }
@@ -86,7 +86,7 @@ interface SingleReviewScreenProps {
   onDeleteComment?: (commentId: number) => void;
   onCreateComment?: (content: string) => Promise<void>;
   onLoadMoreComments?: () => void;
-  onAuthorClick?: (authorId: number) => void;
+  onAuthorClick?: (authorId: string) => void;
   onBookClick?: (bookId: string) => void;
   onReportReview?: (reviewId: number) => void;
   onReportComment?: (commentId: number) => void;

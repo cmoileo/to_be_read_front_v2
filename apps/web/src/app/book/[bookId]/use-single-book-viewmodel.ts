@@ -107,7 +107,7 @@ export const useSingleBookViewModel = ({
   );
 
   const handleAuthorClick = useCallback(
-    (authorId: number) => {
+    (authorId: string) => {
       router.push(`/user/${authorId}`);
     },
     [router]

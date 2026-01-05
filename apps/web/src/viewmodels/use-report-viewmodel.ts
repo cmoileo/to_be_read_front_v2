@@ -10,7 +10,7 @@ export function useReportViewModel() {
   const { toast } = useToast();
   const [isOpen, setIsOpen] = useState(false);
   const [entityType, setEntityType] = useState<ReportEntityType>("review");
-  const [entityId, setEntityId] = useState<number>(0);
+  const [entityId, setEntityId] = useState<string | number>(0);
 
   const mutation = useMutation({
     mutationFn: (data: { reason: ReportReason; description?: string }) =>
@@ -37,7 +37,7 @@ export function useReportViewModel() {
     },
   });
 
-  const openReportDialog = (type: ReportEntityType, id: number) => {
+  const openReportDialog = (type: ReportEntityType, id: string | number) => {
     setEntityType(type);
     setEntityId(id);
     setIsOpen(true);

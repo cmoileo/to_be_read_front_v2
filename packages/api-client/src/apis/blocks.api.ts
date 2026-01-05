@@ -12,21 +12,21 @@ export class BlocksApi {
   /**
    * Block a user
    */
-  static async blockUser(userId: number): Promise<BlockResponse> {
+  static async blockUser(userId: string): Promise<BlockResponse> {
     return HttpClient.post<BlockResponse>(`/block/${userId}`, {});
   }
 
   /**
    * Unblock a user
    */
-  static async unblockUser(userId: number): Promise<BlockResponse> {
+  static async unblockUser(userId: string): Promise<BlockResponse> {
     return HttpClient.delete<BlockResponse>(`/block/${userId}`);
   }
 
   /**
    * Get block status between current user and target user
    */
-  static async getBlockStatus(userId: number): Promise<BlockStatusResponse> {
+  static async getBlockStatus(userId: string): Promise<BlockStatusResponse> {
     return HttpClient.get<BlockStatusResponse>(`/block/${userId}/status`);
   }
 }

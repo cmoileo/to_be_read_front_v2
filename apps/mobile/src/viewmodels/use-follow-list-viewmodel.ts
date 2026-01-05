@@ -8,9 +8,9 @@ import {
   updateFollowingCount,
 } from "@repo/stores";
 
-export const useFollowListViewModel = (userId: number, type: "followers" | "following") => {
+export const useFollowListViewModel = (userId: string, type: "followers" | "following") => {
   const queryClient = useQueryClient();
-  const [optimisticUpdates, setOptimisticUpdates] = useState<Map<number, boolean>>(new Map());
+  const [optimisticUpdates, setOptimisticUpdates] = useState<Map<string, boolean>>(new Map());
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } = useInfiniteQuery({
     queryKey:
@@ -42,8 +42,8 @@ export const useFollowListViewModel = (userId: number, type: "followers" | "foll
   }, [data, optimisticUpdates]);
 
   const followMutation = useMutation({
-    mutationFn: (targetUserId: number) => MobileUserService.followUser(targetUserId),
-    onMutate: async (targetUserId: number) => {
+    mutationFn: (targetUserId: string) => MobileUserService.followUser(targetUserId),
+    onMutate: async (targetUserId: string) => {
       setOptimisticUpdates((prev) => new Map(prev).set(targetUserId, true));
       updateFollowingCount(queryClient, 1);
     },
@@ -64,8 +64,8 @@ export const useFollowListViewModel = (userId: number, type: "followers" | "foll
   });
 
   const unfollowMutation = useMutation({
-    mutationFn: (targetUserId: number) => MobileUserService.unfollowUser(targetUserId),
-    onMutate: async (targetUserId: number) => {
+    mutationFn: (targetUserId: string) => MobileUserService.unfollowUser(targetUserId),
+    onMutate: async (targetUserId: string) => {
       setOptimisticUpdates((prev) => new Map(prev).set(targetUserId, false));
       updateFollowingCount(queryClient, -1);
       // Optimistically remove user's reviews from feed
@@ -94,14 +94,14 @@ export const useFollowListViewModel = (userId: number, type: "followers" | "foll
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   const handleFollow = useCallback(
-    (targetUserId: number) => {
+    (targetUserId: string) => {
       followMutation.mutate(targetUserId);
     },
     [followMutation]
   );
 
   const handleUnfollow = useCallback(
-    (targetUserId: number) => {
+    (targetUserId: string) => {
       unfollowMutation.mutate(targetUserId);
     },
     [unfollowMutation]

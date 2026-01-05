@@ -20,7 +20,7 @@ export interface RegisterCredentials {
 
 export interface AuthResponse {
   user: {
-    id: number;
+    id: string;
     userName: string;
   };
   token: Token;
@@ -41,7 +41,7 @@ export interface RevokeRefreshTokenRequest {
 }
 
 export interface AuthUser {
-  id: number;
+  id: string;
   userName: string;
 }
 
@@ -81,6 +81,6 @@ export type NotificationPermissionStatus = "granted" | "denied" | "default";
 export interface NotificationData {
   type: "like" | "comment" | "follow";
   reviewId?: number;
-  userId?: number;
+  userId?: string;
   userName?: string;
 }

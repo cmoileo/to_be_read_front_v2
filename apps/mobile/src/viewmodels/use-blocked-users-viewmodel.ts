@@ -22,7 +22,7 @@ export const useBlockedUsersViewModel = () => {
   });
 
   const unblockMutation = useMutation({
-    mutationFn: (userId: number) => BlocksApi.unblockUser(userId),
+    mutationFn: (userId: string) => BlocksApi.unblockUser(userId),
     onMutate: () => {
       HapticsService.mediumImpact();
     },
@@ -37,7 +37,7 @@ export const useBlockedUsersViewModel = () => {
 
   const blockedUsers = data?.pages.flatMap((page) => page.data) ?? [];
 
-  const handleUnblock = (userId: number) => {
+  const handleUnblock = (userId: string) => {
     unblockMutation.mutate(userId);
   };
 

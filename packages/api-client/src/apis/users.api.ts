@@ -2,7 +2,7 @@ import type { User, PaginatedResponse, FollowRequestPaginated, FollowRequest, Fo
 import { HttpClient } from "../http-client";
 
 export class UsersApi {
-  static async getUser(id: number): Promise<{ user: User }> {
+  static async getUser(id: string): Promise<{ user: User }> {
     return HttpClient.get<{ user: User }>(`/user/${id}`);
   }
 
@@ -10,19 +10,19 @@ export class UsersApi {
     return HttpClient.get<PaginatedResponse<User>>(`/search/users/${query}/${page}`);
   }
 
-  static async followUser(id: number): Promise<FollowResponse> {
+  static async followUser(id: string): Promise<FollowResponse> {
     return HttpClient.get<FollowResponse>(`/follow/${id}`);
   }
 
-  static async unfollowUser(id: number): Promise<{ message: string }> {
+  static async unfollowUser(id: string): Promise<{ message: string }> {
     return HttpClient.get<{ message: string }>(`/unfollow/${id}`);
   }
 
-  static async getFollowers(userId: number, page: number): Promise<PaginatedResponse<User>> {
+  static async getFollowers(userId: string, page: number): Promise<PaginatedResponse<User>> {
     return HttpClient.get<PaginatedResponse<User>>(`/followers/${userId}/${page}`);
   }
 
-  static async getFollowings(userId: number, page: number): Promise<PaginatedResponse<User>> {
+  static async getFollowings(userId: string, page: number): Promise<PaginatedResponse<User>> {
     return HttpClient.get<PaginatedResponse<User>>(`/followings/${userId}/${page}`);
   }
 
@@ -38,7 +38,7 @@ export class UsersApi {
     return HttpClient.post<{ request: FollowRequest }>(`/follow-request/${requestId}/reject`, {});
   }
 
-  static async cancelFollowRequest(userId: number): Promise<{ message: string }> {
+  static async cancelFollowRequest(userId: string): Promise<{ message: string }> {
     return HttpClient.delete<{ message: string }>(`/user/${userId}/cancel-follow-request`);
   }
 }

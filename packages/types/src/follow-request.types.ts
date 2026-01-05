@@ -2,13 +2,13 @@ export type FollowRequestStatus = "none" | "pending" | "accepted" | "rejected";
 
 export interface FollowRequest {
   id: number;
-  requesterId: number;
-  requestedId: number;
+  requesterId: string;
+  requestedId: string;
   status: FollowRequestStatus;
   createdAt: string;
   updatedAt: string;
   requester: {
-    id: number;
+    id: string;
     userName: string;
     avatarUrl: string | null;
     biography: string | null;

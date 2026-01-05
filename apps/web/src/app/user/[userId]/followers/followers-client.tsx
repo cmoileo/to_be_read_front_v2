@@ -10,7 +10,7 @@ import { getFollowersAction, followUserAction, unfollowUserAction } from "./acti
 import { removeUserReviewsFromFeed, invalidateFeed, updateFollowingCount } from "@repo/stores";
 
 interface FollowersClientProps {
-  userId: number;
+  userId: string;
   userName: string;
   initialData: PaginatedResponse<FollowUser>;
 }
@@ -43,17 +43,17 @@ export default function FollowersClient({ userId, userName, initialData }: Follo
     }
   };
 
-  const handleUserClick = (clickedUserId: number) => {
+  const handleUserClick = (clickedUserId: string) => {
     router.push(`/user/${clickedUserId}`);
   };
 
-  const updateUserFollowState = useCallback((targetUserId: number, isFollowing: boolean) => {
+  const updateUserFollowState = useCallback((targetUserId: string, isFollowing: boolean) => {
     setUsers((prev) =>
       prev.map((user) => (user.id === targetUserId ? { ...user, isFollowing } : user))
     );
   }, []);
 
-  const handleFollow = (targetUserId: number) => {
+  const handleFollow = (targetUserId: string) => {
     updateUserFollowState(targetUserId, true);
     updateFollowingCount(queryClient, 1);
     startTransition(async () => {
@@ -68,7 +68,7 @@ export default function FollowersClient({ userId, userName, initialData }: Follo
     });
   };
 
-  const handleUnfollow = (targetUserId: number) => {
+  const handleUnfollow = (targetUserId: string) => {
     updateUserFollowState(targetUserId, false);
     updateFollowingCount(queryClient, -1);
     // Optimistically remove user's reviews from feed

@@ -8,7 +8,7 @@ export type NotificationType =
   | "comment_reply";
 
 export interface NotificationActor {
-  id: number;
+  id: string;
   userName: string;
   avatarUrl?: string;
 }

@@ -15,7 +15,7 @@ import {
 } from "@repo/stores";
 import { HapticsService } from "../services/native";
 
-export const useUserProfileViewModel = (userId: number) => {
+export const useUserProfileViewModel = (userId: string) => {
   const queryClient = useQueryClient();
 
   const {

@@ -17,8 +17,8 @@ export const queryKeys = {
 
   users: {
     all: ["users"] as const,
-    detail: (userId: number) => [...queryKeys.users.all, "detail", userId] as const,
-    reviews: (userId: number) => [...queryKeys.users.all, "reviews", userId] as const,
+    detail: (userId: string) => [...queryKeys.users.all, "detail", userId] as const,
+    reviews: (userId: string) => [...queryKeys.users.all, "reviews", userId] as const,
   },
 
   reviews: {
@@ -42,8 +42,8 @@ export const queryKeys = {
 
   followList: {
     all: ["followList"] as const,
-    followers: (userId: number) => [...queryKeys.followList.all, "followers", userId] as const,
-    followings: (userId: number) => [...queryKeys.followList.all, "followings", userId] as const,
+    followers: (userId: string) => [...queryKeys.followList.all, "followers", userId] as const,
+    followings: (userId: string) => [...queryKeys.followList.all, "followings", userId] as const,
   },
 
   likes: {
@@ -51,10 +51,10 @@ export const queryKeys = {
   },
 
   follow: {
-    user: (userId: number) => ["follow", "user", userId] as const,
+    user: (userId: string) => ["follow", "user", userId] as const,
   },
 
-  myReviews: (userId: number | undefined) => ["myReviews", userId] as const,
+  myReviews: (userId: string | undefined) => ["myReviews", userId] as const,
 
   search: {
     all: ["search"] as const,

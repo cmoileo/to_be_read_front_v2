@@ -43,8 +43,8 @@ function SingleReviewPage() {
     router.history.back();
   };
 
-  const handleAuthorClick = (authorId: number) => {
-    navigate({ to: "/user/$userId", params: { userId: String(authorId) } });
+  const handleAuthorClick = (authorId: string) => {
+    navigate({ to: "/user/$userId", params: { userId: authorId } });
   };
 
   const handleBookClick = (bookId: string) => {

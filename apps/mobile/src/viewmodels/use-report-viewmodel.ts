@@ -13,7 +13,7 @@ export const useReportViewModel = ({ onSuccess, onError }: UseReportViewModelPro
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const [entityType, setEntityType] = useState<ReportEntityType>("review");
-  const [entityId, setEntityId] = useState<number>(0);
+  const [entityId, setEntityId] = useState<number | string>(0);
 
   const reportMutation = useMutation({
     mutationFn: (data: CreateReportData) => ReportsApi.createReport(data),
@@ -29,7 +29,7 @@ export const useReportViewModel = ({ onSuccess, onError }: UseReportViewModelPro
     },
   });
 
-  const openReportDialog = (type: ReportEntityType, id: number) => {
+  const openReportDialog = (type: ReportEntityType, id: number | string) => {
     setEntityType(type);
     setEntityId(id);
     setIsOpen(true);

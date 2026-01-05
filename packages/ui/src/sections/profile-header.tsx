@@ -23,7 +23,7 @@ import { cn } from "../lib/utils";
 import { Pencil, Loader2, FileText, Users, UserPlus, BookMarked, Settings, Lock, UserX, Clock, MoreHorizontal, Flag, Ban, UserCheck } from "lucide-react";
 
 interface User {
-  id: number;
+  id: string;
   userName: string;
   avatar: string | null;
   biography: string | null;
@@ -50,9 +50,9 @@ interface ProfileHeaderProps {
   onFollowingClick?: () => void;
   onReadingListClick?: () => void;
   onSettingsClick?: () => void;
-  onReportUser?: (userId: number) => void;
-  onBlockUser?: (userId: number) => void;
-  onUnblockUser?: (userId: number) => void;
+  onReportUser?: (userId: string) => void;
+  onBlockUser?: (userId: string) => void;
+  onUnblockUser?: (userId: string) => void;
 }
 
 export const ProfileHeader = ({

@@ -17,7 +17,7 @@ export interface AddToReadListResponse {
   message: string;
   item: {
     id: number;
-    userId: number;
+    userId: string;
     googleBookId: string;
     createdAt: string;
   };

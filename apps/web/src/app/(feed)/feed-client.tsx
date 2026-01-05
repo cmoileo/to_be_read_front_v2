@@ -39,7 +39,7 @@ export default function FeedClient({ initialFeedResponse }: FeedClientProps) {
     setAuthPromptOpen(true);
   };
 
-  const handleAuthorClick = (authorId: number) => {
+  const handleAuthorClick = (authorId: string) => {
     router.push(`/user/${authorId}`);
   };
 
