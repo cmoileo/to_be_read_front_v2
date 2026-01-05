@@ -1,10 +1,25 @@
 #!/bin/bash
 
 # Script to copy the correct GoogleService-Info.plist based on build configuration
-# Add this as a "Run Script" phase in Xcode Build Phases
+# Can be used in two ways:
+# 1. Called manually: bash copy-firebase-config.sh [Debug|Release]
+# 2. Called from Xcode Build Phase (uses CONFIGURATION env var)
 
-PLIST_DESTINATION="${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.app/GoogleService-Info.plist"
-PLIST_SOURCE_DIR="${SRCROOT}/App"
+# Use parameter if provided, otherwise use Xcode env var
+if [ -n "$1" ]; then
+    CONFIGURATION="$1"
+fi
+
+# Set paths based on context (manual call vs Xcode build phase)
+if [ -n "$BUILT_PRODUCTS_DIR" ] && [ -n "$PRODUCT_NAME" ]; then
+    # Called from Xcode Build Phase
+    PLIST_DESTINATION="${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.app/GoogleService-Info.plist"
+    PLIST_SOURCE_DIR="${SRCROOT}/App"
+else
+    # Called manually - copy to App directory
+    PLIST_DESTINATION="./GoogleService-Info.plist"
+    PLIST_SOURCE_DIR="."
+fi
 
 if [ "${CONFIGURATION}" == "Debug" ]; then
     # Use staging for debug builds

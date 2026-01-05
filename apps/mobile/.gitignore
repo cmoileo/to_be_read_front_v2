@@ -28,3 +28,7 @@ src/routeTree.gen.ts
 
 # Tauri
 src-tauri/target
+
+# Firebase
+GoogleService-Info.plist
+GoogleService-Info-Production.plist

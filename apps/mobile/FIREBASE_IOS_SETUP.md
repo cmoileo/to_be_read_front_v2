@@ -43,23 +43,28 @@ Dans Xcode :
 
 ### 4. Configurer les GoogleService-Info.plist
 
-Vous avez 2 fichiers plist dans le dossier :
-- `GoogleService-Info-Staging.plist`
-- `GoogleService-Info-Production.plist`
+Vous avez 2 fichiers plist dans le dossier `ios/App/` :
+- `GoogleService-Info-Staging.plist` (pour Debug/TestFlight)
+- `GoogleService-Info-Production.plist` (pour Release/Production)
 
-#### Option 1 : Utiliser un seul plist (Recommandé pour commencer)
+#### Configuration automatique par environnement ✅
 
-Renommez celui que vous voulez utiliser :
-```bash
-cd /Users/pouch/inkerclub/to_be_read_front_v2/apps/mobile/ios/App/App
-cp GoogleService-Info-Staging.plist GoogleService-Info.plist
-```
+Un script `copy-firebase-config.sh` est déjà configuré pour copier automatiquement le bon fichier selon l'environnement de build :
+- **Debug** → utilise `-Staging.plist`
+- **Release** → utilise `-Production.plist`
 
-Dans Xcode, ajoutez `GoogleService-Info.plist` au projet (drag & drop dans le projet).
+**Important** : Vous devez remplir les valeurs dans `GoogleService-Info-Production.plist` avec les clés de votre projet Firebase Production.
 
-#### Option 2 : Script pour switcher automatiquement (Avancé)
+#### Vérifier la configuration Xcode
 
-Créez un script de build qui copie le bon plist selon l'environnement.
+1. Ouvrez le projet dans Xcode
+2. Sélectionnez le target "App"
+3. Allez dans **Build Phases**
+4. Vérifiez qu'il existe une phase "Run Script" nommée "Copy Firebase Config"
+5. Si elle n'existe pas, créez-la :
+   - Cliquez sur **+** → **New Run Script Phase**
+   - Collez le contenu du script `copy-firebase-config.sh`
+   - Placez cette phase AVANT "Copy Bundle Resources"
 
 ### 5. Vérifier le code AppDelegate
 

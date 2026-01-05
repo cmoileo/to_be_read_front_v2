@@ -215,3 +215,43 @@ pnpm dev
 ```
 
 Le fichier sera régénéré automatiquement.
+
+## Déploiement iOS
+
+### Prérequis
+- Xcode installé
+- Compte Apple Developer
+- Firebase configuré (voir [FIREBASE_IOS_SETUP.md](FIREBASE_IOS_SETUP.md))
+
+### Déploiement sur TestFlight (Staging)
+
+```bash
+./deploy-testflight.sh staging
+```
+
+### Déploiement en Production
+
+```bash
+./deploy-testflight.sh prod
+```
+
+### Ce que fait le script
+
+1. ✅ Incrémente automatiquement le build number
+2. ✅ Configure l'environnement (.env.staging ou .env.production)
+3. ✅ Build le frontend
+4. ✅ Configure Firebase (staging ou production)
+5. ✅ Sync Capacitor
+6. ✅ Ouvre Xcode pour l'archive
+
+### Configuration manuelle de Firebase
+
+Si vous souhaitez changer manuellement la configuration Firebase :
+
+```bash
+cd ios/App
+# Pour staging
+bash copy-firebase-config.sh Debug
+# Pour production
+bash copy-firebase-config.sh Release
+```
