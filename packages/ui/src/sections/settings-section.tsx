@@ -210,29 +210,25 @@ export const SettingsSection = ({
             </>
           )}
 
-          {onOpenLegal && (
-            <>
-              <button
-                onClick={onOpenLegal}
-                className="w-full flex items-center justify-between py-3 hover:bg-muted/50 rounded-lg transition-colors px-2 -mx-2"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-full bg-muted">
-                    <FileText className="h-5 w-5 text-muted-foreground" />
-                  </div>
-                  <div className="text-left">
-                    <p className="font-medium">{t("settings.legal")}</p>
-                    <p className="text-sm text-muted-foreground">
-                      {t("settings.legalDescription")}
-                    </p>
-                  </div>
-                </div>
-                <ChevronRight className="h-5 w-5 text-muted-foreground" />
-              </button>
+          <button
+            onClick={onOpenLegal}
+            className="w-full flex items-center justify-between py-3 hover:bg-muted/50 rounded-lg transition-colors px-2 -mx-2"
+          >
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-full bg-muted">
+                <FileText className="h-5 w-5 text-muted-foreground" />
+              </div>
+              <div className="text-left">
+                <p className="font-medium">{t("settings.legal")}</p>
+                <p className="text-sm text-muted-foreground">
+                  {t("settings.legalDescription")}
+                </p>
+              </div>
+            </div>
+            <ChevronRight className="h-5 w-5 text-muted-foreground" />
+          </button>
 
-              <Separator />
-            </>
-          )}
+          <Separator />
 
           <button
             onClick={() => setShowLogoutDialog(true)}

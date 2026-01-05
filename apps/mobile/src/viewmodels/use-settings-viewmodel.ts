@@ -24,7 +24,7 @@ export function useSettingsViewModel() {
   });
 
   const user = meData?.user;
-  const currentLocale = user?.locale || i18n.language || "en";
+  const currentLocale = i18n.language || user?.locale || "en";
   const notificationsEnabled = user?.pushNotificationsEnabled ?? true;
   const isPrivate = user?.isPrivate ?? false;
 
@@ -54,8 +54,7 @@ export function useSettingsViewModel() {
       await MobileProfileService.updateProfile({ locale: locale as "en" | "fr" });
       return locale;
     },
-    onSuccess: (locale) => {
-      i18n.changeLanguage(locale);
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["me-settings"] });
     },
   });
@@ -100,6 +99,7 @@ export function useSettingsViewModel() {
   };
 
   const handleChangeLanguage = (locale: string) => {
+    i18n.changeLanguage(locale);
     changeLanguageMutation.mutate(locale);
   };
 
