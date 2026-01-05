@@ -62,15 +62,16 @@ function SettingsPage() {
           onBack={() => navigate({ to: "/profile" })}
         />
         
-        {/* Debug Button */}
-        <Button
-          onClick={() => navigate({ to: "/debug-logs" })}
-          variant="outline"
-          className="mt-4 w-full"
-        >
-          <Bug className="h-4 w-4 mr-2" />
-          Debug Logs (Dev)
-        </Button>
+        {import.meta.env.DEV && (
+          <Button
+            onClick={() => navigate({ to: "/debug-logs" })}
+            variant="outline"
+            className="mt-4 w-full"
+          >
+            <Bug className="h-4 w-4 mr-2" />
+            Debug Logs (Dev)
+          </Button>
+        )}
       </PageTransition>
 
       <PrivacySettingsDialog
