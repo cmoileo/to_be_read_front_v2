@@ -58,16 +58,19 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
 
   const [resolvedTheme, setResolvedTheme] = useState<"light" | "dark">(() => {
     if (typeof window === "undefined") return "light";
-    return theme === "system" ? getSystemTheme() : theme;
+    const storedTheme = getStoredTheme();
+    return storedTheme === "system" ? getSystemTheme() : storedTheme;
   });
 
   const setTheme = useCallback((newTheme: Theme) => {
+    console.log("[ThemeProvider] Setting theme to:", newTheme);
     setThemeState(newTheme);
     localStorage.setItem(THEME_STORAGE_KEY, newTheme);
   }, []);
 
   useEffect(() => {
     const resolved = theme === "system" ? getSystemTheme() : theme;
+    console.log("[ThemeProvider] useEffect - theme changed to:", theme, "resolved:", resolved);
     setResolvedTheme(resolved);
     applyTheme(resolved);
   }, [theme]);

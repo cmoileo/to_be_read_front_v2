@@ -44,6 +44,7 @@ function SettingsPage() {
     <div className="min-h-screen bg-background">
       <PageTransition className={`p-4 ${isMobile ? 'pt-[calc(env(safe-area-inset-top)+1rem)] pb-[calc(env(safe-area-inset-bottom)+1rem)]' : ''}`}>
         <SettingsSection
+          key={currentLocale}
           currentLocale={currentLocale}
           currentTheme={currentTheme}
           notificationsEnabled={notificationsEnabled}

@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { MobileAuthService } from "../services/mobile-auth.service";
 import { MobileProfileService } from "../services/mobile-profile.service";
 import { useConnectedUser } from "@repo/stores";
@@ -16,6 +16,11 @@ export function useSettingsViewModel() {
   const { toast } = useToast();
   const { theme, setTheme } = useTheme();
   const [showPrivacyDialog, setShowPrivacyDialog] = useState(false);
+  const [currentLocale, setCurrentLocale] = useState(i18n.language || "en");
+
+  useEffect(() => {
+    console.log("[Settings] Current theme from context:", theme);
+  }, [theme]);
 
   const { data: meData } = useQuery({
     queryKey: ["me-settings"],
@@ -24,7 +29,6 @@ export function useSettingsViewModel() {
   });
 
   const user = meData?.user;
-  const currentLocale = i18n.language || user?.locale || "en";
   const notificationsEnabled = user?.pushNotificationsEnabled ?? true;
   const isPrivate = user?.isPrivate ?? false;
 
@@ -54,8 +58,10 @@ export function useSettingsViewModel() {
       await MobileProfileService.updateProfile({ locale: locale as "en" | "fr" });
       return locale;
     },
-    onSuccess: () => {
+    onSuccess: (locale) => {
       queryClient.invalidateQueries({ queryKey: ["me-settings"] });
+      queryClient.invalidateQueries({ queryKey: ["connectedUser"] });
+      i18n.changeLanguage(locale);
     },
   });
 
@@ -99,11 +105,13 @@ export function useSettingsViewModel() {
   };
 
   const handleChangeLanguage = (locale: string) => {
+    setCurrentLocale(locale);
     i18n.changeLanguage(locale);
     changeLanguageMutation.mutate(locale);
   };
 
   const handleChangeTheme = (newTheme: "light" | "dark" | "system") => {
+    console.log("[Settings] Changing theme to:", newTheme, "Current:", theme);
     setTheme(newTheme);
   };
 

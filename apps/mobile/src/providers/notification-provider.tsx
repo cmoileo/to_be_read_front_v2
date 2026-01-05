@@ -23,14 +23,11 @@ export function NotificationProvider({ children }: NotificationProviderProps) {
   const [hasAttemptedRegistration, setHasAttemptedRegistration] = useState(false);
   const queryClient = useQueryClient();
 
-  // Initialize notification service
   useEffect(() => {
     const initNotifications = async () => {
-      console.log("[NotificationProvider] Initializing...");
       const success = await mobileNotificationService.initialize();
       if (success) {
         const status = await mobileNotificationService.getPermissionStatus();
-        console.log("[NotificationProvider] Current permission status:", status);
         setPermissionStatus(status);
         setIsInitialized(true);
       }
@@ -46,12 +43,10 @@ export function NotificationProvider({ children }: NotificationProviderProps) {
       const user = queryClient.getQueryData<User>(connectedUserKeys.profile());
       
       if (user) {
-        console.log("[NotificationProvider] User is logged in, requesting notification permission...");
         setHasAttemptedRegistration(true);
         
         try {
-          const success = await registerForPushNotificationsInternal();
-          console.log("[NotificationProvider] Push notification registration result:", success);
+          await registerForPushNotificationsInternal();
         } catch (error) {
           console.error("[NotificationProvider] Failed to register for push notifications:", error);
         }
@@ -76,21 +71,14 @@ export function NotificationProvider({ children }: NotificationProviderProps) {
   };
 
   const registerForPushNotificationsInternal = async (): Promise<boolean> => {
-    console.log("[NotificationProvider] Starting push notification registration...");
-    console.log("[NotificationProvider] Current permission status:", permissionStatus);
-    
     const status = await mobileNotificationService.requestPermission();
-    console.log("[NotificationProvider] Permission status after request:", status);
     setPermissionStatus(status);
     
     if (status !== "granted") {
-      console.log("[NotificationProvider] Permission not granted, aborting registration");
       return false;
     }
 
-    console.log("[NotificationProvider] Permission granted, attempting to register token...");
     const result = await mobileNotificationService.registerToken();
-    console.log("[NotificationProvider] Token registration result:", result);
     return result;
   };
 
