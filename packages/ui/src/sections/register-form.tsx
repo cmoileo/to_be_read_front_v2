@@ -26,6 +26,7 @@ interface RegisterFormProps {
   error?: string;
   onLoginClick?: () => void;
   isUsernameAvailable?: (username: string) => Promise<boolean>;
+  legalUrl?: string;
 }
 
 export function RegisterForm({
@@ -34,6 +35,7 @@ export function RegisterForm({
   error,
   onLoginClick,
   isUsernameAvailable,
+  legalUrl = "/legal",
 }: RegisterFormProps) {
   const { t } = useTranslation();
   const form = useForm({
@@ -268,7 +270,7 @@ export function RegisterForm({
                   <Label htmlFor={field.name} className="text-sm font-medium cursor-pointer leading-tight">
                     {t("auth.register.acceptTerms")}{" "}
                     <a
-                      href="/legal"
+                      href={legalUrl}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-primary hover:text-primary/80 underline"

@@ -60,6 +60,7 @@ function RegisterPage() {
           error={viewModel.error}
           isUsernameAvailable={viewModel.checkUsernameAvailability}
           onLoginClick={viewModel.navigateToLogin}
+          legalUrl={`${import.meta.env.VITE_WEB_URL}/legal`}
         />
       </div>
     </PageTransition>
