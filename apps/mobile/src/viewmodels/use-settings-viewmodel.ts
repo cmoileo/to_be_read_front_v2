@@ -6,6 +6,7 @@ import { MobileAuthService } from "../services/mobile-auth.service";
 import { MobileProfileService } from "../services/mobile-profile.service";
 import { useConnectedUser } from "@repo/stores";
 import { useToast } from "@repo/ui";
+import { useTheme } from "../providers/theme-provider";
 
 export function useSettingsViewModel() {
   const navigate = useNavigate();
@@ -13,6 +14,7 @@ export function useSettingsViewModel() {
   const { i18n, t } = useTranslation();
   const { clearUser } = useConnectedUser();
   const { toast } = useToast();
+  const { theme, setTheme } = useTheme();
   const [showPrivacyDialog, setShowPrivacyDialog] = useState(false);
 
   const { data: meData } = useQuery({
@@ -101,6 +103,10 @@ export function useSettingsViewModel() {
     changeLanguageMutation.mutate(locale);
   };
 
+  const handleChangeTheme = (newTheme: "light" | "dark" | "system") => {
+    setTheme(newTheme);
+  };
+
   const handleToggleNotifications = (enabled: boolean) => {
     notificationSettingsMutation.mutate(enabled);
   };
@@ -115,6 +121,7 @@ export function useSettingsViewModel() {
 
   return {
     currentLocale,
+    currentTheme: theme,
     notificationsEnabled,
     isPrivate,
     showPrivacyDialog,
@@ -124,6 +131,7 @@ export function useSettingsViewModel() {
     handleLogout,
     handleDeleteAccount,
     handleChangeLanguage,
+    handleChangeTheme,
     handleToggleNotifications,
     handleOpenPrivacySettings,
     handleSavePrivacySettings,

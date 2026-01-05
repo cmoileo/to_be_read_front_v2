@@ -22,6 +22,7 @@ function SettingsPage() {
 
   const {
     currentLocale,
+    currentTheme,
     notificationsEnabled,
     isPrivate,
     showPrivacyDialog,
@@ -31,6 +32,7 @@ function SettingsPage() {
     handleLogout,
     handleDeleteAccount,
     handleChangeLanguage,
+    handleChangeTheme,
     handleToggleNotifications,
     handleOpenPrivacySettings,
     handleSavePrivacySettings,
@@ -42,6 +44,7 @@ function SettingsPage() {
       <PageTransition className={`p-4 ${isMobile ? 'pt-[calc(env(safe-area-inset-top)+1rem)] pb-[calc(env(safe-area-inset-bottom)+1rem)]' : ''}`}>
         <SettingsSection
           currentLocale={currentLocale}
+          currentTheme={currentTheme}
           notificationsEnabled={notificationsEnabled}
           isPrivate={isPrivate}
           isLoggingOut={isLoggingOut}
@@ -49,6 +52,7 @@ function SettingsPage() {
           onLogout={handleLogout}
           onDeleteAccount={handleDeleteAccount}
           onChangeLanguage={handleChangeLanguage}
+          onChangeTheme={handleChangeTheme}
           onToggleNotifications={handleToggleNotifications}
           onOpenPrivacySettings={handleOpenPrivacySettings}
           onOpenBlockedUsers={() => navigate({ to: "/blocked-users" })}
